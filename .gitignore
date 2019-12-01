@@ -1,0 +1,4 @@
+*~
+.stack-work/
+tesla.cabal
+/stack.yaml.lock
