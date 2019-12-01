@@ -32,6 +32,8 @@ dependencies:
 - time
 - vector
 - mtl
+- template-haskell
+- casing
 
 library:
   source-dirs: src
