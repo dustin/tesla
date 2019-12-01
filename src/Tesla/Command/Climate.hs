@@ -3,7 +3,8 @@
 
 module Tesla.Command.Climate (
   hvacOn, hvacOff, heatSeat, Seat(..),
-  setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn
+  setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
+  wakeUp
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
@@ -41,5 +42,6 @@ setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" := driver, "pas
 
 
 mkNamedCommands [("hvacOn", "auto_conditioning_start"),
-                 ("hvacOff", "auto_conditioning_stop")]
+                 ("hvacOff", "auto_conditioning_stop"),
+                 ("wakeUp", "wake_up")]
 
