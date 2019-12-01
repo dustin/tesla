@@ -16,10 +16,13 @@ carCMD s u = do
     FunD (mkName s) [Clause [] (NormalB expr) []]]
   where expr = LamE [] (AppE (VarE (mkName "runCmd'")) (LitE (StringL u)))
 
+cmapM :: (Monoid b, Applicative f) => (a -> f b) -> [a] -> f b
+cmapM f xs = mconcat <$> traverse f xs
+
 -- Build a bunch of commands from a list of named endpoints, defining
 -- functions by removing the common prefix.
 mkCommands :: [String] -> Q [Dec]
-mkCommands targets = mconcat <$> traverse easyCMD targets
+mkCommands targets = cmapM easyCMD targets
   where
     prefix = commonPrefix targets
     easyCMD :: String -> Q [Dec]
@@ -33,3 +36,7 @@ mkCommands targets = mconcat <$> traverse easyCMD targets
         tp xs
           | any null xs = []
           | otherwise = (head <$> xs) : tp (tail <$> xs)
+
+-- Make commands with given names.
+mkNamedCommands :: [(String, String)] -> Q [Dec]
+mkNamedCommands = cmapM (uncurry carCMD)

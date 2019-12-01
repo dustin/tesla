@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Tesla.Command.Charging (
   startCharging, stopCharging, setLimit, openChargePort, closeChargePort
@@ -8,18 +9,12 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
 
 import           Tesla.Command
-
-startCharging :: MonadIO m => Car m CommandResponse
-startCharging = runCmd' "charge_start"
-
-stopCharging :: MonadIO m => Car m CommandResponse
-stopCharging = runCmd' "charge_stop"
+import           Tesla.Command.TH
 
 setLimit :: MonadIO m => Int -> Car m CommandResponse
 setLimit to = runCmd "set_charge_limit" ["percent" := to ]
 
-openChargePort :: MonadIO m => Car m CommandResponse
-openChargePort = runCmd' "charge_port_door_open"
-
-closeChargePort :: MonadIO m => Car m CommandResponse
-closeChargePort = runCmd' "charge_port_door_close"
+mkNamedCommands [("startCharging", "charge_start"),
+                 ("stopCharging", "charge_stop"),
+                 ("openChargePort", "charge_port_door_open"),
+                 ("closeChargePort", "charge_port_door_close")]
