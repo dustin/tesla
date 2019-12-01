@@ -58,10 +58,10 @@ import           Tesla
 
 -- | Get the URL for a named endpoint for a given vehicle.
 vehicleURL :: VehicleID -> String -> String
-vehicleURL v c = mconcat [baseURL, "api/1/vehicles/", v, "/", c]
+vehicleURL v c = mconcat [baseURL, "api/1/vehicles/", unpack v, "/", c]
 
 -- | A VehicleID.
-type VehicleID = String
+type VehicleID = Text
 
 data CarEnv = CarEnv {
   _authInfo :: IO AuthInfo,
@@ -88,7 +88,7 @@ runNamedCar :: MonadIO m => Text -> IO AuthInfo -> Car m a -> m a
 runNamedCar name ai f = do
   a <- liftIO ai
   vs <- vehicles a
-  runCar ai (unpack $ vs Map.! name) f
+  runCar ai (vs Map.! name) f
 
 -- | Giant blob of VehicleData describing all known state of the vehicle.
 --
