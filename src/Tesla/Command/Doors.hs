@@ -1,14 +1,18 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Tesla.Command.Doors (
-  lock, unlock
+  actuateFrontTrunk, actuateRearTrunk
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
+import           Network.Wreq           (FormParam (..))
 import           Tesla.Command
 
-lock :: MonadIO m => Car m CommandResponse
-lock = runCmd' "door_lock"
+atr :: MonadIO m => String -> Car m CommandResponse
+atr w = runCmd "actuate_trunk" [ "which_trunk" := w ]
 
-unlock :: MonadIO m => Car m CommandResponse
-unlock = runCmd' "door_unlock"
+actuateFrontTrunk :: MonadIO m => Car m CommandResponse
+actuateFrontTrunk = atr "front"
+
+actuateRearTrunk :: MonadIO m => Car m CommandResponse
+actuateRearTrunk = atr "rear"
