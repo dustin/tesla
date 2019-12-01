@@ -1,4 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-|
+Module      : Tesla.Command
+Description : Commands executed on a car.
+
+Executing commands within the Car Monad.
+-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Tesla.Command (runCmd, runCmd', CommandResponse, Car) where
@@ -16,6 +22,8 @@ import           Network.Wreq.Types     (FormValue (..), Postable)
 import           Tesla
 import           Tesla.Car
 
+-- | A CommandResponse wraps an Either such that Left represents a
+-- failure message and Right suggests the command was successful.
 type CommandResponse = Either Text ()
 
 -- | Run a command with a payload.
@@ -28,7 +36,7 @@ runCmd cmd p = do
     Just True  -> Right ()
     _ -> Left $ r ^. responseBody . key "response" . key "reason" . _String
 
--- | run command without a payload
+-- | Run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse
 runCmd' cmd = runCmd cmd BL.empty
 

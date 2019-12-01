@@ -1,9 +1,19 @@
+{-|
+Module:      Tesla
+Description: Tesla API implementation.
+
+'Tesla' is intended to provide access to all known Tesla APIs as
+documented at https://tesla-api.timdorr.com/
+-}
+
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 
 module Tesla
-    ( authenticate, refreshAuth, AuthResponse(..), vehicles, AuthInfo(..),
+    ( authenticate, refreshAuth, AuthResponse(..),
+      AuthInfo(..),
+      vehicles,
       fromToken, authOpts, baseURL
     ) where
 
@@ -39,6 +49,7 @@ userAgent = "github.com/dustin/tesla 0.1"
 defOpts :: Network.Wreq.Options
 defOpts = defaults & header "User-Agent" .~ [userAgent]
 
+-- | An Authentication request.
 data AuthInfo = AuthInfo {
   _clientID       :: String
   , _clientSecret :: String
@@ -47,6 +58,7 @@ data AuthInfo = AuthInfo {
   , _bearerToken  :: String
   } deriving(Show)
 
+-- | Get an AuthInfo instance from a bearer token.
 fromToken :: String -> AuthInfo
 fromToken t = AuthInfo{_bearerToken=t, _clientID="", _clientSecret="", _email="", _password=""}
 
@@ -55,6 +67,7 @@ jsonOpts = defaultOptions {
   fieldLabelModifier = dropWhile (== '_')
   }
 
+-- | An Authentication response.
 data AuthResponse = AuthResponse {
   _access_token    :: String
   , _expires_in    :: Int
@@ -64,6 +77,7 @@ data AuthResponse = AuthResponse {
 instance FromJSON AuthResponse where
   parseJSON = genericParseJSON jsonOpts
 
+-- | Authenticate to the Tesla service.
 authenticate :: AuthInfo -> IO AuthResponse
 authenticate AuthInfo{..} = do
   r <- asJSON =<< postWith defOpts authURL ["grant_type" := ("password" :: String),
@@ -73,6 +87,7 @@ authenticate AuthInfo{..} = do
                                             "password" := _password] :: IO (Response AuthResponse)
   pure $ r ^. responseBody
 
+-- | Refresh authentication credentials using a refresh token.
 refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
 refreshAuth AuthInfo{..} AuthResponse{..} = do
   r <- asJSON =<< postWith defOpts authRefreshURL ["grant_type" := ("refresh_token" :: String),
@@ -82,10 +97,11 @@ refreshAuth AuthInfo{..} AuthResponse{..} = do
   pure $ r ^. responseBody
 
 
+-- | Get a set of wreq options from an 'AuthInfo'.
 authOpts :: AuthInfo -> Network.Wreq.Options
 authOpts AuthInfo{..} = defOpts & header "Authorization" .~ ["Bearer " <> BC.pack _bearerToken]
 
--- Vehicle name -> vehicle ID
+-- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)
 vehicles ai = do
   r <- liftIO (asJSON =<< getWith (authOpts ai) vehiclesURL :: IO (Response Value))
