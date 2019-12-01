@@ -6,7 +6,6 @@ module Tesla.Command.Climate (
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Data.Char              (toLower)
 import           Network.Wreq           (FormParam (..))
 
 import           Tesla.Command
@@ -21,7 +20,7 @@ hvacOff = runCmd' "auto_conditioning_stop"
 
 -- | Turn on the steering wheel heater
 wheelHeater :: MonadIO m => Bool -> Car m CommandResponse
-wheelHeater on = runCmd "remote_steering_wheel_heater_request" ["on" := map toLower (show on)]
+wheelHeater on = runCmd "remote_steering_wheel_heater_request" ["on" := on]
 
 wheelHeaterOn :: MonadIO m => Car m CommandResponse
 wheelHeaterOn = wheelHeater True

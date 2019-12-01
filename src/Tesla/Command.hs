@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Tesla.Command (runCmd, runCmd', CommandResponse, Car) where
 
@@ -10,7 +11,7 @@ import qualified Data.ByteString.Lazy   as BL
 import           Data.Text              (Text)
 import           Network.Wreq           (Response, asJSON, postWith,
                                          responseBody)
-import           Network.Wreq.Types     (Postable)
+import           Network.Wreq.Types     (FormValue (..), Postable)
 
 import           Tesla
 import           Tesla.Car
@@ -30,3 +31,7 @@ runCmd cmd p = do
 -- | run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse
 runCmd' cmd = runCmd cmd BL.empty
+
+instance FormValue Bool where
+  renderFormValue True  = "true"
+  renderFormValue False = "false"
