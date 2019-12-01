@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Tesla.Command.Alerts (
   honkHorn, flashLights
@@ -6,9 +7,6 @@ module Tesla.Command.Alerts (
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Tesla.Command
+import           Tesla.Command.TH
 
-honkHorn :: MonadIO m => Car m CommandResponse
-honkHorn = runCmd' "honk_horn"
-
-flashLights :: MonadIO m => Car m CommandResponse
-flashLights = runCmd' "flash_lights"
+mkCommands ["honk_horn", "flash_lights"]
