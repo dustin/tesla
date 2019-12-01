@@ -11,7 +11,6 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
 
 import           Tesla.Command
-import           Tesla.Command.TH
 
 -- | Turn on the steering wheel heater
 wheelHeater :: MonadIO m => Bool -> Car m CommandResponse

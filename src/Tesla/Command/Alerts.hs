@@ -7,6 +7,5 @@ module Tesla.Command.Alerts (
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Tesla.Command
-import           Tesla.Command.TH
 
 mkCommands ["honk_horn", "flash_lights"]
