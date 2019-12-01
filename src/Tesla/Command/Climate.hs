@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Tesla.Command.Climate (
   hvacOn, hvacOff, heatSeat, Seat(..),
@@ -9,14 +10,7 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
 
 import           Tesla.Command
-
--- | Turn HVAC on.
-hvacOn :: MonadIO m => Car m CommandResponse
-hvacOn = runCmd' "auto_conditioning_start"
-
--- | Turn HVAC off.
-hvacOff :: MonadIO m => Car m CommandResponse
-hvacOff = runCmd' "auto_conditioning_stop"
+import           Tesla.Command.TH
 
 -- | Turn on the steering wheel heater
 wheelHeater :: MonadIO m => Bool -> Car m CommandResponse
@@ -44,4 +38,8 @@ heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" := seatNum s
 -- | Set the main HVAC temperatures.
 setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
 setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" := driver, "passenger_temp" := passenger]
+
+
+mkNamedCommands [("hvacOn", "auto_conditioning_start"),
+                 ("hvacOff", "auto_conditioning_stop")]
 
