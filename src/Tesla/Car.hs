@@ -32,6 +32,7 @@ module Tesla.Car (
   vehicleURL, authInfo, vehicleID
       ) where
 
+import           Control.Exception      (Exception, throwIO)
 import           Control.Lens
 import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class (MonadIO (..))
@@ -83,12 +84,26 @@ type Car = ReaderT CarEnv
 runCar :: MonadIO m => IO AuthInfo -> VehicleID -> Car m a -> m a
 runCar ai vi f = runReaderT f (CarEnv ai vi)
 
+newtype BadCarException = BadCar String deriving Eq
+
+instance Show BadCarException where
+  show (BadCar s) = "BadCar: " <> s
+
+instance Exception BadCarException
+
 -- | Run a Car Monad by looking up a car by name.
 runNamedCar :: MonadIO m => Text -> IO AuthInfo -> Car m a -> m a
 runNamedCar name ai f = do
   a <- liftIO ai
   vs <- vehicles a
-  runCar ai (vs Map.! name) f
+  c <- case Map.lookup name vs of
+         Nothing -> throw $ mconcat [show name, " is not a valid vehicle name.  Try one of: ",
+                                     show $ Map.keys vs]
+         Just c -> pure c
+  runCar ai c f
+
+  where
+    throw = liftIO . throwIO . BadCar
 
 -- | Giant blob of VehicleData describing all known state of the vehicle.
 --
