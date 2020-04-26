@@ -41,7 +41,7 @@ currentEnergyID :: Monad m => Energy m EnergyID
 currentEnergyID = asks _eid
 
 -- | Energy Monad for accessing energy-specific things.
-newtype (MonadIO m) => Energy m a = Energy { runEnergyM :: ReaderT EnergyEnv m a }
+newtype Energy m a = Energy { runEnergyM :: ReaderT EnergyEnv m a }
   deriving (Applicative, Functor, Monad, MonadIO,
             MonadCatch, MonadThrow, MonadMask, MonadReader EnergyEnv, MonadFail)
 

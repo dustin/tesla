@@ -74,7 +74,7 @@ currentVehicleID :: MonadReader CarEnv m => m VehicleID
 currentVehicleID = asks _vid
 
 -- | Car Monad for accessing car-specific things.
-newtype (MonadIO m) => Car m a = Car { runCarM :: ReaderT CarEnv m a }
+newtype Car m a = Car { runCarM :: ReaderT CarEnv m a }
   deriving (Applicative, Functor, Monad, MonadIO,
             MonadCatch, MonadThrow, MonadMask, MonadReader CarEnv, MonadFail)
 
