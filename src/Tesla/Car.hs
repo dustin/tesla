@@ -14,6 +14,7 @@ Access of car-specific APIs.
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE RecordWildCards            #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE UndecidableInstances       #-}
 
@@ -55,10 +56,11 @@ import           Data.Time.Clock        (UTCTime)
 import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
 import qualified Data.Vector            as V
 import           Generics.Deriving.Base (Generic)
-import           Network.Wreq           (Response, asJSON, getWith, responseBody)
+import           Network.Wreq           (getWith, responseBody)
 
 import           Tesla
 import           Tesla.Auth
+import           Tesla.Internal.HTTP
 
 -- | Get the URL for a named endpoint for a given vehicle.
 vehicleURL :: VehicleID -> String -> String
@@ -243,14 +245,13 @@ destinationChargers = toListOf (folded . _DC)
 -- | Get the nearby chargers.
 nearbyChargers :: MonadIO m => Car m [Charger]
 nearbyChargers = do
-  a <- teslaAuth
   v <- currentVehicleID
-  r <- liftIO (asJSON =<< getWith (authOpts a) (vehicleURL v "nearby_charging_sites") :: IO (Response Value))
-  let rb = r ^. responseBody
-      chargers = parseOne rb SC "superchargers" <> parseOne rb DC "destination_charging"
+  rb <- jgetAuth (vehicleURL v "nearby_charging_sites")
+  let chargers = parseOne rb SC "superchargers" <> parseOne rb DC "destination_charging"
   pure (V.toList chargers)
 
     where
+      parseOne :: FromJSON a => Value -> (a -> Charger) -> Text -> V.Vector Charger
       parseOne rb f k =  let rs = traverse fromJSON (rb ^. key "response" . key k . _Array) in
                            f <$> case rs of
                                    Error e   -> error e
