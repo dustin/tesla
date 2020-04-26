@@ -9,29 +9,30 @@ documented at https://tesla-api.timdorr.com/
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE TupleSections     #-}
 
 module Tesla
-    ( authenticate, refreshAuth, AuthResponse(..),
+    ( authenticate, refreshAuth, AuthResponse(..), ProductType(..),
       AuthInfo(..),
-      vehicles,
+      vehicles, products, decodeProducts,
       fromToken, authOpts, baseURL
     ) where
 
 
 import           Control.Lens
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Data.Aeson             (FromJSON (..), Options (..),
-                                         Value (..), defaultOptions,
-                                         fieldLabelModifier, genericParseJSON)
-import           Data.Aeson.Lens        (key, values, _String)
+import           Data.Aeson             (FromJSON (..), Options (..), Value (..), defaultOptions, fieldLabelModifier,
+                                         genericParseJSON)
+import           Data.Aeson.Lens        (key, _Array, _String)
 import qualified Data.ByteString.Char8  as BC
+import           Data.Foldable          (asum)
 import           Data.Map.Strict        (Map)
 import qualified Data.Map.Strict        as Map
+import           Data.Maybe             (catMaybes)
 import           Data.Text              (Text)
 import           Generics.Deriving.Base (Generic)
-import           Network.Wreq           (FormParam (..), Options, Response,
-                                         asJSON, defaults, getWith, header,
-                                         postWith, responseBody)
+import           Network.Wreq           (FormParam (..), Options, Response, asJSON, defaults, getWith, header, postWith,
+                                         responseBody)
 
 baseURL :: String
 baseURL = "https://owner-api.teslamotors.com/"
@@ -39,9 +40,8 @@ authURL :: String
 authURL = baseURL <> "oauth/token"
 authRefreshURL :: String
 authRefreshURL = baseURL <> "oauth/token"
-vehiclesURL :: String
-vehiclesURL = baseURL <> "api/1/vehicles"
-
+productsURL :: String
+productsURL = baseURL <> "api/1/products"
 
 userAgent :: BC.ByteString
 userAgent = "github.com/dustin/tesla 0.1"
@@ -101,10 +101,20 @@ refreshAuth AuthInfo{..} AuthResponse{..} = do
 authOpts :: AuthInfo -> Network.Wreq.Options
 authOpts AuthInfo{..} = defOpts & header "Authorization" .~ ["Bearer " <> BC.pack _bearerToken]
 
+data ProductType = ProductCar | ProductSolar | ProductPowerWall deriving (Show, Read, Eq, Enum, Bounded)
+
+decodeProducts :: Value -> [(ProductType, Text, Text)]
+decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to prod)
+  where
+    prod o = asum [ prodCar, prodSolar, Nothing ]
+      where
+        prodCar = (ProductCar,,) <$> (o ^? key "id_s" . _String) <*> (o ^? key "display_name" . _String)
+        prodSolar = (ProductSolar,,) <$> (o ^? key "id" . _String) <*> (o ^? key "solar_type" . _String)
+
+-- | Get all products associated with this account.
+products :: MonadIO m => AuthInfo -> m [(ProductType, Text, Text)]
+products ai = decodeProducts . view responseBody <$> liftIO (asJSON =<< getWith (authOpts ai) productsURL)
+
 -- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)
-vehicles ai = do
-  r <- liftIO (asJSON =<< getWith (authOpts ai) vehiclesURL :: IO (Response Value))
-  let vals = r ^.. responseBody . key "response" . values . key "id_s" . _String
-      keys = r ^.. responseBody . key "response" . values . key "display_name" . _String
-  pure (Map.fromList $ zip keys vals)
+vehicles = fmap (Map.fromList . map (\(_,b,c) -> (c,b)) . filter (\(a,_,_) -> a == ProductCar)) . products
