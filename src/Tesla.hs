@@ -9,12 +9,15 @@ documented at https://tesla-api.timdorr.com/
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE TemplateHaskell   #-}
 {-# LANGUAGE TupleSections     #-}
 
 module Tesla
-    ( authenticate, refreshAuth, AuthResponse(..), ProductType(..),
+    ( authenticate, refreshAuth, AuthResponse(..),
+      Product(..), carName, carID, solarID, _ProductCar, _ProductSolar, _ProductPowerWall,
       AuthInfo(..),
       vehicles, products, decodeProducts,
+      solarIDs,
       fromToken, authOpts, baseURL
     ) where
 
@@ -101,20 +104,30 @@ refreshAuth AuthInfo{..} AuthResponse{..} = do
 authOpts :: AuthInfo -> Network.Wreq.Options
 authOpts AuthInfo{..} = defOpts & header "Authorization" .~ ["Bearer " <> BC.pack _bearerToken]
 
-data ProductType = ProductCar | ProductSolar | ProductPowerWall deriving (Show, Read, Eq, Enum, Bounded)
+-- | Tesla Product Types.
+data Product = ProductCar { _carName :: Text, _carID :: Text }
+             | ProductSolar { _solarID :: Text }
+             | ProductPowerWall deriving (Show, Read, Eq)
 
-decodeProducts :: Value -> [(ProductType, Text, Text)]
+makePrisms ''Product
+makeLenses ''Product
+
+decodeProducts :: Value -> [Product]
 decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to prod)
   where
     prod o = asum [ prodCar, prodSolar, Nothing ]
       where
-        prodCar = (ProductCar,,) <$> (o ^? key "id_s" . _String) <*> (o ^? key "display_name" . _String)
-        prodSolar = (ProductSolar,,) <$> (o ^? key "id" . _String) <*> (o ^? key "solar_type" . _String)
+        prodCar = ProductCar <$> (o ^? key "display_name" . _String) <*> (o ^? key "id_s" . _String)
+        prodSolar = ProductSolar <$> (o ^? key "id" . _String)
 
 -- | Get all products associated with this account.
-products :: MonadIO m => AuthInfo -> m [(ProductType, Text, Text)]
+products :: MonadIO m => AuthInfo -> m [Product]
 products ai = decodeProducts . view responseBody <$> liftIO (asJSON =<< getWith (authOpts ai) productsURL)
 
 -- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)
-vehicles = fmap (Map.fromList . map (\(_,b,c) -> (c,b)) . filter (\(a,_,_) -> a == ProductCar)) . products
+vehicles = fmap (Map.fromList . toListOf (folded . _ProductCar)) . products
+
+-- | Get a list of Solar ID installations.
+solarIDs :: MonadIO m => AuthInfo -> m [Text]
+solarIDs = fmap (toListOf $ folded . solarID) . products
