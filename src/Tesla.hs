@@ -6,7 +6,6 @@ Description: Tesla API implementation.
 documented at https://tesla-api.timdorr.com/
 -}
 
-{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE TemplateHaskell   #-}
@@ -15,7 +14,6 @@ documented at https://tesla-api.timdorr.com/
 module Tesla
     ( authenticate, refreshAuth, AuthResponse(..),
       Product(..), vehicleName, vehicleID, energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
-      AuthInfo(..),
       VehicleID, vehicles, products, decodeProducts,
       EnergyID, energyIDs,
       fromToken, authOpts, baseURL
@@ -24,18 +22,17 @@ module Tesla
 
 import           Control.Lens
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Data.Aeson             (FromJSON (..), Options (..), Value (..), defaultOptions, fieldLabelModifier,
-                                         genericParseJSON)
-import           Data.Aeson.Lens        (key, _Array, _String)
-import qualified Data.ByteString.Char8  as BC
+import           Data.Aeson             (Value (..))
+import           Data.Aeson.Lens        (key, _Array, _Integer, _String)
 import           Data.Foldable          (asum)
 import           Data.Map.Strict        (Map)
 import qualified Data.Map.Strict        as Map
 import           Data.Maybe             (catMaybes)
 import           Data.Text              (Text)
-import           Generics.Deriving.Base (Generic)
-import           Network.Wreq           (FormParam (..), Options, Response, asJSON, defaults, getWith, header, postWith,
-                                         responseBody)
+import           Network.Wreq           (FormParam (..))
+
+import           Tesla.Auth
+import           Tesla.Internal.HTTP
 
 baseURL :: String
 baseURL = "https://owner-api.teslamotors.com/"
@@ -46,69 +43,30 @@ authRefreshURL = baseURL <> "oauth/token"
 productsURL :: String
 productsURL = baseURL <> "api/1/products"
 
-userAgent :: BC.ByteString
-userAgent = "github.com/dustin/tesla 0.1"
-
-defOpts :: Network.Wreq.Options
-defOpts = defaults & header "User-Agent" .~ [userAgent]
-
--- | An Authentication request.
-data AuthInfo = AuthInfo {
-  _clientID       :: String
-  , _clientSecret :: String
-  , _email        :: String
-  , _password     :: String
-  , _bearerToken  :: String
-  } deriving(Show)
-
--- | Get an AuthInfo instance from a bearer token.
-fromToken :: String -> AuthInfo
-fromToken t = AuthInfo{_bearerToken=t, _clientID="", _clientSecret="", _email="", _password=""}
-
-jsonOpts :: Data.Aeson.Options
-jsonOpts = defaultOptions {
-  fieldLabelModifier = dropWhile (== '_')
-  }
-
--- | An Authentication response.
-data AuthResponse = AuthResponse {
-  _access_token    :: String
-  , _expires_in    :: Int
-  , _refresh_token :: String
-  } deriving(Generic, Show)
-
-instance FromJSON AuthResponse where
-  parseJSON = genericParseJSON jsonOpts
 
 -- | Authenticate to the Tesla service.
 authenticate :: AuthInfo -> IO AuthResponse
-authenticate AuthInfo{..} = do
-  r <- asJSON =<< postWith defOpts authURL ["grant_type" := ("password" :: String),
-                                            "client_id" := _clientID,
-                                            "client_secret" := _clientSecret,
-                                            "email" := _email,
-                                            "password" := _password] :: IO (Response AuthResponse)
-  pure $ r ^. responseBody
+authenticate AuthInfo{..} =
+  jpostWith defOpts authURL ["grant_type" := ("password" :: String),
+                             "client_id" := _clientID,
+                             "client_secret" := _clientSecret,
+                             "email" := _email,
+                             "password" := _password]
 
 -- | Refresh authentication credentials using a refresh token.
 refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
-refreshAuth AuthInfo{..} AuthResponse{..} = do
-  r <- asJSON =<< postWith defOpts authRefreshURL ["grant_type" := ("refresh_token" :: String),
-                                                   "client_id" := _clientID,
-                                                   "client_secret" := _clientSecret,
-                                                   "refresh_token" := _refresh_token] :: IO (Response AuthResponse)
-  pure $ r ^. responseBody
+refreshAuth AuthInfo{..} AuthResponse{..} =
+  jpostWith defOpts authRefreshURL ["grant_type" := ("refresh_token" :: String),
+                                    "client_id" := _clientID,
+                                    "client_secret" := _clientSecret,
+                                    "refresh_token" := _refresh_token]
 
-
--- | Get a set of wreq options from an 'AuthInfo'.
-authOpts :: AuthInfo -> Network.Wreq.Options
-authOpts AuthInfo{..} = defOpts & header "Authorization" .~ ["Bearer " <> BC.pack _bearerToken]
 
 -- | A VehicleID.
 type VehicleID = Text
 
 -- | An energy site ID.
-type EnergyID = Text
+type EnergyID = Integer
 
 -- | Tesla Product Types.
 data Product = ProductVehicle { _vehicleName :: Text, _vehicleID :: VehicleID }
@@ -124,11 +82,11 @@ decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to pro
     prod o = asum [ prodCar, prodSolar, Nothing ]
       where
         prodCar = ProductVehicle <$> (o ^? key "display_name" . _String) <*> (o ^? key "id_s" . _String)
-        prodSolar = ProductEnergy <$> (o ^? key "id" . _String)
+        prodSolar = ProductEnergy <$> (o ^? key "energy_site_id" . _Integer)
 
 -- | Get all products associated with this account.
 products :: MonadIO m => AuthInfo -> m [Product]
-products ai = decodeProducts . view responseBody <$> liftIO (asJSON =<< getWith (authOpts ai) productsURL)
+products ai = decodeProducts <$> jgetWith (authOpts ai) productsURL
 
 -- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)

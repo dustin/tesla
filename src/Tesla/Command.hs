@@ -1,4 +1,5 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-|
 Module      : Tesla.Command
 Description : Commands executed on a car.
@@ -19,13 +20,11 @@ import           Data.Aeson.Lens        (key, _Bool, _String)
 import qualified Data.ByteString.Lazy   as BL
 import           Data.Text              (Text)
 import           Language.Haskell.TH
-import           Network.Wreq           (Response, asJSON, postWith, responseBody)
 import           Network.Wreq.Types     (FormValue (..), Postable)
 import           Text.Casing            (fromSnake, toCamel)
 
-
-import           Tesla
 import           Tesla.Car
+import           Tesla.Internal.HTTP
 
 -- | A CommandResponse wraps an Either such that Left represents a
 -- failure message and Right suggests the command was successful.
@@ -34,12 +33,11 @@ type CommandResponse = Either Text ()
 -- | Run a command with a payload.
 runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
 runCmd cmd p = do
-  a <- authInfo
   v <- currentVehicleID
-  r <- liftIO (asJSON =<< postWith (authOpts a) (vehicleURL v $ "command/" <> cmd) p :: IO (Response Value))
-  pure $ case r ^? responseBody . key "response" . key "result" . _Bool of
+  j :: Value <- jpostAuth (vehicleURL v $ "command/" <> cmd) p
+  pure $ case j ^? key "response" . key "result" . _Bool of
     Just True -> Right ()
-    _         -> Left $ r ^. responseBody . key "response" . key "reason" . _String
+    _         -> Left $ j ^. key "response" . key "reason" . _String
 
 -- | Run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse
@@ -49,12 +47,11 @@ instance FormValue Bool where
   renderFormValue True  = "true"
   renderFormValue False = "false"
 
-
 -- | Build a simple named command car that posts to the given named endpoint.
 mkCommand :: String -> String -> Q [Dec]
 mkCommand s u = do
   let m = mkName "m"
-  pure $ [
+  pure [
     SigD (mkName s) (ForallT [PlainTV m] [AppT (ConT (mkName "MonadIO")) (VarT m)]
                      (AppT (AppT (ConT (mkName "Car")) (VarT m)) (ConT (mkName "CommandResponse")))),
     FunD (mkName s) [Clause [] (NormalB expr) []]]
@@ -81,6 +78,6 @@ mkCommands targets = cmapM easyCMD targets
           | any null xs = []
           | otherwise = (head <$> xs) : tp (tail <$> xs)
 
--- Make commands with given names.
+-- | Make commands with given names.
 mkNamedCommands :: [(String, String)] -> Q [Dec]
 mkNamedCommands = cmapM (uncurry mkCommand)

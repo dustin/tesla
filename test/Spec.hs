@@ -41,7 +41,7 @@ testOpenDoors =  assertEqual "open" [RearTrunk] (openDoors sampleVehicleData)
 
 testParseProducts :: Assertion
 testParseProducts = assertEqual "products" [ProductVehicle "MyCar" "848528",
-                                            ProductEnergy "SOME_UU_I_D"]
+                                            ProductEnergy 2848535]
                     (decodeProducts sampleProducts)
 
 tests :: [TestTree]

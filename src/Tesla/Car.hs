@@ -7,8 +7,8 @@ Access of car-specific APIs.
 
 {-# LANGUAGE DeriveGeneric          #-}
 {-# LANGUAGE DuplicateRecordFields  #-}
+{-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE MultiParamTypeClasses  #-}
 {-# LANGUAGE OverloadedStrings      #-}
 {-# LANGUAGE RecordWildCards        #-}
 {-# LANGUAGE TemplateHaskell        #-}
@@ -29,7 +29,7 @@ module Tesla.Car (
   lat, lon, _SC, _DC,
   name, location, distance_miles, available_stalls, total_stalls, site_closed,
   -- * Probably uninteresting internals
-  vehicleURL, authInfo, currentVehicleID
+  vehicleURL, currentVehicleID
       ) where
 
 import           Control.Exception      (Exception, throwIO)
@@ -52,6 +52,7 @@ import           Generics.Deriving.Base (Generic)
 import           Network.Wreq           (Response, asJSON, getWith, responseBody)
 
 import           Tesla
+import           Tesla.Auth
 
 -- | Get the URL for a named endpoint for a given vehicle.
 vehicleURL :: VehicleID -> String -> String
@@ -62,16 +63,15 @@ data CarEnv = CarEnv {
   _vid      :: VehicleID
   }
 
--- | Get authInfo from the Car Monad.
-authInfo :: MonadIO m => Car m AuthInfo
-authInfo = liftIO =<< asks _authInfo
-
 -- | Get the current vehicle ID from the Car Monad.
 currentVehicleID :: Monad m => Car m VehicleID
 currentVehicleID = asks _vid
 
 -- | Car Monad for accessing car-specific things.
 type Car = ReaderT CarEnv
+
+instance MonadIO m => HasTeslaAuth (Car m) where
+  teslaAuth = liftIO =<< asks _authInfo
 
 -- | Run a Car Monad with the given Vehicle ID
 runCar :: MonadIO m => IO AuthInfo -> VehicleID -> Car m a -> m a
@@ -107,9 +107,9 @@ runNamedCar name ai f = do
 type VehicleData = BL.ByteString
 
 -- | Fetch the VehicleData.
-vehicleData :: MonadIO m => Car m VehicleData
+vehicleData :: (HasTeslaAuth m, MonadIO m) => Car m VehicleData
 vehicleData = do
-  a <- authInfo
+  a <- teslaAuth
   v <- currentVehicleID
   r <- liftIO $ getWith (authOpts a) (vehicleURL v "vehicle_data")
   pure . fromJust . inner $ r ^. responseBody
@@ -233,9 +233,9 @@ destinationChargers :: [Charger] -> [DestinationCharger]
 destinationChargers = toListOf (folded . _DC)
 
 -- | Get the nearby chargers.
-nearbyChargers :: MonadIO m => Car m [Charger]
+nearbyChargers :: (HasTeslaAuth m, MonadIO m) => Car m [Charger]
 nearbyChargers = do
-  a <- authInfo
+  a <- teslaAuth
   v <- currentVehicleID
   r <- liftIO (asJSON =<< getWith (authOpts a) (vehicleURL v "nearby_charging_sites") :: IO (Response Value))
   let rb = r ^. responseBody
