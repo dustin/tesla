@@ -1,7 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Tesla.Command.Doors (
-  actuateFrontTrunk, actuateRearTrunk
+  actuateFrontTrunk, actuateRearTrunk,
+  lockDoors, unlockDoors
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
@@ -16,3 +18,6 @@ actuateFrontTrunk = atr "front"
 
 actuateRearTrunk :: MonadIO m => Car m CommandResponse
 actuateRearTrunk = atr "rear"
+
+mkNamedCommands [("lockDoors", "door_lock"),
+                 ("unlockDoors", "door_unlock")]
