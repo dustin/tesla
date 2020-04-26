@@ -14,7 +14,9 @@ Access of energy-specific APIs.
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE UndecidableInstances       #-}
 
-module Tesla.Energy where
+module Tesla.Energy (
+  runEnergy, siteData, siteConfig, Energy
+  ) where
 
 import           Control.Exception      (Exception)
 import           Control.Monad.Catch    (MonadCatch (..), MonadMask (..), MonadThrow (..))
