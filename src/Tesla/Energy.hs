@@ -5,16 +5,22 @@ Description: Tesla energy-specific APIs.
 Access of energy-specific APIs.
 -}
 
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings     #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+{-# LANGUAGE DuplicateRecordFields      #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 module Tesla.Energy where
 
 import           Control.Exception      (Exception)
+import           Control.Monad.Catch    (MonadCatch (..), MonadMask (..), MonadThrow (..))
+import           Control.Monad.Fail     (MonadFail (..))
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Control.Monad.Reader   (ReaderT (..), asks, runReaderT)
+import           Control.Monad.Reader   (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson             (FromJSON (..))
 
 import           Tesla
@@ -35,14 +41,17 @@ currentEnergyID :: Monad m => Energy m EnergyID
 currentEnergyID = asks _eid
 
 -- | Energy Monad for accessing energy-specific things.
-type Energy = ReaderT EnergyEnv
+newtype (MonadIO m) => Energy m a = Energy { runEnergyM :: ReaderT EnergyEnv m a }
+  deriving (Applicative, Functor, Monad, MonadIO,
+            MonadCatch, MonadThrow, MonadMask, MonadReader EnergyEnv, MonadFail)
 
-instance MonadIO m => HasTeslaAuth (Energy m) where
+
+instance (Monad m, MonadIO m, MonadReader EnergyEnv m) => HasTeslaAuth m where
   teslaAuth = liftIO =<< asks _authInfo
 
 -- | Run a Energy Monad with the given Vehicle ID
 runEnergy :: MonadIO m => IO AuthInfo -> EnergyID -> Energy m a -> m a
-runEnergy ai ei f = runReaderT f (EnergyEnv ai ei)
+runEnergy ai ei f = runReaderT (runEnergyM f) (EnergyEnv ai ei)
 
 newtype BadEnergyException = BadEnergy String deriving Eq
 

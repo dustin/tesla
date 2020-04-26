@@ -5,13 +5,17 @@ Description: Tesla car-specific APIs.
 Access of car-specific APIs.
 -}
 
-{-# LANGUAGE DeriveGeneric          #-}
-{-# LANGUAGE DuplicateRecordFields  #-}
-{-# LANGUAGE FlexibleInstances      #-}
-{-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE OverloadedStrings      #-}
-{-# LANGUAGE RecordWildCards        #-}
-{-# LANGUAGE TemplateHaskell        #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE DuplicateRecordFields      #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE FunctionalDependencies     #-}
+{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE RecordWildCards            #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 module Tesla.Car (
   -- * Car Monad and related types.
@@ -35,8 +39,10 @@ module Tesla.Car (
 import           Control.Exception      (Exception, throwIO)
 import           Control.Lens
 import           Control.Monad          ((<=<))
+import           Control.Monad.Catch    (MonadCatch (..), MonadMask (..), MonadThrow (..))
+import           Control.Monad.Fail     (MonadFail (..))
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Control.Monad.Reader   (ReaderT (..), asks, runReaderT)
+import           Control.Monad.Reader   (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson             (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
                                          fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
 import           Data.Aeson.Lens        (key, _Array, _Bool, _Integer)
@@ -64,18 +70,20 @@ data CarEnv = CarEnv {
   }
 
 -- | Get the current vehicle ID from the Car Monad.
-currentVehicleID :: Monad m => Car m VehicleID
+currentVehicleID :: MonadReader CarEnv m => m VehicleID
 currentVehicleID = asks _vid
 
 -- | Car Monad for accessing car-specific things.
-type Car = ReaderT CarEnv
+newtype (MonadIO m) => Car m a = Car { runCarM :: ReaderT CarEnv m a }
+  deriving (Applicative, Functor, Monad, MonadIO,
+            MonadCatch, MonadThrow, MonadMask, MonadReader CarEnv, MonadFail)
 
-instance MonadIO m => HasTeslaAuth (Car m) where
+instance (Monad m, MonadIO m, MonadReader CarEnv m) => HasTeslaAuth m where
   teslaAuth = liftIO =<< asks _authInfo
 
 -- | Run a Car Monad with the given Vehicle ID
 runCar :: MonadIO m => IO AuthInfo -> VehicleID -> Car m a -> m a
-runCar ai vi f = runReaderT f (CarEnv ai vi)
+runCar ai vi f = runReaderT (runCarM f) (CarEnv ai vi)
 
 newtype BadCarException = BadCar String deriving Eq
 
@@ -107,7 +115,7 @@ runNamedCar name ai f = do
 type VehicleData = BL.ByteString
 
 -- | Fetch the VehicleData.
-vehicleData :: (HasTeslaAuth m, MonadIO m) => Car m VehicleData
+vehicleData :: MonadIO m => Car m VehicleData
 vehicleData = do
   a <- teslaAuth
   v <- currentVehicleID
@@ -233,7 +241,7 @@ destinationChargers :: [Charger] -> [DestinationCharger]
 destinationChargers = toListOf (folded . _DC)
 
 -- | Get the nearby chargers.
-nearbyChargers :: (HasTeslaAuth m, MonadIO m) => Car m [Charger]
+nearbyChargers :: MonadIO m => Car m [Charger]
 nearbyChargers = do
   a <- teslaAuth
   v <- currentVehicleID
