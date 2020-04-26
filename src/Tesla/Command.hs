@@ -19,8 +19,7 @@ import           Data.Aeson.Lens        (key, _Bool, _String)
 import qualified Data.ByteString.Lazy   as BL
 import           Data.Text              (Text)
 import           Language.Haskell.TH
-import           Network.Wreq           (Response, asJSON, postWith,
-                                         responseBody)
+import           Network.Wreq           (Response, asJSON, postWith, responseBody)
 import           Network.Wreq.Types     (FormValue (..), Postable)
 import           Text.Casing            (fromSnake, toCamel)
 
@@ -36,11 +35,11 @@ type CommandResponse = Either Text ()
 runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
 runCmd cmd p = do
   a <- authInfo
-  v <- vehicleID
+  v <- currentVehicleID
   r <- liftIO (asJSON =<< postWith (authOpts a) (vehicleURL v $ "command/" <> cmd) p :: IO (Response Value))
   pure $ case r ^? responseBody . key "response" . key "result" . _Bool of
-    Just True  -> Right ()
-    _ -> Left $ r ^. responseBody . key "response" . key "reason" . _String
+    Just True -> Right ()
+    _         -> Left $ r ^. responseBody . key "response" . key "reason" . _String
 
 -- | Run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse

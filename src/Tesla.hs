@@ -14,10 +14,10 @@ documented at https://tesla-api.timdorr.com/
 
 module Tesla
     ( authenticate, refreshAuth, AuthResponse(..),
-      Product(..), carName, carID, solarID, _ProductCar, _ProductSolar, _ProductPowerWall,
+      Product(..), vehicleName, vehicleID, energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
       AuthInfo(..),
-      vehicles, products, decodeProducts,
-      solarIDs,
+      VehicleID, vehicles, products, decodeProducts,
+      EnergyID, energyIDs,
       fromToken, authOpts, baseURL
     ) where
 
@@ -104,9 +104,15 @@ refreshAuth AuthInfo{..} AuthResponse{..} = do
 authOpts :: AuthInfo -> Network.Wreq.Options
 authOpts AuthInfo{..} = defOpts & header "Authorization" .~ ["Bearer " <> BC.pack _bearerToken]
 
+-- | A VehicleID.
+type VehicleID = Text
+
+-- | An energy site ID.
+type EnergyID = Text
+
 -- | Tesla Product Types.
-data Product = ProductCar { _carName :: Text, _carID :: Text }
-             | ProductSolar { _solarID :: Text }
+data Product = ProductVehicle { _vehicleName :: Text, _vehicleID :: VehicleID }
+             | ProductEnergy { _energyID :: EnergyID }
              | ProductPowerWall deriving (Show, Read, Eq)
 
 makePrisms ''Product
@@ -117,8 +123,8 @@ decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to pro
   where
     prod o = asum [ prodCar, prodSolar, Nothing ]
       where
-        prodCar = ProductCar <$> (o ^? key "display_name" . _String) <*> (o ^? key "id_s" . _String)
-        prodSolar = ProductSolar <$> (o ^? key "id" . _String)
+        prodCar = ProductVehicle <$> (o ^? key "display_name" . _String) <*> (o ^? key "id_s" . _String)
+        prodSolar = ProductEnergy <$> (o ^? key "id" . _String)
 
 -- | Get all products associated with this account.
 products :: MonadIO m => AuthInfo -> m [Product]
@@ -126,8 +132,8 @@ products ai = decodeProducts . view responseBody <$> liftIO (asJSON =<< getWith 
 
 -- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)
-vehicles = fmap (Map.fromList . toListOf (folded . _ProductCar)) . products
+vehicles = fmap (Map.fromList . toListOf (folded . _ProductVehicle)) . products
 
 -- | Get a list of Solar ID installations.
-solarIDs :: MonadIO m => AuthInfo -> m [Text]
-solarIDs = fmap (toListOf $ folded . solarID) . products
+energyIDs :: MonadIO m => AuthInfo -> m [EnergyID]
+energyIDs = fmap (toListOf $ folded . _ProductEnergy) . products

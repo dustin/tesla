@@ -29,7 +29,7 @@ module Tesla.Car (
   lat, lon, _SC, _DC,
   name, location, distance_miles, available_stalls, total_stalls, site_closed,
   -- * Probably uninteresting internals
-  vehicleURL, authInfo, vehicleID
+  vehicleURL, authInfo, currentVehicleID
       ) where
 
 import           Control.Exception      (Exception, throwIO)
@@ -37,11 +37,8 @@ import           Control.Lens
 import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Control.Monad.Reader   (ReaderT (..), asks, runReaderT)
-import           Data.Aeson             (FromJSON (..), Options (..),
-                                         Result (..), Value (..), decode,
-                                         defaultOptions, fieldLabelModifier,
-                                         fromJSON, genericParseJSON, withObject,
-                                         (.:))
+import           Data.Aeson             (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
+                                         fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
 import           Data.Aeson.Lens        (key, _Array, _Bool, _Integer)
 import qualified Data.ByteString.Lazy   as BL
 import qualified Data.Map.Strict        as Map
@@ -52,17 +49,13 @@ import           Data.Time.Clock        (UTCTime)
 import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
 import qualified Data.Vector            as V
 import           Generics.Deriving.Base (Generic)
-import           Network.Wreq           (Response, asJSON, getWith,
-                                         responseBody)
+import           Network.Wreq           (Response, asJSON, getWith, responseBody)
 
 import           Tesla
 
 -- | Get the URL for a named endpoint for a given vehicle.
 vehicleURL :: VehicleID -> String -> String
 vehicleURL v c = mconcat [baseURL, "api/1/vehicles/", unpack v, "/", c]
-
--- | A VehicleID.
-type VehicleID = Text
 
 data CarEnv = CarEnv {
   _authInfo :: IO AuthInfo,
@@ -74,8 +67,8 @@ authInfo :: MonadIO m => Car m AuthInfo
 authInfo = liftIO =<< asks _authInfo
 
 -- | Get the current vehicle ID from the Car Monad.
-vehicleID :: Monad m => Car m VehicleID
-vehicleID = asks _vid
+currentVehicleID :: Monad m => Car m VehicleID
+currentVehicleID = asks _vid
 
 -- | Car Monad for accessing car-specific things.
 type Car = ReaderT CarEnv
@@ -117,7 +110,7 @@ type VehicleData = BL.ByteString
 vehicleData :: MonadIO m => Car m VehicleData
 vehicleData = do
   a <- authInfo
-  v <- vehicleID
+  v <- currentVehicleID
   r <- liftIO $ getWith (authOpts a) (vehicleURL v "vehicle_data")
   pure . fromJust . inner $ r ^. responseBody
     where inner = BL.stripPrefix "{\"response\":" <=< BL.stripSuffix "}"
@@ -243,7 +236,7 @@ destinationChargers = toListOf (folded . _DC)
 nearbyChargers :: MonadIO m => Car m [Charger]
 nearbyChargers = do
   a <- authInfo
-  v <- vehicleID
+  v <- currentVehicleID
   r <- liftIO (asJSON =<< getWith (authOpts a) (vehicleURL v "nearby_charging_sites") :: IO (Response Value))
   let rb = r ^. responseBody
       chargers = parseOne rb SC "superchargers" <> parseOne rb DC "destination_charging"
