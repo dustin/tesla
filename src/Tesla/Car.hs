@@ -46,7 +46,7 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Control.Monad.Reader   (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson             (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
                                          fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
-import           Data.Aeson.Lens        (key, _Array, _Bool, _Integer)
+import           Data.Aeson.Lens        (key, values, _Bool, _Integer)
 import qualified Data.ByteString.Lazy   as BL
 import qualified Data.Map.Strict        as Map
 import           Data.Maybe             (fromJust, fromMaybe)
@@ -54,7 +54,6 @@ import           Data.Ratio
 import           Data.Text              (Text, unpack)
 import           Data.Time.Clock        (UTCTime)
 import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
-import qualified Data.Vector            as V
 import           Generics.Deriving.Base (Generic)
 import           Network.Wreq           (getWith, responseBody)
 
@@ -236,12 +235,11 @@ nearbyChargers :: MonadIO m => Car m [Charger]
 nearbyChargers = do
   v <- currentVehicleID
   rb <- jgetAuth (vehicleURL v "nearby_charging_sites")
-  let chargers = parseOne rb SC "superchargers" <> parseOne rb DC "destination_charging"
-  pure (V.toList chargers)
+  pure $ parseOne rb SC "superchargers" <> parseOne rb DC "destination_charging"
 
     where
-      parseOne :: FromJSON a => Value -> (a -> Charger) -> Text -> V.Vector Charger
-      parseOne rb f k =  let rs = traverse fromJSON (rb ^. key "response" . key k . _Array) in
+      parseOne :: FromJSON a => Value -> (a -> Charger) -> Text -> [Charger]
+      parseOne rb f k =  let rs = traverse fromJSON (rb ^.. key "response" . key k . values) in
                            f <$> case rs of
                                    Error e   -> error e
                                    Success s -> s
