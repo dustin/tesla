@@ -1,11 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Tesla.Command.RemoteStart where
+module Tesla.Car.Command.RemoteStart where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
 
-import           Tesla.Command
+import           Tesla.Car.Command
 
 -- | Enables keyless driving.
 --

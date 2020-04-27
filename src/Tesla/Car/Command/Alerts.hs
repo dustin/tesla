@@ -1,11 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module Tesla.Command.Alerts (
+module Tesla.Car.Command.Alerts (
   honkHorn, flashLights
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Tesla.Command
+import           Tesla.Car.Command
 
 mkCommands ["honk_horn", "flash_lights"]

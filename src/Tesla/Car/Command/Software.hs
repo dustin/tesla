@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module Tesla.Command.Software (
+module Tesla.Car.Command.Software (
   scheduleUpdate, cancelUpdate
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
 
-import           Tesla.Command
+import           Tesla.Car.Command
 
 -- | Schedule a software update in this many seconds.
 scheduleUpdate :: MonadIO m => Int -> Car m CommandResponse

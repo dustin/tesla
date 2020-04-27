@@ -14,9 +14,10 @@ documented at https://tesla-api.timdorr.com/
 module Tesla
     ( authenticate, refreshAuth, AuthResponse(..),
       Product(..), vehicleName, vehicleID, energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
-      VehicleID, vehicles, products, decodeProducts,
+      VehicleID, vehicles, products,
       EnergyID, energyIDs,
-      fromToken, authOpts, baseURL
+      fromToken, authOpts, baseURL,
+      decodeProducts
     ) where
 
 

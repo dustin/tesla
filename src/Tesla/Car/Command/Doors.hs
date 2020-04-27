@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module Tesla.Command.Doors (
+module Tesla.Car.Command.Doors (
   actuateFrontTrunk, actuateRearTrunk,
   lockDoors, unlockDoors
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
-import           Tesla.Command
+import           Tesla.Car.Command
 
 atr :: MonadIO m => String -> Car m CommandResponse
 atr w = runCmd "actuate_trunk" [ "which_trunk" := w ]

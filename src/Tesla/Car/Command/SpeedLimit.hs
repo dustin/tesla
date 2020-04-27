@@ -1,12 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Tesla.Command.SpeedLimit (
+module Tesla.Car.Command.SpeedLimit (
   speedLimit, activateSpeedLimit, deactivateSpeedLimit, clearSpeedLimitPIN
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
-import           Tesla.Command
+import           Tesla.Car.Command
 
 speedLimit :: MonadIO m => Int -> Car m CommandResponse
 speedLimit to = runCmd "speed_limit_set_limit" ["limit_mph" := to ]

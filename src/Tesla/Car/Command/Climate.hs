@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module Tesla.Command.Climate (
+module Tesla.Car.Command.Climate (
   hvacOn, hvacOff, heatSeat, Seat(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   wakeUp
@@ -10,7 +10,7 @@ module Tesla.Command.Climate (
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
 
-import           Tesla.Command
+import           Tesla.Car.Command
 
 -- | Turn on the steering wheel heater
 wheelHeater :: MonadIO m => Bool -> Car m CommandResponse

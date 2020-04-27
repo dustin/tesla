@@ -1,11 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module Tesla.Command.Media where
+module Tesla.Car.Command.Media where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 
-import           Tesla.Command
+import           Tesla.Car.Command
 
 mkCommands [
   "media_toggle_playback",

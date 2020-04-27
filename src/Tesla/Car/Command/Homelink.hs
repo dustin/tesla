@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Tesla.Command.Homelink (trigger) where
+module Tesla.Car.Command.Homelink (trigger) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Network.Wreq           (FormParam (..))
-import           Tesla.Command
+import           Tesla.Car.Command
 
 -- | Trigger nearby homelink with the given (lat,lon)
 trigger :: MonadIO m => (Double, Double) -> Car m CommandResponse

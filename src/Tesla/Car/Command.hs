@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-|
-Module      : Tesla.Command
+Module      : Tesla.Car.Command
 Description : Commands executed on a car.
 
 Executing commands within the Car Monad.
 -}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Tesla.Command (
+module Tesla.Car.Command (
   runCmd, runCmd', CommandResponse, Car,
   -- * TH support for generating commands.
   mkCommand, mkCommands, mkNamedCommands) where

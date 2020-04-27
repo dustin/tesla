@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Tesla.Command.Sharing (share) where
+module Tesla.Car.Command.Sharing (share) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson
 import           Data.Text              (Text)
 import           Data.Time.Clock.POSIX  (getCurrentTime, utcTimeToPOSIXSeconds)
 
-import           Tesla.Command
+import           Tesla.Car.Command
 
 share :: MonadIO m => Text -> Car m CommandResponse
 share to = do

@@ -1,13 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Tesla.Command.Windows (
+module Tesla.Car.Command.Windows (
   ventWindows, closeWindows, ventSunroof, closeSunroof
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Text              (Text)
 import           Network.Wreq           (FormParam (..))
-import           Tesla.Command
+
+import           Tesla.Car.Command
 
 windowControl :: MonadIO m => Text -> (Double, Double) -> Car m CommandResponse
 windowControl x (lat,lon) = runCmd "window_control" [ "command" := x, "lat" := lat, "lon" := lon]
