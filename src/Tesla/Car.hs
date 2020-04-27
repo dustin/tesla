@@ -141,9 +141,8 @@ isCharging b = let mi = maybeVal b ^? _Just . key "charge_state" . key "charger_
 
 -- | Get the timestamp from this VehicleData if present.
 maybeTeslaTS :: VehicleData -> Maybe UTCTime
-maybeTeslaTS b = pt <$> mv
-  where mv = maybeVal b ^? _Just . key "vehicle_state" . key "timestamp" . _Integer
-        pt x = posixSecondsToUTCTime . fromRational $ x % 1000
+maybeTeslaTS b = maybeVal b ^? _Just . key "vehicle_state" . key "timestamp" . _Integer . to pt
+  where pt x = posixSecondsToUTCTime . fromRational $ x % 1000
 
 -- | Get the timestamp from this VehicleData or error if there isn't one.
 teslaTS :: VehicleData -> UTCTime
