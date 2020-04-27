@@ -131,13 +131,11 @@ maybeVal = decode
 
 -- | True if a user is present in the vehicle.
 isUserPresent :: VehicleData -> Bool
-isUserPresent b = let mb = maybeVal b ^? _Just . key "vehicle_state" . key "is_user_present" . _Bool in
-                    fromMaybe False mb
+isUserPresent = fromMaybe False . preview (_Just . key "vehicle_state" . key "is_user_present" . _Bool) . maybeVal
 
 -- | True of the vehicle is currently charging.
 isCharging :: VehicleData -> Bool
-isCharging b = let mi = maybeVal b ^? _Just . key "charge_state" . key "charger_power" . _Integer in
-                 fromMaybe 0 mi > 0
+isCharging = maybe False (> 0) . preview (_Just . key "charge_state" . key "charger_power" . _Integer) . maybeVal
 
 -- | Get the timestamp from this VehicleData if present.
 maybeTeslaTS :: VehicleData -> Maybe UTCTime
