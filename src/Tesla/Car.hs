@@ -26,7 +26,7 @@ module Tesla.Car (
   vehicleData, nearbyChargers,
   -- * Convenience functions for examining VehicleData
   VehicleData, isUserPresent, isCharging, teslaTS, maybeTeslaTS,
-  Door(..), OpenState(..), doors, openDoors,
+  Door(..), OpenState(..), _Open, _Closed, doors, openDoors,
   -- * Charger Info
   Location(..), DestinationCharger(..), Supercharger(..), Charger(..),
   superchargers, destinationChargers,
@@ -166,15 +166,7 @@ data Door = DriverFront
 -- 0 or 32 for rt
 data OpenState a = Closed a | Open a deriving (Show, Eq)
 
--- | True if the given OpenState represents an open door.
-isOpen :: OpenState a -> Bool
-isOpen (Closed _) = False
-isOpen _          = True
-
--- | Return the thing that is open in this OpenState.
-fromOpenState :: OpenState a -> a
-fromOpenState (Open d)   = d
-fromOpenState (Closed d) = d
+makePrisms ''OpenState
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
@@ -186,7 +178,7 @@ doors b = traverse ds $ zip ["df", "dr", "pf", "pr", "ft", "rt"] [minBound..]
 
 -- | Return a list of open doors.
 openDoors :: VehicleData -> [Door]
-openDoors b = maybe [] (map fromOpenState . filter isOpen) (doors b)
+openDoors = toListOf (_Just . folded . _Open) . doors
 
 -- | Location, Location, Location.
 data Location = Location { _lat :: Double, _lon :: Double } deriving (Show, Generic)
