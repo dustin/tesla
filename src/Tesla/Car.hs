@@ -43,6 +43,7 @@ import           Control.Monad          ((<=<))
 import           Control.Monad.Catch    (MonadCatch (..), MonadMask (..), MonadThrow (..))
 import           Control.Monad.Fail     (MonadFail (..))
 import           Control.Monad.IO.Class (MonadIO (..))
+import           Control.Monad.Logger   (MonadLogger)
 import           Control.Monad.Reader   (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson             (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
                                          fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
@@ -77,7 +78,8 @@ currentVehicleID = asks _vid
 -- | Car Monad for accessing car-specific things.
 newtype Car m a = Car { runCarM :: ReaderT CarEnv m a }
   deriving (Applicative, Functor, Monad, MonadIO,
-            MonadCatch, MonadThrow, MonadMask, MonadReader CarEnv, MonadFail)
+            MonadCatch, MonadThrow, MonadMask, MonadReader CarEnv,
+            MonadFail, MonadLogger)
 
 instance (Monad m, MonadIO m, MonadReader CarEnv m) => HasTeslaAuth m where
   teslaAuth = liftIO =<< asks _authInfo
