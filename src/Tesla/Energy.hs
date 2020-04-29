@@ -18,12 +18,14 @@ module Tesla.Energy (
   runEnergy, siteData, siteConfig, Energy
   ) where
 
-import           Control.Exception      (Exception)
-import           Control.Monad.Catch    (MonadCatch (..), MonadMask (..), MonadThrow (..))
-import           Control.Monad.Fail     (MonadFail (..))
-import           Control.Monad.IO.Class (MonadIO (..))
-import           Control.Monad.Reader   (MonadReader, ReaderT (..), asks, runReaderT)
-import           Data.Aeson             (FromJSON (..))
+import           Control.Exception       (Exception)
+import           Control.Monad.Catch     (MonadCatch (..), MonadMask (..), MonadThrow (..))
+import           Control.Monad.Fail      (MonadFail (..))
+import           Control.Monad.IO.Class  (MonadIO (..))
+import           Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
+import           Control.Monad.Logger    (MonadLogger)
+import           Control.Monad.Reader    (MonadReader, ReaderT (..), asks, runReaderT)
+import           Data.Aeson              (FromJSON (..))
 
 import           Tesla
 import           Tesla.Auth
@@ -45,8 +47,11 @@ currentEnergyID = asks _eid
 -- | Energy Monad for accessing energy-specific things.
 newtype Energy m a = Energy { runEnergyM :: ReaderT EnergyEnv m a }
   deriving (Applicative, Functor, Monad, MonadIO,
-            MonadCatch, MonadThrow, MonadMask, MonadReader EnergyEnv, MonadFail)
+            MonadCatch, MonadThrow, MonadMask, MonadReader EnergyEnv,
+            MonadFail, MonadLogger)
 
+instance MonadUnliftIO m => MonadUnliftIO (Energy m) where
+  withRunInIO inner = Energy $ withRunInIO $ \run -> inner (run . runEnergyM)
 
 instance (Monad m, MonadIO m, MonadReader EnergyEnv m) => HasTeslaAuth m where
   teslaAuth = liftIO =<< asks _authInfo
