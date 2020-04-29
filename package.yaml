@@ -36,6 +36,7 @@ dependencies:
 - wreq             >= 0.5 && < 0.6
 - exceptions
 - monad-logger
+- unliftio-core
 
 library:
   source-dirs: src

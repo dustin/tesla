@@ -37,26 +37,27 @@ module Tesla.Car (
   vehicleURL, currentVehicleID
       ) where
 
-import           Control.Exception      (Exception, throwIO)
+import           Control.Exception       (Exception, throwIO)
 import           Control.Lens
-import           Control.Monad          ((<=<))
-import           Control.Monad.Catch    (MonadCatch (..), MonadMask (..), MonadThrow (..))
-import           Control.Monad.Fail     (MonadFail (..))
-import           Control.Monad.IO.Class (MonadIO (..))
-import           Control.Monad.Logger   (MonadLogger)
-import           Control.Monad.Reader   (MonadReader, ReaderT (..), asks, runReaderT)
-import           Data.Aeson             (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
-                                         fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
-import           Data.Aeson.Lens        (key, values, _Bool, _Integer)
-import qualified Data.ByteString.Lazy   as BL
-import qualified Data.Map.Strict        as Map
-import           Data.Maybe             (fromJust, fromMaybe)
+import           Control.Monad           ((<=<))
+import           Control.Monad.Catch     (MonadCatch (..), MonadMask (..), MonadThrow (..))
+import           Control.Monad.Fail      (MonadFail (..))
+import           Control.Monad.IO.Class  (MonadIO (..))
+import           Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
+import           Control.Monad.Logger    (MonadLogger)
+import           Control.Monad.Reader    (MonadReader, ReaderT (..), asks, runReaderT)
+import           Data.Aeson              (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
+                                          fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
+import           Data.Aeson.Lens         (key, values, _Bool, _Integer)
+import qualified Data.ByteString.Lazy    as BL
+import qualified Data.Map.Strict         as Map
+import           Data.Maybe              (fromJust, fromMaybe)
 import           Data.Ratio
-import           Data.Text              (Text, unpack)
-import           Data.Time.Clock        (UTCTime)
-import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
-import           Generics.Deriving.Base (Generic)
-import           Network.Wreq           (getWith, responseBody)
+import           Data.Text               (Text, unpack)
+import           Data.Time.Clock         (UTCTime)
+import           Data.Time.Clock.POSIX   (posixSecondsToUTCTime)
+import           Generics.Deriving.Base  (Generic)
+import           Network.Wreq            (getWith, responseBody)
 
 import           Tesla
 import           Tesla.Auth
@@ -80,6 +81,14 @@ newtype Car m a = Car { runCarM :: ReaderT CarEnv m a }
   deriving (Applicative, Functor, Monad, MonadIO,
             MonadCatch, MonadThrow, MonadMask, MonadReader CarEnv,
             MonadFail, MonadLogger)
+
+{- solonarv's thing almost works:
+deriving newtype instance (MonadUnliftIO m, forall a a'. Coercible a a' => Coercible (m a) (m a')) => MonadUnliftIO (Car m)
+-}
+
+instance MonadUnliftIO m => MonadUnliftIO (Car m) where
+  -- ((forall a. m a -> IO a) -> IO b) -> m b
+  withRunInIO inner = Car $ withRunInIO $ \run -> inner (run . runCarM)
 
 instance (Monad m, MonadIO m, MonadReader CarEnv m) => HasTeslaAuth m where
   teslaAuth = liftIO =<< asks _authInfo
