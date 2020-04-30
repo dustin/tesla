@@ -51,7 +51,7 @@ instance GHC.Show.Show Tesla.Auth.AuthInfo
 
 
 -- | <tt>Tesla</tt> is intended to provide access to all known Tesla APIs
---   as documented at <a>https://tesla-api.timdorr.com/</a>
+--   as documented at <a>https://www.teslaapi.io/</a>
 module Tesla
 
 -- | Authenticate to the Tesla service.
