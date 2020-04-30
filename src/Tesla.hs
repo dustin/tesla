@@ -3,7 +3,7 @@ Module:      Tesla
 Description: Tesla API implementation.
 
 'Tesla' is intended to provide access to all known Tesla APIs as
-documented at https://tesla-api.timdorr.com/
+documented at https://www.teslaapi.io/
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
