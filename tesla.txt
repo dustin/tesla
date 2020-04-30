@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.2.0.0
+@version 0.3.0.0
 
 
 -- | Authentication related data structures.
@@ -86,7 +86,7 @@ _ProductPowerWall :: Prism' Product ()
 type VehicleID = Text
 
 -- | Get a mapping of vehicle name to vehicle ID.
-vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)
+vehicles :: [Product] -> Map Text Text
 
 -- | Get all products associated with this account.
 products :: MonadIO m => AuthInfo -> m [Product]
@@ -95,7 +95,7 @@ products :: MonadIO m => AuthInfo -> m [Product]
 type EnergyID = Integer
 
 -- | Get a list of Solar ID installations.
-energyIDs :: MonadIO m => AuthInfo -> m [EnergyID]
+energyIDs :: [Product] -> [EnergyID]
 
 -- | Get an AuthInfo instance from a bearer token.
 fromToken :: String -> AuthInfo
@@ -188,8 +188,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_aETR. Prism' (OpenState a_aETR) a_aETR
-_Closed :: forall a_aETR. Prism' (OpenState a_aETR) a_aETR
+_Open :: forall a_aEMc. Prism' (OpenState a_aEMc) a_aEMc
+_Closed :: forall a_aEMc. Prism' (OpenState a_aEMc) a_aEMc
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
