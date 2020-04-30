@@ -4,82 +4,458 @@ Description: Tesla energy-specific APIs.
 
 Access of energy-specific APIs.
 -}</span><span>
-</span><a name="line-7"></a><span>
-</span><a name="line-8"></a><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
-</span><a name="line-9"></a><span class="hs-pragma">{-# LANGUAGE DuplicateRecordFields      #-}</span><span>
-</span><a name="line-10"></a><span class="hs-pragma">{-# LANGUAGE FlexibleContexts           #-}</span><span>
-</span><a name="line-11"></a><span class="hs-pragma">{-# LANGUAGE FlexibleInstances          #-}</span><span>
-</span><a name="line-12"></a><span class="hs-pragma">{-# LANGUAGE GeneralisedNewtypeDeriving #-}</span><span>
-</span><a name="line-13"></a><span class="hs-pragma">{-# LANGUAGE MultiParamTypeClasses      #-}</span><span>
-</span><a name="line-14"></a><span class="hs-pragma">{-# LANGUAGE OverloadedStrings          #-}</span><span>
-</span><a name="line-15"></a><span class="hs-pragma">{-# LANGUAGE UndecidableInstances       #-}</span><span>
-</span><a name="line-16"></a><span>
-</span><a name="line-17"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Tesla.Energy</span><span> </span><span class="hs-special">(</span><span>
-</span><a name="line-18"></a><span>  </span><a href="Tesla.Energy.html#runEnergy"><span class="hs-identifier hs-var">runEnergy</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Energy.html#siteData"><span class="hs-identifier hs-var">siteData</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Energy.html#siteConfig"><span class="hs-identifier hs-var">siteConfig</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a><span>
-</span><a name="line-19"></a><span>  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-20"></a><span>
-</span><a name="line-21"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Exception</span><span>       </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Exception</span><span class="hs-special">)</span><span>
-</span><a name="line-22"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Monad.Catch</span><span>     </span><span class="hs-special">(</span><span class="hs-identifier hs-type">MonadCatch</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadMask</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadThrow</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><a name="line-23"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Monad.Fail</span><span>      </span><span class="hs-special">(</span><span class="hs-identifier hs-type">MonadFail</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><a name="line-24"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Monad.IO.Class</span><span>  </span><span class="hs-special">(</span><span class="hs-identifier hs-type">MonadIO</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><a name="line-25"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Monad.IO.Unlift</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">MonadUnliftIO</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">withRunInIO</span><span class="hs-special">)</span><span>
-</span><a name="line-26"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Monad.Logger</span><span>    </span><span class="hs-special">(</span><span class="hs-identifier hs-type">MonadLogger</span><span class="hs-special">)</span><span>
-</span><a name="line-27"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Monad.Reader</span><span>    </span><span class="hs-special">(</span><span class="hs-identifier hs-type">MonadReader</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">ReaderT</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">asks</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">runReaderT</span><span class="hs-special">)</span><span>
-</span><a name="line-28"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Data.Aeson</span><span>              </span><span class="hs-special">(</span><span class="hs-identifier hs-type">FromJSON</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><a name="line-29"></a><span>
-</span><a name="line-30"></a><span class="hs-keyword">import</span><span>           </span><a href="Tesla.html"><span class="hs-identifier">Tesla</span></a><span>
-</span><a name="line-31"></a><span class="hs-keyword">import</span><span>           </span><a href="Tesla.Auth.html"><span class="hs-identifier">Tesla.Auth</span></a><span>
-</span><a name="line-32"></a><span class="hs-keyword">import</span><span>           </span><a href="Tesla.Internal.HTTP.html"><span class="hs-identifier">Tesla.Internal.HTTP</span></a><span>
-</span><a name="line-33"></a><span>
-</span><a name="line-34"></a><span class="hs-comment">-- | Get the URL for a named endpoint for a given vehicle.</span><span>
-</span><a name="line-35"></a><span class="hs-identifier">energyURL</span><span> </span><span class="hs-glyph">::</span><span> </span><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-identifier hs-type">String</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-36"></a><a name="energyURL"><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier">energyURL</span></a></a><span> </span><a name="local-6989586621679157367"><a href="#local-6989586621679157367"><span class="hs-identifier">v</span></a></a><span> </span><a name="local-6989586621679157368"><a href="#local-6989586621679157368"><span class="hs-identifier">c</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">mconcat</span><span> </span><span class="hs-special">[</span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var">baseURL</span></a><span class="hs-special">,</span><span> </span><span class="hs-string">&quot;api/1/energy_sites/&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">show</span><span> </span><a href="#local-6989586621679157367"><span class="hs-identifier hs-var">v</span></a><span class="hs-special">,</span><span> </span><span class="hs-string">&quot;/&quot;</span><span class="hs-special">,</span><span> </span><a href="#local-6989586621679157368"><span class="hs-identifier hs-var">c</span></a><span class="hs-special">]</span><span>
-</span><a name="line-37"></a><span>
-</span><a name="line-38"></a><span class="hs-keyword">data</span><span> </span><a name="EnergyEnv"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier">EnergyEnv</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="EnergyEnv"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier">EnergyEnv</span></a></a><span> </span><span class="hs-special">{</span><span>
-</span><a name="line-39"></a><span>  </span><a name="%24sel%3A_authInfo%3AEnergyEnv"><a href="Tesla.Energy.html#%24sel%3A_authInfo%3AEnergyEnv"><span class="hs-identifier">_authInfo</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">IO</span><span> </span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a><span class="hs-special">,</span><span>
-</span><a name="line-40"></a><span>  </span><a name="%24sel%3A_eid%3AEnergyEnv"><a href="Tesla.Energy.html#%24sel%3A_eid%3AEnergyEnv"><span class="hs-identifier">_eid</span></a></a><span>      </span><span class="hs-glyph">::</span><span> </span><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a><span>
-</span><a name="line-41"></a><span>  </span><span class="hs-special">}</span><span>
-</span><a name="line-42"></a><span>
-</span><a name="line-43"></a><span class="hs-comment">-- | Get the current energy ID from the Energy Monad.</span><span>
-</span><a name="line-44"></a><span class="hs-identifier">currentEnergyID</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Monad</span><span> </span><a href="#local-6989586621679157366"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a><span> </span><a href="#local-6989586621679157366"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a><span>
-</span><a name="line-45"></a><a name="currentEnergyID"><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier">currentEnergyID</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">asks</span><span> </span><span class="hs-identifier">_eid</span><span>
-</span><a name="line-46"></a><span>
-</span><a name="line-47"></a><span class="hs-comment">-- | Energy Monad for accessing energy-specific things.</span><span>
-</span><a name="line-48"></a><span class="hs-keyword">newtype</span><span> </span><a name="Energy"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier">Energy</span></a></a><span> </span><a name="local-6989586621679157218"><a href="#local-6989586621679157218"><span class="hs-identifier">m</span></a></a><span> </span><a name="local-6989586621679157219"><a href="#local-6989586621679157219"><span class="hs-identifier">a</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="Energy"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier">Energy</span></a></a><span> </span><span class="hs-special">{</span><span> </span><a name="%24sel%3ArunEnergyM%3AEnergy"><a href="Tesla.Energy.html#%24sel%3ArunEnergyM%3AEnergy"><span class="hs-identifier">runEnergyM</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">ReaderT</span><span> </span><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-type">EnergyEnv</span></a><span> </span><a href="#local-6989586621679157218"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="#local-6989586621679157219"><span class="hs-identifier hs-type">a</span></a><span> </span><span class="hs-special">}</span><span>
-</span><a name="line-49"></a><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Applicative</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Functor</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Monad</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadIO</span><span class="hs-special">,</span><span>
-</span><a name="line-50"></a><span>            </span><span class="hs-identifier hs-type">MonadCatch</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadThrow</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadMask</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadReader</span><span> </span><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-type">EnergyEnv</span></a><span class="hs-special">,</span><span>
-</span><a name="line-51"></a><span>            </span><span class="hs-identifier hs-type">MonadFail</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadLogger</span><span class="hs-special">)</span><span>
-</span><a name="line-52"></a><span>
-</span><a name="line-53"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">MonadUnliftIO</span><span> </span><a href="#local-6989586621679157357"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-identifier hs-type">MonadUnliftIO</span><span> </span><span class="hs-special">(</span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a><span> </span><a href="#local-6989586621679157357"><span class="hs-identifier hs-type">m</span></a><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-54"></a><span>  </span><a name="local-8214565720323927683"><span class="hs-identifier">withRunInIO</span></a><span> </span><a name="local-6989586621679157358"><a href="#local-6989586621679157358"><span class="hs-identifier">inner</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-var">Energy</span></a><span> </span><span class="hs-operator hs-var">$</span><span> </span><span class="hs-identifier hs-var">withRunInIO</span><span> </span><span class="hs-operator hs-var">$</span><span> </span><span class="hs-glyph">\</span><a name="local-6989586621679157359"><a href="#local-6989586621679157359"><span class="hs-identifier">run</span></a></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="#local-6989586621679157358"><span class="hs-identifier hs-var">inner</span></a><span> </span><span class="hs-special">(</span><a href="#local-6989586621679157359"><span class="hs-identifier hs-var">run</span></a><span> </span><span class="hs-operator hs-var">.</span><span> </span><span class="hs-identifier">runEnergyM</span><span class="hs-special">)</span><span>
-</span><a name="line-55"></a><span>
-</span><a name="line-56"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Monad</span><span> </span><a href="#local-6989586621679157356"><span class="hs-identifier hs-type">m</span></a><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadIO</span><span> </span><a href="#local-6989586621679157356"><span class="hs-identifier hs-type">m</span></a><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadReader</span><span> </span><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-type">EnergyEnv</span></a><span> </span><a href="#local-6989586621679157356"><span class="hs-identifier hs-type">m</span></a><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a href="Tesla.Auth.html#HasTeslaAuth"><span class="hs-identifier hs-type">HasTeslaAuth</span></a><span> </span><a href="#local-6989586621679157356"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-57"></a><span>  </span><a name="local-8214565720323871775"><a href="Tesla.Auth.html#teslaAuth"><span class="hs-identifier">teslaAuth</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">liftIO</span><span> </span><span class="hs-operator hs-var">=&lt;&lt;</span><span> </span><span class="hs-identifier hs-var">asks</span><span> </span><span class="hs-identifier">_authInfo</span><span>
-</span><a name="line-58"></a><span>
-</span><a name="line-59"></a><span class="hs-comment">-- | Run a Energy Monad with the given Vehicle ID</span><span>
-</span><a name="line-60"></a><span class="hs-identifier">runEnergy</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">MonadIO</span><span> </span><a href="#local-6989586621679157364"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-identifier hs-type">IO</span><span> </span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a><span> </span><a href="#local-6989586621679157364"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="#local-6989586621679157365"><span class="hs-identifier hs-type">a</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="#local-6989586621679157364"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="#local-6989586621679157365"><span class="hs-identifier hs-type">a</span></a><span>
-</span><a name="line-61"></a><a name="runEnergy"><a href="Tesla.Energy.html#runEnergy"><span class="hs-identifier">runEnergy</span></a></a><span> </span><a name="local-6989586621679157369"><a href="#local-6989586621679157369"><span class="hs-identifier">ai</span></a></a><span> </span><a name="local-6989586621679157370"><a href="#local-6989586621679157370"><span class="hs-identifier">ei</span></a></a><span> </span><a name="local-6989586621679157371"><a href="#local-6989586621679157371"><span class="hs-identifier">f</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier">runReaderT</span><span> </span><span class="hs-special">(</span><span class="hs-identifier">runEnergyM</span><span> </span><a href="#local-6989586621679157371"><span class="hs-identifier hs-var">f</span></a><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-var">EnergyEnv</span></a><span> </span><a href="#local-6989586621679157369"><span class="hs-identifier hs-var">ai</span></a><span> </span><a href="#local-6989586621679157370"><span class="hs-identifier hs-var">ei</span></a><span class="hs-special">)</span><span>
-</span><a name="line-62"></a><span>
-</span><a name="line-63"></a><span class="hs-keyword">newtype</span><span> </span><a name="BadEnergyException"><a href="Tesla.Energy.html#BadEnergyException"><span class="hs-identifier">BadEnergyException</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="BadEnergy"><a href="Tesla.Energy.html#BadEnergy"><span class="hs-identifier">BadEnergy</span></a></a><span> </span><span class="hs-identifier hs-type">String</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-identifier hs-type">Eq</span><span>
-</span><a name="line-64"></a><span>
-</span><a name="line-65"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">Show</span><span> </span><a href="Tesla.Energy.html#BadEnergyException"><span class="hs-identifier hs-type">BadEnergyException</span></a><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-66"></a><span>  </span><a name="local-8214565720323790323"><span class="hs-identifier">show</span></a><span> </span><span class="hs-special">(</span><a href="Tesla.Energy.html#BadEnergy"><span class="hs-identifier hs-var">BadEnergy</span></a><span> </span><a name="local-6989586621679157355"><a href="#local-6989586621679157355"><span class="hs-identifier">s</span></a></a><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-string">&quot;BadEnergy: &quot;</span><span> </span><span class="hs-operator hs-var">&lt;&gt;</span><span> </span><a href="#local-6989586621679157355"><span class="hs-identifier hs-var">s</span></a><span>
-</span><a name="line-67"></a><span>
-</span><a name="line-68"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">Exception</span><span> </span><a href="Tesla.Energy.html#BadEnergyException"><span class="hs-identifier hs-type">BadEnergyException</span></a><span>
-</span><a name="line-69"></a><span>
-</span><a name="line-70"></a><span class="hs-comment">{- 404?
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-9"></span><span class="hs-pragma">{-# LANGUAGE DuplicateRecordFields      #-}</span><span>
+</span><span id="line-10"></span><span class="hs-pragma">{-# LANGUAGE FlexibleContexts           #-}</span><span>
+</span><span id="line-11"></span><span class="hs-pragma">{-# LANGUAGE FlexibleInstances          #-}</span><span>
+</span><span id="line-12"></span><span class="hs-pragma">{-# LANGUAGE GeneralisedNewtypeDeriving #-}</span><span>
+</span><span id="line-13"></span><span class="hs-pragma">{-# LANGUAGE MultiParamTypeClasses      #-}</span><span>
+</span><span id="line-14"></span><span class="hs-pragma">{-# LANGUAGE OverloadedStrings          #-}</span><span>
+</span><span id="line-15"></span><span class="hs-pragma">{-# LANGUAGE UndecidableInstances       #-}</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Tesla.Energy</span><span> </span><span class="hs-special">(</span><span>
+</span><span id="line-18"></span><span>  </span><span class="annot"><a href="Tesla.Energy.html#runEnergy"><span class="hs-identifier">runEnergy</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Energy.html#siteData"><span class="hs-identifier">siteData</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Energy.html#siteConfig"><span class="hs-identifier">siteConfig</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier">Energy</span></a></span><span>
+</span><span id="line-19"></span><span>  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Exception</span></span><span>       </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Exception</span></span><span class="hs-special">)</span><span>
+</span><span id="line-22"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.Catch</span></span><span>     </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadCatch</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">MonadMask</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">MonadThrow</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-23"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.Fail</span></span><span>      </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadFail</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-24"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.IO.Class</span></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadIO</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-25"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.IO.Unlift</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadUnliftIO</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">withRunInIO</span></span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.Logger</span></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadLogger</span></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.Reader</span></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadReader</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">ReaderT</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">asks</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">runReaderT</span></span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>              </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">FromJSON</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.html"><span class="hs-identifier">Tesla</span></a></span><span>
+</span><span id="line-31"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Auth.html"><span class="hs-identifier">Tesla.Auth</span></a></span><span>
+</span><span id="line-32"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Internal.HTTP.html"><span class="hs-identifier">Tesla.Internal.HTTP</span></a></span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-comment">-- | Get the URL for a named endpoint for a given vehicle.</span><span>
+</span><span id="line-35"></span><span class="annot"><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier hs-type">energyURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-36"></span><span id="energyURL"><span class="annot"><span class="annottext">energyURL :: EnergyID -&gt; String -&gt; String
+</span><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier hs-var hs-var">energyURL</span></a></span></span><span> </span><span id="local-6989586621679267135"><span class="annot"><span class="annottext">v :: EnergyID
+</span><a href="#local-6989586621679267135"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679267134"><span class="annot"><span class="annottext">c :: String
+</span><a href="#local-6989586621679267134"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[String] -&gt; String
+forall a. Monoid a =&gt; [a] -&gt; a
+</span><span class="hs-identifier hs-var">mconcat</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
+</span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var">baseURL</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;api/1/energy_sites/&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; String
+forall a. Show a =&gt; a -&gt; String
+</span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">EnergyID
+</span><a href="#local-6989586621679267135"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;/&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679267134"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="hs-keyword">data</span><span> </span><span id="EnergyEnv"><span class="annot"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-var">EnergyEnv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="EnergyEnv"><span class="annot"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-var">EnergyEnv</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-39"></span><span>  </span><span id="%24sel%3A_authInfo%3AEnergyEnv"><span class="annot"><span class="annottext">EnergyEnv -&gt; IO AuthInfo
+</span><a href="Tesla.Energy.html#%24sel%3A_authInfo%3AEnergyEnv"><span class="hs-identifier hs-var hs-var">_authInfo</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-40"></span><span>  </span><span id="%24sel%3A_eid%3AEnergyEnv"><span class="annot"><span class="annottext">EnergyEnv -&gt; EnergyID
+</span><a href="Tesla.Energy.html#%24sel%3A_eid%3AEnergyEnv"><span class="hs-identifier hs-var hs-var">_eid</span></a></span></span><span>      </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span><span>
+</span><span id="line-41"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span class="hs-comment">-- | Get the current energy ID from the Energy Monad.</span><span>
+</span><span id="line-44"></span><span id="local-6989586621679267148"><span class="annot"><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier hs-type">currentEnergyID</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Monad</span></span><span> </span><span class="annot"><a href="#local-6989586621679267148"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267148"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span></span><span>
+</span><span id="line-45"></span><span id="currentEnergyID"><span class="annot"><span class="annottext">currentEnergyID :: Energy m EnergyID
+</span><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier hs-var hs-var">currentEnergyID</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(EnergyEnv -&gt; EnergyID) -&gt; Energy m EnergyID
+forall r (m :: * -&gt; *) a. MonadReader r m =&gt; (r -&gt; a) -&gt; m a
+</span><span class="hs-identifier hs-var">asks</span></span><span> </span><span class="annot"><span class="annottext">EnergyEnv -&gt; EnergyID
+</span><a href="Tesla.Energy.html#%24sel%3A_eid%3AEnergyEnv"><span class="hs-identifier hs-var hs-var">_eid</span></a></span><span>
+</span><span id="line-46"></span><span>
+</span><span id="line-47"></span><span class="hs-comment">-- | Energy Monad for accessing energy-specific things.</span><span>
+</span><span id="line-48"></span><span class="hs-keyword">newtype</span><span> </span><span id="Energy"><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-var">Energy</span></a></span></span><span> </span><span id="local-6989586621679267175"><span class="annot"><a href="#local-6989586621679267175"><span class="hs-identifier hs-type">m</span></a></span></span><span> </span><span id="local-6989586621679267174"><span class="annot"><a href="#local-6989586621679267174"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Energy"><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-var">Energy</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="%24sel%3ArunEnergyM%3AEnergy"><span class="annot"><span class="annottext">Energy m a -&gt; ReaderT EnergyEnv m a
+</span><a href="Tesla.Energy.html#%24sel%3ArunEnergyM%3AEnergy"><span class="hs-identifier hs-var hs-var">runEnergyM</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">ReaderT</span></span><span> </span><span class="annot"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-type">EnergyEnv</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267175"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267174"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-49"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679267115"><span id="local-6989586621679267117"><span id="local-6989586621679267119"><span id="local-6989586621679267121"><span id="local-6989586621679267123"><span class="annot"><span class="annottext">Functor (Energy m)
+a -&gt; Energy m a
+Functor (Energy m) =&gt;
+(forall a. a -&gt; Energy m a)
+-&gt; (forall a b. Energy m (a -&gt; b) -&gt; Energy m a -&gt; Energy m b)
+-&gt; (forall a b c.
+    (a -&gt; b -&gt; c) -&gt; Energy m a -&gt; Energy m b -&gt; Energy m c)
+-&gt; (forall a b. Energy m a -&gt; Energy m b -&gt; Energy m b)
+-&gt; (forall a b. Energy m a -&gt; Energy m b -&gt; Energy m a)
+-&gt; Applicative (Energy m)
+Energy m a -&gt; Energy m b -&gt; Energy m b
+Energy m a -&gt; Energy m b -&gt; Energy m a
+Energy m (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+(a -&gt; b -&gt; c) -&gt; Energy m a -&gt; Energy m b -&gt; Energy m c
+forall a. a -&gt; Energy m a
+forall a b. Energy m a -&gt; Energy m b -&gt; Energy m a
+forall a b. Energy m a -&gt; Energy m b -&gt; Energy m b
+forall a b. Energy m (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+forall a b c.
+(a -&gt; b -&gt; c) -&gt; Energy m a -&gt; Energy m b -&gt; Energy m c
+forall (f :: * -&gt; *).
+Functor f =&gt;
+(forall a. a -&gt; f a)
+-&gt; (forall a b. f (a -&gt; b) -&gt; f a -&gt; f b)
+-&gt; (forall a b c. (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c)
+-&gt; (forall a b. f a -&gt; f b -&gt; f b)
+-&gt; (forall a b. f a -&gt; f b -&gt; f a)
+-&gt; Applicative f
+forall (m :: * -&gt; *). Applicative m =&gt; Functor (Energy m)
+forall (m :: * -&gt; *) a. Applicative m =&gt; a -&gt; Energy m a
+forall (m :: * -&gt; *) a b.
+Applicative m =&gt;
+Energy m a -&gt; Energy m b -&gt; Energy m a
+forall (m :: * -&gt; *) a b.
+Applicative m =&gt;
+Energy m a -&gt; Energy m b -&gt; Energy m b
+forall (m :: * -&gt; *) a b.
+Applicative m =&gt;
+Energy m (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+forall (m :: * -&gt; *) a b c.
+Applicative m =&gt;
+(a -&gt; b -&gt; c) -&gt; Energy m a -&gt; Energy m b -&gt; Energy m c
+&lt;* :: Energy m a -&gt; Energy m b -&gt; Energy m a
+$c&lt;* :: forall (m :: * -&gt; *) a b.
+Applicative m =&gt;
+Energy m a -&gt; Energy m b -&gt; Energy m a
+*&gt; :: Energy m a -&gt; Energy m b -&gt; Energy m b
+$c*&gt; :: forall (m :: * -&gt; *) a b.
+Applicative m =&gt;
+Energy m a -&gt; Energy m b -&gt; Energy m b
+liftA2 :: (a -&gt; b -&gt; c) -&gt; Energy m a -&gt; Energy m b -&gt; Energy m c
+$cliftA2 :: forall (m :: * -&gt; *) a b c.
+Applicative m =&gt;
+(a -&gt; b -&gt; c) -&gt; Energy m a -&gt; Energy m b -&gt; Energy m c
+&lt;*&gt; :: Energy m (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+$c&lt;*&gt; :: forall (m :: * -&gt; *) a b.
+Applicative m =&gt;
+Energy m (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+pure :: a -&gt; Energy m a
+$cpure :: forall (m :: * -&gt; *) a. Applicative m =&gt; a -&gt; Energy m a
+$cp1Applicative :: forall (m :: * -&gt; *). Applicative m =&gt; Functor (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Applicative</span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267110"><span id="local-6989586621679267112"><span class="annot"><span class="annottext">a -&gt; Energy m b -&gt; Energy m a
+(a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+(forall a b. (a -&gt; b) -&gt; Energy m a -&gt; Energy m b)
+-&gt; (forall a b. a -&gt; Energy m b -&gt; Energy m a)
+-&gt; Functor (Energy m)
+forall a b. a -&gt; Energy m b -&gt; Energy m a
+forall a b. (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+forall (m :: * -&gt; *) a b.
+Functor m =&gt;
+a -&gt; Energy m b -&gt; Energy m a
+forall (m :: * -&gt; *) a b.
+Functor m =&gt;
+(a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+forall (f :: * -&gt; *).
+(forall a b. (a -&gt; b) -&gt; f a -&gt; f b)
+-&gt; (forall a b. a -&gt; f b -&gt; f a) -&gt; Functor f
+&lt;$ :: a -&gt; Energy m b -&gt; Energy m a
+$c&lt;$ :: forall (m :: * -&gt; *) a b.
+Functor m =&gt;
+a -&gt; Energy m b -&gt; Energy m a
+fmap :: (a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+$cfmap :: forall (m :: * -&gt; *) a b.
+Functor m =&gt;
+(a -&gt; b) -&gt; Energy m a -&gt; Energy m b
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Functor</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267102"><span id="local-6989586621679267104"><span id="local-6989586621679267106"><span class="annot"><span class="annottext">Applicative (Energy m)
+a -&gt; Energy m a
+Applicative (Energy m) =&gt;
+(forall a b. Energy m a -&gt; (a -&gt; Energy m b) -&gt; Energy m b)
+-&gt; (forall a b. Energy m a -&gt; Energy m b -&gt; Energy m b)
+-&gt; (forall a. a -&gt; Energy m a)
+-&gt; Monad (Energy m)
+Energy m a -&gt; (a -&gt; Energy m b) -&gt; Energy m b
+Energy m a -&gt; Energy m b -&gt; Energy m b
+forall a. a -&gt; Energy m a
+forall a b. Energy m a -&gt; Energy m b -&gt; Energy m b
+forall a b. Energy m a -&gt; (a -&gt; Energy m b) -&gt; Energy m b
+forall (m :: * -&gt; *). Monad m =&gt; Applicative (Energy m)
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; Energy m a
+forall (m :: * -&gt; *) a b.
+Monad m =&gt;
+Energy m a -&gt; Energy m b -&gt; Energy m b
+forall (m :: * -&gt; *) a b.
+Monad m =&gt;
+Energy m a -&gt; (a -&gt; Energy m b) -&gt; Energy m b
+forall (m :: * -&gt; *).
+Applicative m =&gt;
+(forall a b. m a -&gt; (a -&gt; m b) -&gt; m b)
+-&gt; (forall a b. m a -&gt; m b -&gt; m b)
+-&gt; (forall a. a -&gt; m a)
+-&gt; Monad m
+return :: a -&gt; Energy m a
+$creturn :: forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; Energy m a
+&gt;&gt; :: Energy m a -&gt; Energy m b -&gt; Energy m b
+$c&gt;&gt; :: forall (m :: * -&gt; *) a b.
+Monad m =&gt;
+Energy m a -&gt; Energy m b -&gt; Energy m b
+&gt;&gt;= :: Energy m a -&gt; (a -&gt; Energy m b) -&gt; Energy m b
+$c&gt;&gt;= :: forall (m :: * -&gt; *) a b.
+Monad m =&gt;
+Energy m a -&gt; (a -&gt; Energy m b) -&gt; Energy m b
+$cp1Monad :: forall (m :: * -&gt; *). Monad m =&gt; Applicative (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Monad</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267098"><span class="annot"><span class="annottext">Monad (Energy m)
+Monad (Energy m) =&gt;
+(forall a. IO a -&gt; Energy m a) -&gt; MonadIO (Energy m)
+IO a -&gt; Energy m a
+forall a. IO a -&gt; Energy m a
+forall (m :: * -&gt; *).
+Monad m =&gt;
+(forall a. IO a -&gt; m a) -&gt; MonadIO m
+forall (m :: * -&gt; *). MonadIO m =&gt; Monad (Energy m)
+forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; Energy m a
+liftIO :: IO a -&gt; Energy m a
+$cliftIO :: forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; Energy m a
+$cp1MonadIO :: forall (m :: * -&gt; *). MonadIO m =&gt; Monad (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var">MonadIO</span></span></span><span class="hs-special">,</span><span>
+</span><span id="line-50"></span><span>            </span><span id="local-6989586621679267094"><span class="annot"><span class="annottext">MonadThrow (Energy m)
+MonadThrow (Energy m) =&gt;
+(forall e a.
+ Exception e =&gt;
+ Energy m a -&gt; (e -&gt; Energy m a) -&gt; Energy m a)
+-&gt; MonadCatch (Energy m)
+Energy m a -&gt; (e -&gt; Energy m a) -&gt; Energy m a
+forall e a.
+Exception e =&gt;
+Energy m a -&gt; (e -&gt; Energy m a) -&gt; Energy m a
+forall (m :: * -&gt; *). MonadCatch m =&gt; MonadThrow (Energy m)
+forall (m :: * -&gt; *) e a.
+(MonadCatch m, Exception e) =&gt;
+Energy m a -&gt; (e -&gt; Energy m a) -&gt; Energy m a
+forall (m :: * -&gt; *).
+MonadThrow m =&gt;
+(forall e a. Exception e =&gt; m a -&gt; (e -&gt; m a) -&gt; m a)
+-&gt; MonadCatch m
+catch :: Energy m a -&gt; (e -&gt; Energy m a) -&gt; Energy m a
+$ccatch :: forall (m :: * -&gt; *) e a.
+(MonadCatch m, Exception e) =&gt;
+Energy m a -&gt; (e -&gt; Energy m a) -&gt; Energy m a
+$cp1MonadCatch :: forall (m :: * -&gt; *). MonadCatch m =&gt; MonadThrow (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var">MonadCatch</span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267090"><span class="annot"><span class="annottext">Monad (Energy m)
+e -&gt; Energy m a
+Monad (Energy m) =&gt;
+(forall e a. Exception e =&gt; e -&gt; Energy m a)
+-&gt; MonadThrow (Energy m)
+forall e a. Exception e =&gt; e -&gt; Energy m a
+forall (m :: * -&gt; *).
+Monad m =&gt;
+(forall e a. Exception e =&gt; e -&gt; m a) -&gt; MonadThrow m
+forall (m :: * -&gt; *). MonadThrow m =&gt; Monad (Energy m)
+forall (m :: * -&gt; *) e a.
+(MonadThrow m, Exception e) =&gt;
+e -&gt; Energy m a
+throwM :: e -&gt; Energy m a
+$cthrowM :: forall (m :: * -&gt; *) e a.
+(MonadThrow m, Exception e) =&gt;
+e -&gt; Energy m a
+$cp1MonadThrow :: forall (m :: * -&gt; *). MonadThrow m =&gt; Monad (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var">MonadThrow</span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267082"><span id="local-6989586621679267084"><span id="local-6989586621679267086"><span class="annot"><span class="annottext">MonadCatch (Energy m)
+MonadCatch (Energy m) =&gt;
+(forall b.
+ ((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b)
+-&gt; (forall b.
+    ((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b)
+-&gt; (forall a b c.
+    Energy m a
+    -&gt; (a -&gt; ExitCase b -&gt; Energy m c)
+    -&gt; (a -&gt; Energy m b)
+    -&gt; Energy m (b, c))
+-&gt; MonadMask (Energy m)
+Energy m a
+-&gt; (a -&gt; ExitCase b -&gt; Energy m c)
+-&gt; (a -&gt; Energy m b)
+-&gt; Energy m (b, c)
+((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+forall b.
+((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+forall a b c.
+Energy m a
+-&gt; (a -&gt; ExitCase b -&gt; Energy m c)
+-&gt; (a -&gt; Energy m b)
+-&gt; Energy m (b, c)
+forall (m :: * -&gt; *).
+MonadCatch m =&gt;
+(forall b. ((forall a. m a -&gt; m a) -&gt; m b) -&gt; m b)
+-&gt; (forall b. ((forall a. m a -&gt; m a) -&gt; m b) -&gt; m b)
+-&gt; (forall a b c.
+    m a -&gt; (a -&gt; ExitCase b -&gt; m c) -&gt; (a -&gt; m b) -&gt; m (b, c))
+-&gt; MonadMask m
+forall (m :: * -&gt; *). MonadMask m =&gt; MonadCatch (Energy m)
+forall (m :: * -&gt; *) b.
+MonadMask m =&gt;
+((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+forall (m :: * -&gt; *) a b c.
+MonadMask m =&gt;
+Energy m a
+-&gt; (a -&gt; ExitCase b -&gt; Energy m c)
+-&gt; (a -&gt; Energy m b)
+-&gt; Energy m (b, c)
+generalBracket :: Energy m a
+-&gt; (a -&gt; ExitCase b -&gt; Energy m c)
+-&gt; (a -&gt; Energy m b)
+-&gt; Energy m (b, c)
+$cgeneralBracket :: forall (m :: * -&gt; *) a b c.
+MonadMask m =&gt;
+Energy m a
+-&gt; (a -&gt; ExitCase b -&gt; Energy m c)
+-&gt; (a -&gt; Energy m b)
+-&gt; Energy m (b, c)
+uninterruptibleMask :: ((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+$cuninterruptibleMask :: forall (m :: * -&gt; *) b.
+MonadMask m =&gt;
+((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+mask :: ((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+$cmask :: forall (m :: * -&gt; *) b.
+MonadMask m =&gt;
+((forall a. Energy m a -&gt; Energy m a) -&gt; Energy m b) -&gt; Energy m b
+$cp1MonadMask :: forall (m :: * -&gt; *). MonadMask m =&gt; MonadCatch (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">MonadMask</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267074"><span id="local-6989586621679267076"><span id="local-6989586621679267078"><span class="annot"><span class="hs-identifier hs-type">MonadReader</span></span><span> </span><span class="annot"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-type">EnergyEnv</span></a></span></span></span></span><span class="hs-special">,</span><span>
+</span><span id="line-51"></span><span>            </span><span id="local-6989586621679267070"><span class="annot"><span class="annottext">Monad (Energy m)
+Monad (Energy m) =&gt;
+(forall a. String -&gt; Energy m a) -&gt; MonadFail (Energy m)
+String -&gt; Energy m a
+forall a. String -&gt; Energy m a
+forall (m :: * -&gt; *).
+Monad m =&gt;
+(forall a. String -&gt; m a) -&gt; MonadFail m
+forall (m :: * -&gt; *). MonadFail m =&gt; Monad (Energy m)
+forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; Energy m a
+fail :: String -&gt; Energy m a
+$cfail :: forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; Energy m a
+$cp1MonadFail :: forall (m :: * -&gt; *). MonadFail m =&gt; Monad (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var">MonadFail</span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679267066"><span class="annot"><span class="annottext">Monad (Energy m)
+Monad (Energy m) =&gt;
+(forall msg.
+ ToLogStr msg =&gt;
+ Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; Energy m ())
+-&gt; MonadLogger (Energy m)
+Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; Energy m ()
+forall msg.
+ToLogStr msg =&gt;
+Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; Energy m ()
+forall (m :: * -&gt; *).
+Monad m =&gt;
+(forall msg.
+ ToLogStr msg =&gt;
+ Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; m ())
+-&gt; MonadLogger m
+forall (m :: * -&gt; *). MonadLogger m =&gt; Monad (Energy m)
+forall (m :: * -&gt; *) msg.
+(MonadLogger m, ToLogStr msg) =&gt;
+Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; Energy m ()
+monadLoggerLog :: Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; Energy m ()
+$cmonadLoggerLog :: forall (m :: * -&gt; *) msg.
+(MonadLogger m, ToLogStr msg) =&gt;
+Loc -&gt; LogSource -&gt; LogLevel -&gt; msg -&gt; Energy m ()
+$cp1MonadLogger :: forall (m :: * -&gt; *). MonadLogger m =&gt; Monad (Energy m)
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var">MonadLogger</span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span id="local-6989586621679267064"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679267061"><span class="annot"><span class="hs-identifier hs-type">MonadUnliftIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679267064"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadUnliftIO</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267064"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-54"></span><span>  </span><span id="local-6989586621679267058"><span class="annot"><span class="annottext">withRunInIO :: ((forall a. Energy m a -&gt; IO a) -&gt; IO b) -&gt; Energy m b
+</span><a href="#local-6989586621679267058"><span class="hs-identifier hs-var hs-var hs-var hs-var">withRunInIO</span></a></span></span><span> </span><span id="local-6989586621679267057"><span class="annot"><span class="annottext">inner :: (forall a. Energy m a -&gt; IO a) -&gt; IO b
+</span><a href="#local-6989586621679267057"><span class="hs-identifier hs-var">inner</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ReaderT EnergyEnv m b -&gt; Energy m b
+forall (m :: * -&gt; *) a. ReaderT EnergyEnv m a -&gt; Energy m a
+</span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-var">Energy</span></a></span><span> </span><span class="annot"><span class="annottext">(ReaderT EnergyEnv m b -&gt; Energy m b)
+-&gt; ReaderT EnergyEnv m b -&gt; Energy m b
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">((forall a. ReaderT EnergyEnv m a -&gt; IO a) -&gt; IO b)
+-&gt; ReaderT EnergyEnv m b
+forall (m :: * -&gt; *) b.
+MonadUnliftIO m =&gt;
+((forall a. m a -&gt; IO a) -&gt; IO b) -&gt; m b
+</span><span class="hs-identifier hs-var">withRunInIO</span></span><span> </span><span class="annot"><span class="annottext">(((forall a. ReaderT EnergyEnv m a -&gt; IO a) -&gt; IO b)
+ -&gt; ReaderT EnergyEnv m b)
+-&gt; ((forall a. ReaderT EnergyEnv m a -&gt; IO a) -&gt; IO b)
+-&gt; ReaderT EnergyEnv m b
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679267056"><span class="annot"><span class="annottext">run :: forall a. ReaderT EnergyEnv m a -&gt; IO a
+</span><a href="#local-6989586621679267056"><span class="hs-identifier hs-var">run</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(forall a. Energy m a -&gt; IO a) -&gt; IO b
+</span><a href="#local-6989586621679267057"><span class="hs-identifier hs-var">inner</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ReaderT EnergyEnv m a -&gt; IO a
+forall a. ReaderT EnergyEnv m a -&gt; IO a
+</span><a href="#local-6989586621679267056"><span class="hs-identifier hs-var">run</span></a></span><span> </span><span class="annot"><span class="annottext">(ReaderT EnergyEnv m a -&gt; IO a)
+-&gt; (Energy m a -&gt; ReaderT EnergyEnv m a) -&gt; Energy m a -&gt; IO a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Energy m a -&gt; ReaderT EnergyEnv m a
+forall (m :: * -&gt; *) a. Energy m a -&gt; ReaderT EnergyEnv m a
+</span><a href="Tesla.Energy.html#%24sel%3ArunEnergyM%3AEnergy"><span class="hs-identifier hs-var hs-var">runEnergyM</span></a></span><span class="hs-special">)</span></span><span>
+</span><span id="line-55"></span><span>
+</span><span id="line-56"></span><span id="local-6989586621679267054"><span class="hs-keyword">instance</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Monad</span></span><span> </span><span class="annot"><a href="#local-6989586621679267054"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679267054"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadReader</span></span><span> </span><span class="annot"><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-type">EnergyEnv</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267054"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#HasTeslaAuth"><span class="hs-identifier hs-type">HasTeslaAuth</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267054"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-57"></span><span>  </span><span id="local-6989586621679267050"><span class="annot"><span class="annottext">teslaAuth :: m AuthInfo
+</span><a href="Tesla.Auth.html#teslaAuth"><span class="hs-identifier hs-var hs-var hs-var hs-var">teslaAuth</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">IO AuthInfo -&gt; m AuthInfo
+forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
+</span><span class="hs-identifier hs-var">liftIO</span></span><span> </span><span class="annot"><span class="annottext">(IO AuthInfo -&gt; m AuthInfo) -&gt; m (IO AuthInfo) -&gt; m AuthInfo
+forall (m :: * -&gt; *) a b. Monad m =&gt; (a -&gt; m b) -&gt; m a -&gt; m b
+</span><span class="hs-operator hs-var">=&lt;&lt;</span></span><span> </span><span class="annot"><span class="annottext">(EnergyEnv -&gt; IO AuthInfo) -&gt; m (IO AuthInfo)
+forall r (m :: * -&gt; *) a. MonadReader r m =&gt; (r -&gt; a) -&gt; m a
+</span><span class="hs-identifier hs-var">asks</span></span><span> </span><span class="annot"><span class="annottext">EnergyEnv -&gt; IO AuthInfo
+</span><a href="Tesla.Energy.html#%24sel%3A_authInfo%3AEnergyEnv"><span class="hs-identifier hs-var hs-var">_authInfo</span></a></span></span><span>
+</span><span id="line-58"></span><span>
+</span><span id="line-59"></span><span class="hs-comment">-- | Run a Energy Monad with the given Vehicle ID</span><span>
+</span><span id="line-60"></span><span id="local-6989586621679267045"><span id="local-6989586621679267046"><span class="annot"><a href="Tesla.Energy.html#runEnergy"><span class="hs-identifier hs-type">runEnergy</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679267046"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267046"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267045"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679267046"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267045"><span class="hs-identifier hs-type">a</span></a></span></span></span><span>
+</span><span id="line-61"></span><span id="runEnergy"><span class="annot"><span class="annottext">runEnergy :: IO AuthInfo -&gt; EnergyID -&gt; Energy m a -&gt; m a
+</span><a href="Tesla.Energy.html#runEnergy"><span class="hs-identifier hs-var hs-var">runEnergy</span></a></span></span><span> </span><span id="local-6989586621679267044"><span class="annot"><span class="annottext">ai :: IO AuthInfo
+</span><a href="#local-6989586621679267044"><span class="hs-identifier hs-var">ai</span></a></span></span><span> </span><span id="local-6989586621679267043"><span class="annot"><span class="annottext">ei :: EnergyID
+</span><a href="#local-6989586621679267043"><span class="hs-identifier hs-var">ei</span></a></span></span><span> </span><span id="local-6989586621679267042"><span class="annot"><span class="annottext">f :: Energy m a
+</span><a href="#local-6989586621679267042"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ReaderT EnergyEnv m a -&gt; EnergyEnv -&gt; m a
+forall r (m :: * -&gt; *) a. ReaderT r m a -&gt; r -&gt; m a
+</span><span class="hs-identifier hs-var hs-var">runReaderT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Energy m a -&gt; ReaderT EnergyEnv m a
+forall (m :: * -&gt; *) a. Energy m a -&gt; ReaderT EnergyEnv m a
+</span><a href="Tesla.Energy.html#%24sel%3ArunEnergyM%3AEnergy"><span class="hs-identifier hs-var hs-var">runEnergyM</span></a></span><span> </span><span class="annot"><span class="annottext">Energy m a
+</span><a href="#local-6989586621679267042"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">IO AuthInfo -&gt; EnergyID -&gt; EnergyEnv
+</span><a href="Tesla.Energy.html#EnergyEnv"><span class="hs-identifier hs-var">EnergyEnv</span></a></span><span> </span><span class="annot"><span class="annottext">IO AuthInfo
+</span><a href="#local-6989586621679267044"><span class="hs-identifier hs-var">ai</span></a></span><span> </span><span class="annot"><span class="annottext">EnergyID
+</span><a href="#local-6989586621679267043"><span class="hs-identifier hs-var">ei</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-62"></span><span>
+</span><span id="line-63"></span><span class="hs-keyword">newtype</span><span> </span><span id="BadEnergyException"><span class="annot"><a href="Tesla.Energy.html#BadEnergyException"><span class="hs-identifier hs-var">BadEnergyException</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="BadEnergy"><span class="annot"><a href="Tesla.Energy.html#BadEnergy"><span class="hs-identifier hs-var">BadEnergy</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-keyword">deriving</span><span> </span><span id="local-6989586621679267037"><span id="local-6989586621679267039"><span class="annot"><span class="annottext">BadEnergyException -&gt; BadEnergyException -&gt; Bool
+(BadEnergyException -&gt; BadEnergyException -&gt; Bool)
+-&gt; (BadEnergyException -&gt; BadEnergyException -&gt; Bool)
+-&gt; Eq BadEnergyException
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: BadEnergyException -&gt; BadEnergyException -&gt; Bool
+$c/= :: BadEnergyException -&gt; BadEnergyException -&gt; Bool
+== :: BadEnergyException -&gt; BadEnergyException -&gt; Bool
+$c== :: BadEnergyException -&gt; BadEnergyException -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span>
+</span><span id="line-64"></span><span>
+</span><span id="line-65"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679267031"><span id="local-6989586621679267034"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="Tesla.Energy.html#BadEnergyException"><span class="hs-identifier hs-type">BadEnergyException</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-66"></span><span>  </span><span id="local-6989586621679267029"><span class="annot"><span class="annottext">show :: BadEnergyException -&gt; String
+</span><a href="#local-6989586621679267029"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Tesla.Energy.html#BadEnergy"><span class="hs-identifier hs-type">BadEnergy</span></a></span><span> </span><span id="local-6989586621679267028"><span class="annot"><span class="annottext">s :: String
+</span><a href="#local-6989586621679267028"><span class="hs-identifier hs-var">s</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;BadEnergy: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679267028"><span class="hs-identifier hs-var">s</span></a></span><span>
+</span><span id="line-67"></span><span>
+</span><span id="line-68"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679267020"><span id="local-6989586621679267022"><span id="local-6989586621679267024"><span class="annot"><span class="hs-identifier hs-type">Exception</span></span><span> </span><span class="annot"><a href="Tesla.Energy.html#BadEnergyException"><span class="hs-identifier hs-type">BadEnergyException</span></a></span></span></span></span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span class="hs-comment">{- 404?
 siteSummary :: (FromJSON j, MonadIO m) =&gt; Energy m j
 siteSummary = currentEnergyID &gt;&gt;= \e -&gt; jget (energyURL e &quot;status&quot;)
 -}</span><span>
-</span><a name="line-74"></a><span>
-</span><a name="line-75"></a><span class="hs-identifier">siteData</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">FromJSON</span><span> </span><a href="#local-6989586621679157362"><span class="hs-identifier hs-type">j</span></a><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadIO</span><span> </span><a href="#local-6989586621679157363"><span class="hs-identifier hs-type">m</span></a><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a><span> </span><a href="#local-6989586621679157363"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="#local-6989586621679157362"><span class="hs-identifier hs-type">j</span></a><span>
-</span><a name="line-76"></a><a name="siteData"><a href="Tesla.Energy.html#siteData"><span class="hs-identifier">siteData</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier hs-var">currentEnergyID</span></a><span> </span><span class="hs-operator hs-var">&gt;&gt;=</span><span> </span><span class="hs-glyph">\</span><a name="local-6989586621679157372"><a href="#local-6989586621679157372"><span class="hs-identifier">e</span></a></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="Tesla.Internal.HTTP.html#jgetAuth"><span class="hs-identifier hs-var">jgetAuth</span></a><span> </span><span class="hs-special">(</span><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier hs-var">energyURL</span></a><span> </span><a href="#local-6989586621679157372"><span class="hs-identifier hs-var">e</span></a><span> </span><span class="hs-string">&quot;live_status&quot;</span><span class="hs-special">)</span><span>
-</span><a name="line-77"></a><span>
-</span><a name="line-78"></a><span class="hs-identifier">siteConfig</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">FromJSON</span><span> </span><a href="#local-6989586621679157360"><span class="hs-identifier hs-type">j</span></a><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">MonadIO</span><span> </span><a href="#local-6989586621679157361"><span class="hs-identifier hs-type">m</span></a><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a><span> </span><a href="#local-6989586621679157361"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="#local-6989586621679157360"><span class="hs-identifier hs-type">j</span></a><span>
-</span><a name="line-79"></a><a name="siteConfig"><a href="Tesla.Energy.html#siteConfig"><span class="hs-identifier">siteConfig</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier hs-var">currentEnergyID</span></a><span> </span><span class="hs-operator hs-var">&gt;&gt;=</span><span> </span><span class="hs-glyph">\</span><a name="local-6989586621679157373"><a href="#local-6989586621679157373"><span class="hs-identifier">e</span></a></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="Tesla.Internal.HTTP.html#jgetAuth"><span class="hs-identifier hs-var">jgetAuth</span></a><span> </span><span class="hs-special">(</span><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier hs-var">energyURL</span></a><span> </span><a href="#local-6989586621679157373"><span class="hs-identifier hs-var">e</span></a><span> </span><span class="hs-string">&quot;site_info&quot;</span><span class="hs-special">)</span><span>
-</span><a name="line-80"></a><span>
-</span><a name="line-81"></a><span class="hs-comment">{- Errors that 'kind' is required.
+</span><span id="line-74"></span><span>
+</span><span id="line-75"></span><span id="local-6989586621679267017"><span id="local-6989586621679267018"><span class="annot"><a href="Tesla.Energy.html#siteData"><span class="hs-identifier hs-type">siteData</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679267018"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679267017"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267017"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267018"><span class="hs-identifier hs-type">j</span></a></span></span></span><span>
+</span><span id="line-76"></span><span id="siteData"><span class="annot"><span class="annottext">siteData :: Energy m j
+</span><a href="Tesla.Energy.html#siteData"><span class="hs-identifier hs-var hs-var">siteData</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Energy m EnergyID
+forall (m :: * -&gt; *). Monad m =&gt; Energy m EnergyID
+</span><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier hs-var">currentEnergyID</span></a></span><span> </span><span class="annot"><span class="annottext">Energy m EnergyID -&gt; (EnergyID -&gt; Energy m j) -&gt; Energy m j
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679267016"><span class="annot"><span class="annottext">e :: EnergyID
+</span><a href="#local-6989586621679267016"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Energy m j
+forall (m :: * -&gt; *) j.
+(HasTeslaAuth m, FromJSON j, MonadIO m) =&gt;
+String -&gt; m j
+</span><a href="Tesla.Internal.HTTP.html#jgetAuth"><span class="hs-identifier hs-var">jgetAuth</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">EnergyID -&gt; String -&gt; String
+</span><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier hs-var">energyURL</span></a></span><span> </span><span class="annot"><span class="annottext">EnergyID
+</span><a href="#local-6989586621679267016"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;live_status&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-77"></span><span>
+</span><span id="line-78"></span><span id="local-6989586621679267013"><span id="local-6989586621679267014"><span class="annot"><a href="Tesla.Energy.html#siteConfig"><span class="hs-identifier hs-type">siteConfig</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679267014"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679267013"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Energy.html#Energy"><span class="hs-identifier hs-type">Energy</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267013"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679267014"><span class="hs-identifier hs-type">j</span></a></span></span></span><span>
+</span><span id="line-79"></span><span id="siteConfig"><span class="annot"><span class="annottext">siteConfig :: Energy m j
+</span><a href="Tesla.Energy.html#siteConfig"><span class="hs-identifier hs-var hs-var">siteConfig</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Energy m EnergyID
+forall (m :: * -&gt; *). Monad m =&gt; Energy m EnergyID
+</span><a href="Tesla.Energy.html#currentEnergyID"><span class="hs-identifier hs-var">currentEnergyID</span></a></span><span> </span><span class="annot"><span class="annottext">Energy m EnergyID -&gt; (EnergyID -&gt; Energy m j) -&gt; Energy m j
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679267012"><span class="annot"><span class="annottext">e :: EnergyID
+</span><a href="#local-6989586621679267012"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Energy m j
+forall (m :: * -&gt; *) j.
+(HasTeslaAuth m, FromJSON j, MonadIO m) =&gt;
+String -&gt; m j
+</span><a href="Tesla.Internal.HTTP.html#jgetAuth"><span class="hs-identifier hs-var">jgetAuth</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">EnergyID -&gt; String -&gt; String
+</span><a href="Tesla.Energy.html#energyURL"><span class="hs-identifier hs-var">energyURL</span></a></span><span> </span><span class="annot"><span class="annottext">EnergyID
+</span><a href="#local-6989586621679267012"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;site_info&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-80"></span><span>
+</span><span id="line-81"></span><span class="hs-comment">{- Errors that 'kind' is required.
 siteHistory :: (FromJSON j, MonadIO m) =&gt; Energy m j
 siteHistory = currentEnergyID &gt;&gt;= \e -&gt; jget (energyURL e &quot;history&quot;)
 -}</span><span>
-</span><a name="line-85"></a></pre></body></html>
+</span><span id="line-85"></span></pre></body></html>

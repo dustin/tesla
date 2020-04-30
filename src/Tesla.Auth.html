@@ -4,56 +4,123 @@ Description: Tesla Authentication structures.
 
 Authentication related data structures.
 -}</span><span>
-</span><a name="line-7"></a><span>
-</span><a name="line-8"></a><span class="hs-pragma">{-# LANGUAGE DeriveGeneric     #-}</span><span>
-</span><a name="line-9"></a><span class="hs-pragma">{-# LANGUAGE OverloadedStrings #-}</span><span>
-</span><a name="line-10"></a><span class="hs-pragma">{-# LANGUAGE TemplateHaskell   #-}</span><span>
-</span><a name="line-11"></a><span>
-</span><a name="line-12"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Tesla.Auth</span><span> </span><span class="hs-special">(</span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><a name="line-13"></a><span>                   </span><a href="Tesla.Auth.html#clientID"><span class="hs-identifier hs-var">clientID</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#clientSecret"><span class="hs-identifier hs-var">clientSecret</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#email"><span class="hs-identifier hs-var">email</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#password"><span class="hs-identifier hs-var">password</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#bearerToken"><span class="hs-identifier hs-var">bearerToken</span></a><span class="hs-special">,</span><span>
-</span><a name="line-14"></a><span>                   </span><a href="Tesla.Auth.html#fromToken"><span class="hs-identifier hs-var">fromToken</span></a><span class="hs-special">,</span><span>
-</span><a name="line-15"></a><span>                   </span><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#access_token"><span class="hs-identifier hs-var">access_token</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#expires_in"><span class="hs-identifier hs-var">expires_in</span></a><span class="hs-special">,</span><span> </span><a href="Tesla.Auth.html#refresh_token"><span class="hs-identifier hs-var">refresh_token</span></a><span class="hs-special">,</span><span>
-</span><a name="line-16"></a><span>                   </span><a href="Tesla.Auth.html#HasTeslaAuth"><span class="hs-identifier hs-type">HasTeslaAuth</span></a><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
-</span><a name="line-17"></a><span>                  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-18"></a><span>
-</span><a name="line-19"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Control.Lens</span><span>
-</span><a name="line-20"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Data.Aeson</span><span>             </span><span class="hs-special">(</span><span class="hs-identifier hs-type">FromJSON</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Options</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">defaultOptions</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">fieldLabelModifier</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-var">genericParseJSON</span><span class="hs-special">)</span><span>
-</span><a name="line-21"></a><span class="hs-keyword">import</span><span>           </span><span class="hs-identifier">Generics.Deriving.Base</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">)</span><span>
-</span><a name="line-22"></a><span>
-</span><a name="line-23"></a><span class="hs-comment">-- | An Authentication request.</span><span>
-</span><a name="line-24"></a><span class="hs-keyword">data</span><span> </span><a name="AuthInfo"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier">AuthInfo</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="AuthInfo"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier">AuthInfo</span></a></a><span> </span><span class="hs-special">{</span><span>
-</span><a name="line-25"></a><span>  </span><a name="_clientID"><a href="Tesla.Auth.html#_clientID"><span class="hs-identifier">_clientID</span></a></a><span>       </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-26"></a><span>  </span><span class="hs-special">,</span><span> </span><a name="_clientSecret"><a href="Tesla.Auth.html#_clientSecret"><span class="hs-identifier">_clientSecret</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-27"></a><span>  </span><span class="hs-special">,</span><span> </span><a name="_email"><a href="Tesla.Auth.html#_email"><span class="hs-identifier">_email</span></a></a><span>        </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-28"></a><span>  </span><span class="hs-special">,</span><span> </span><a name="_password"><a href="Tesla.Auth.html#_password"><span class="hs-identifier">_password</span></a></a><span>     </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-29"></a><span>  </span><span class="hs-special">,</span><span> </span><a name="_bearerToken"><a href="Tesla.Auth.html#_bearerToken"><span class="hs-identifier">_bearerToken</span></a></a><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-30"></a><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span class="hs-special">(</span><span class="hs-identifier hs-type">Show</span><span class="hs-special">)</span><span>
-</span><a name="line-31"></a><span>
-</span><a name="line-32"></a><span class="hs-identifier hs-var">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier hs-var">AuthInfo</span><span>
-</span><a name="line-33"></a><span>
-</span><a name="line-34"></a><span class="hs-comment">-- | Get an AuthInfo instance from a bearer token.</span><span>
-</span><a name="line-35"></a><span class="hs-identifier">fromToken</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a><span>
-</span><a name="line-36"></a><a name="fromToken"><a href="Tesla.Auth.html#fromToken"><span class="hs-identifier">fromToken</span></a></a><span> </span><a name="local-6989586621679076348"><a href="#local-6989586621679076348"><span class="hs-identifier">t</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-var">AuthInfo</span></a><span class="hs-special">{</span><span class="hs-identifier">_bearerToken</span><span class="hs-glyph">=</span><a href="#local-6989586621679076348"><span class="hs-identifier hs-var">t</span></a><span class="hs-special">,</span><span> </span><span class="hs-identifier">_clientID</span><span class="hs-glyph">=</span><span class="hs-string">&quot;&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-identifier">_clientSecret</span><span class="hs-glyph">=</span><span class="hs-string">&quot;&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-identifier">_email</span><span class="hs-glyph">=</span><span class="hs-string">&quot;&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-identifier">_password</span><span class="hs-glyph">=</span><span class="hs-string">&quot;&quot;</span><span class="hs-special">}</span><span>
-</span><a name="line-37"></a><span>
-</span><a name="line-38"></a><span class="hs-identifier">jsonOpts</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Data.Aeson.Options</span><span>
-</span><a name="line-39"></a><a name="jsonOpts"><a href="Tesla.Auth.html#jsonOpts"><span class="hs-identifier">jsonOpts</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">defaultOptions</span><span> </span><span class="hs-special">{</span><span>
-</span><a name="line-40"></a><span>  </span><span class="hs-identifier">fieldLabelModifier</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">dropWhile</span><span> </span><span class="hs-special">(</span><span class="hs-operator hs-var">==</span><span> </span><span class="hs-char">'_'</span><span class="hs-special">)</span><span>
-</span><a name="line-41"></a><span>  </span><span class="hs-special">}</span><span>
-</span><a name="line-42"></a><span>
-</span><a name="line-43"></a><span class="hs-comment">-- | An Authentication response.</span><span>
-</span><a name="line-44"></a><span class="hs-keyword">data</span><span> </span><a name="AuthResponse"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier">AuthResponse</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="AuthResponse"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier">AuthResponse</span></a></a><span> </span><span class="hs-special">{</span><span>
-</span><a name="line-45"></a><span>  </span><a name="_access_token"><a href="Tesla.Auth.html#_access_token"><span class="hs-identifier">_access_token</span></a></a><span>    </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-46"></a><span>  </span><span class="hs-special">,</span><span> </span><a name="_expires_in"><a href="Tesla.Auth.html#_expires_in"><span class="hs-identifier">_expires_in</span></a></a><span>    </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span>
-</span><a name="line-47"></a><span>  </span><span class="hs-special">,</span><span> </span><a name="_refresh_token"><a href="Tesla.Auth.html#_refresh_token"><span class="hs-identifier">_refresh_token</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
-</span><a name="line-48"></a><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span class="hs-special">(</span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Show</span><span class="hs-special">)</span><span>
-</span><a name="line-49"></a><span>
-</span><a name="line-50"></a><span class="hs-identifier hs-var">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier hs-var">AuthResponse</span><span>
-</span><a name="line-51"></a><span>
-</span><a name="line-52"></a><span class="hs-comment">-- | A Monad may have a 'HasTeslaAuth' instance to indicate it knows</span><span>
-</span><a name="line-53"></a><span class="hs-comment">-- how to authenticate against the Tesla service.</span><span>
-</span><a name="line-54"></a><span class="hs-keyword">class</span><span> </span><span class="hs-identifier hs-type">Monad</span><span> </span><a href="#local-6989586621679099556"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a name="HasTeslaAuth"><a href="Tesla.Auth.html#HasTeslaAuth"><span class="hs-identifier">HasTeslaAuth</span></a></a><span> </span><a name="local-6989586621679099556"><a href="#local-6989586621679099556"><span class="hs-identifier">m</span></a></a><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-55"></a><span>  </span><a name="teslaAuth"><a href="Tesla.Auth.html#teslaAuth"><span class="hs-identifier">teslaAuth</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><a href="#local-6989586621679099556"><span class="hs-identifier hs-type">m</span></a><span> </span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a><span>
-</span><a name="line-56"></a><span>
-</span><a name="line-57"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">FromJSON</span><span> </span><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a><span> </span><span class="hs-keyword">where</span><span>
-</span><a name="line-58"></a><span>  </span><a name="local-8214565720323803782"><span class="hs-identifier">parseJSON</span></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">genericParseJSON</span><span> </span><a href="Tesla.Auth.html#jsonOpts"><span class="hs-identifier hs-var">jsonOpts</span></a><span>
-</span><a name="line-59"></a></pre></body></html>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-pragma">{-# LANGUAGE DeriveGeneric     #-}</span><span>
+</span><span id="line-9"></span><span class="hs-pragma">{-# LANGUAGE OverloadedStrings #-}</span><span>
+</span><span id="line-10"></span><span class="hs-pragma">{-# LANGUAGE TemplateHaskell   #-}</span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Tesla.Auth</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier">AuthInfo</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-13"></span><span>                   </span><span class="annot"><a href="Tesla.Auth.html#clientID"><span class="hs-identifier">clientID</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#clientSecret"><span class="hs-identifier">clientSecret</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#email"><span class="hs-identifier">email</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#password"><span class="hs-identifier">password</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#bearerToken"><span class="hs-identifier">bearerToken</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-14"></span><span>                   </span><span class="annot"><a href="Tesla.Auth.html#fromToken"><span class="hs-identifier">fromToken</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-15"></span><span>                   </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier">AuthResponse</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#access_token"><span class="hs-identifier">access_token</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#expires_in"><span class="hs-identifier">expires_in</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Auth.html#refresh_token"><span class="hs-identifier">refresh_token</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-16"></span><span>                   </span><span class="annot"><a href="Tesla.Auth.html#HasTeslaAuth"><span class="hs-identifier">HasTeslaAuth</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span>                  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Lens</span></span><span>
+</span><span id="line-20"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>             </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">FromJSON</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Options</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">defaultOptions</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">fieldLabelModifier</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">genericParseJSON</span></span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Generics.Deriving.Base</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span class="hs-comment">-- | An Authentication request.</span><span>
+</span><span id="line-24"></span><span class="hs-keyword">data</span><span> </span><span id="AuthInfo"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-var">AuthInfo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AuthInfo"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-var">AuthInfo</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-25"></span><span>  </span><span id="_clientID"><span class="annot"><span class="annottext">AuthInfo -&gt; String
+</span><a href="Tesla.Auth.html#_clientID"><span class="hs-identifier hs-var hs-var">_clientID</span></a></span></span><span>       </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-26"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="_clientSecret"><span class="annot"><span class="annottext">AuthInfo -&gt; String
+</span><a href="Tesla.Auth.html#_clientSecret"><span class="hs-identifier hs-var hs-var">_clientSecret</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-27"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="_email"><span class="annot"><span class="annottext">AuthInfo -&gt; String
+</span><a href="Tesla.Auth.html#_email"><span class="hs-identifier hs-var hs-var">_email</span></a></span></span><span>        </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-28"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="_password"><span class="annot"><span class="annottext">AuthInfo -&gt; String
+</span><a href="Tesla.Auth.html#_password"><span class="hs-identifier hs-var hs-var">_password</span></a></span></span><span>     </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-29"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="_bearerToken"><span class="annot"><span class="annottext">AuthInfo -&gt; String
+</span><a href="Tesla.Auth.html#_bearerToken"><span class="hs-identifier hs-var hs-var">_bearerToken</span></a></span></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-30"></span><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span class="hs-special">(</span><span id="local-6989586621679266660"><span id="local-6989586621679266662"><span id="local-6989586621679266664"><span class="annot"><span class="annottext">Int -&gt; AuthInfo -&gt; ShowS
+[AuthInfo] -&gt; ShowS
+AuthInfo -&gt; String
+(Int -&gt; AuthInfo -&gt; ShowS)
+-&gt; (AuthInfo -&gt; String) -&gt; ([AuthInfo] -&gt; ShowS) -&gt; Show AuthInfo
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AuthInfo] -&gt; ShowS
+$cshowList :: [AuthInfo] -&gt; ShowS
+show :: AuthInfo -&gt; String
+$cshow :: AuthInfo -&gt; String
+showsPrec :: Int -&gt; AuthInfo -&gt; ShowS
+$cshowsPrec :: Int -&gt; AuthInfo -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-31"></span><span>
+</span><span id="line-32"></span><span id="bearerToken"><span id="password"><span id="email"><span id="clientSecret"><span id="clientID"><span class="hs-identifier">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">AuthInfo</span></span></span></span></span></span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-comment">-- | Get an AuthInfo instance from a bearer token.</span><span>
+</span><span id="line-35"></span><span class="annot"><a href="Tesla.Auth.html#fromToken"><span class="hs-identifier hs-type">fromToken</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span>
+</span><span id="line-36"></span><span id="fromToken"><span class="annot"><span class="annottext">fromToken :: String -&gt; AuthInfo
+</span><a href="Tesla.Auth.html#fromToken"><span class="hs-identifier hs-var hs-var">fromToken</span></a></span></span><span> </span><span id="local-6989586621679266658"><span class="annot"><span class="annottext">t :: String
+</span><a href="#local-6989586621679266658"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AuthInfo :: String -&gt; String -&gt; String -&gt; String -&gt; String -&gt; AuthInfo
+</span><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type hs-type">AuthInfo</span></a></span><span class="hs-special">{</span><span class="annot"><span class="annottext">_bearerToken :: String
+</span><a href="Tesla.Auth.html#_bearerToken"><span class="hs-identifier hs-var">_bearerToken</span></a></span><span class="hs-glyph">=</span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679266658"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">_clientID :: String
+</span><a href="Tesla.Auth.html#_clientID"><span class="hs-identifier hs-var">_clientID</span></a></span><span class="hs-glyph">=</span><span class="annot"><span class="hs-string">&quot;&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">_clientSecret :: String
+</span><a href="Tesla.Auth.html#_clientSecret"><span class="hs-identifier hs-var">_clientSecret</span></a></span><span class="hs-glyph">=</span><span class="annot"><span class="hs-string">&quot;&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">_email :: String
+</span><a href="Tesla.Auth.html#_email"><span class="hs-identifier hs-var">_email</span></a></span><span class="hs-glyph">=</span><span class="annot"><span class="hs-string">&quot;&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">_password :: String
+</span><a href="Tesla.Auth.html#_password"><span class="hs-identifier hs-var">_password</span></a></span><span class="hs-glyph">=</span><span class="annot"><span class="hs-string">&quot;&quot;</span></span><span class="hs-special">}</span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="annot"><a href="Tesla.Auth.html#jsonOpts"><span class="hs-identifier hs-type">jsonOpts</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Data.Aeson.Options</span></span><span>
+</span><span id="line-39"></span><span id="jsonOpts"><span class="annot"><span class="annottext">jsonOpts :: Options
+</span><a href="Tesla.Auth.html#jsonOpts"><span class="hs-identifier hs-var hs-var">jsonOpts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Options
+</span><span class="hs-identifier hs-var">defaultOptions</span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-40"></span><span>  </span><span class="annot"><span class="annottext">fieldLabelModifier :: ShowS
+</span><span class="hs-identifier hs-var">fieldLabelModifier</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Char -&gt; Bool) -&gt; ShowS
+forall a. (a -&gt; Bool) -&gt; [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">dropWhile</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char -&gt; Char -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="hs-char">'_'</span></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span class="hs-comment">-- | An Authentication response.</span><span>
+</span><span id="line-44"></span><span id="local-6989586621679266653"><span id="local-6989586621679266654"></span></span><span class="hs-keyword">data</span><span> </span><span id="AuthResponse"><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-var">AuthResponse</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AuthResponse"><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-var">AuthResponse</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-45"></span><span>  </span><span id="_access_token"><span class="annot"><span class="annottext">AuthResponse -&gt; String
+</span><a href="Tesla.Auth.html#_access_token"><span class="hs-identifier hs-var hs-var">_access_token</span></a></span></span><span>    </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-46"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="_expires_in"><span class="annot"><span class="annottext">AuthResponse -&gt; Int
+</span><a href="Tesla.Auth.html#_expires_in"><span class="hs-identifier hs-var hs-var">_expires_in</span></a></span></span><span>    </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
+</span><span id="line-47"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="_refresh_token"><span class="annot"><span class="annottext">AuthResponse -&gt; String
+</span><a href="Tesla.Auth.html#_refresh_token"><span class="hs-identifier hs-var hs-var">_refresh_token</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-48"></span><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(forall x. AuthResponse -&gt; Rep AuthResponse x)
+-&gt; (forall x. Rep AuthResponse x -&gt; AuthResponse)
+-&gt; Generic AuthResponse
+forall x. Rep AuthResponse x -&gt; AuthResponse
+forall x. AuthResponse -&gt; Rep AuthResponse x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep AuthResponse x -&gt; AuthResponse
+$cfrom :: forall x. AuthResponse -&gt; Rep AuthResponse x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679266640"><span id="local-6989586621679266642"><span id="local-6989586621679266644"><span class="annot"><span class="annottext">Int -&gt; AuthResponse -&gt; ShowS
+[AuthResponse] -&gt; ShowS
+AuthResponse -&gt; String
+(Int -&gt; AuthResponse -&gt; ShowS)
+-&gt; (AuthResponse -&gt; String)
+-&gt; ([AuthResponse] -&gt; ShowS)
+-&gt; Show AuthResponse
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AuthResponse] -&gt; ShowS
+$cshowList :: [AuthResponse] -&gt; ShowS
+show :: AuthResponse -&gt; String
+$cshow :: AuthResponse -&gt; String
+showsPrec :: Int -&gt; AuthResponse -&gt; ShowS
+$cshowsPrec :: Int -&gt; AuthResponse -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span id="refresh_token"><span id="expires_in"><span id="access_token"><span class="hs-identifier">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">AuthResponse</span></span></span></span><span>
+</span><span id="line-51"></span><span>
+</span><span id="line-52"></span><span class="hs-comment">-- | A Monad may have a 'HasTeslaAuth' instance to indicate it knows</span><span>
+</span><span id="line-53"></span><span class="hs-comment">-- how to authenticate against the Tesla service.</span><span>
+</span><span id="line-54"></span><span class="hs-keyword">class</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Monad</span></span><span> </span><span class="annot"><a href="#local-6989586621679266639"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="HasTeslaAuth"><span class="annot"><a href="Tesla.Auth.html#HasTeslaAuth"><span class="hs-identifier hs-var">HasTeslaAuth</span></a></span></span><span> </span><span id="local-6989586621679266639"><span class="annot"><a href="#local-6989586621679266639"><span class="hs-identifier hs-type">m</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-55"></span><span>  </span><span id="teslaAuth"><span class="annot"><a href="Tesla.Auth.html#teslaAuth"><span class="hs-identifier hs-type">teslaAuth</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679266639"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span>
+</span><span id="line-56"></span><span>
+</span><span id="line-57"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679266635"><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-58"></span><span>  </span><span id="local-6989586621679266633"><span class="annot"><span class="annottext">parseJSON :: Value -&gt; Parser AuthResponse
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">parseJSON</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Options -&gt; Value -&gt; Parser AuthResponse
+forall a.
+(Generic a, GFromJSON Zero (Rep a)) =&gt;
+Options -&gt; Value -&gt; Parser a
+</span><span class="hs-identifier hs-var">genericParseJSON</span></span><span> </span><span class="annot"><span class="annottext">Options
+</span><a href="Tesla.Auth.html#jsonOpts"><span class="hs-identifier hs-var">jsonOpts</span></a></span><span>
+</span><span id="line-59"></span></pre></body></html>
