@@ -41,7 +41,6 @@ import           Control.Exception       (Exception, throwIO)
 import           Control.Lens
 import           Control.Monad           ((<=<))
 import           Control.Monad.Catch     (MonadCatch (..), MonadMask (..), MonadThrow (..))
-import           Control.Monad.Fail      (MonadFail (..))
 import           Control.Monad.IO.Class  (MonadIO (..))
 import           Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
 import           Control.Monad.Logger    (MonadLogger)
@@ -108,7 +107,7 @@ instance Exception BadCarException
 runNamedCar :: MonadIO m => Text -> IO AuthInfo -> Car m a -> m a
 runNamedCar name ai f = do
   a <- liftIO ai
-  vs <- vehicles a
+  vs <- vehicles <$> products a
   c <- case Map.lookup name vs of
          Nothing -> throw $ mconcat [show name, " is not a valid vehicle name.  Try one of: ",
                                      show $ Map.keys vs]

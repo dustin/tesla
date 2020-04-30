@@ -5,6 +5,7 @@ import           Test.Tasty.HUnit
 import           Test.Tasty.QuickCheck as QC
 
 import           Data.Aeson
+import qualified Data.Map.Strict       as Map
 import           Data.Maybe            (fromJust)
 import           Data.Ratio
 import           Data.Time.Clock       (UTCTime)
@@ -40,9 +41,11 @@ testOpenDoors :: Assertion
 testOpenDoors =  assertEqual "open" [RearTrunk] (openDoors sampleVehicleData)
 
 testParseProducts :: Assertion
-testParseProducts = assertEqual "products" [ProductVehicle "MyCar" "848528",
-                                            ProductEnergy 2848535]
-                    (decodeProducts sampleProducts)
+testParseProducts = do
+  let prods = decodeProducts sampleProducts
+  assertEqual "products" [ProductVehicle "MyCar" "848528", ProductEnergy 2848535] prods
+  assertEqual "vehicles" (Map.fromList [("MyCar", "848528")]) $ vehicles prods
+  assertEqual "energy" [2848535] $ energyIDs prods
 
 tests :: [TestTree]
 tests = [

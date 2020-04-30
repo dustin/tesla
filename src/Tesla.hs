@@ -90,9 +90,9 @@ products :: MonadIO m => AuthInfo -> m [Product]
 products ai = decodeProducts <$> jgetWith (authOpts ai) productsURL
 
 -- | Get a mapping of vehicle name to vehicle ID.
-vehicles :: MonadIO m => AuthInfo -> m (Map Text Text)
-vehicles = fmap (Map.fromList . toListOf (folded . _ProductVehicle)) . products
+vehicles :: [Product] -> (Map Text Text)
+vehicles = Map.fromList . toListOf (folded . _ProductVehicle)
 
 -- | Get a list of Solar ID installations.
-energyIDs :: MonadIO m => AuthInfo -> m [EnergyID]
-energyIDs = fmap (toListOf $ folded . _ProductEnergy) . products
+energyIDs :: [Product] -> [EnergyID]
+energyIDs = toListOf (folded . energyID)
