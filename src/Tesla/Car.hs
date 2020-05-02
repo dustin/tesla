@@ -140,7 +140,7 @@ maybeVal = decode
 
 -- | True if a user is present in the vehicle.
 isUserPresent :: VehicleData -> Bool
-isUserPresent = fromMaybe False . preview (_Just . key "vehicle_state" . key "is_user_present" . _Bool) . maybeVal
+isUserPresent = (Just True ==) . preview (_Just . key "vehicle_state" . key "is_user_present" . _Bool) . maybeVal
 
 -- | True of the vehicle is currently charging.
 isCharging :: VehicleData -> Bool

@@ -20,7 +20,6 @@ module Tesla.Energy (
 
 import           Control.Exception       (Exception)
 import           Control.Monad.Catch     (MonadCatch (..), MonadMask (..), MonadThrow (..))
-import           Control.Monad.Fail      (MonadFail (..))
 import           Control.Monad.IO.Class  (MonadIO (..))
 import           Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
 import           Control.Monad.Logger    (MonadLogger)
