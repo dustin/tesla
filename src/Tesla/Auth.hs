@@ -17,7 +17,8 @@ module Tesla.Auth (AuthInfo(..),
                   ) where
 
 import           Control.Lens
-import           Data.Aeson             (FromJSON (..), Options, defaultOptions, fieldLabelModifier, genericParseJSON)
+import           Data.Aeson             (FromJSON (..), Options, ToJSON (..), defaultOptions, fieldLabelModifier,
+                                         genericParseJSON, genericToJSON)
 import           Generics.Deriving.Base (Generic)
 
 -- | An Authentication request.
@@ -56,3 +57,6 @@ class Monad m => HasTeslaAuth m where
 
 instance FromJSON AuthResponse where
   parseJSON = genericParseJSON jsonOpts
+
+instance ToJSON AuthResponse where
+  toJSON = genericToJSON jsonOpts
