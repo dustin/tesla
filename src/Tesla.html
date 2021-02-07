@@ -22,112 +22,758 @@ documented at https://www.teslaapi.io/
 </span><span id="line-22"></span><span>
 </span><span id="line-23"></span><span>
 </span><span id="line-24"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Lens</span></span><span>
-</span><span id="line-25"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.IO.Class</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadIO</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-26"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>             </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Value</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-27"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Aeson.Lens</span></span><span>        </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">key</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">_Array</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">_Integer</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">_String</span></span><span class="hs-special">)</span><span>
-</span><span id="line-28"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Foldable</span></span><span>          </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">asum</span></span><span class="hs-special">)</span><span>
-</span><span id="line-29"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span>        </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Map</span></span><span class="hs-special">)</span><span>
-</span><span id="line-30"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span>        </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Map</span></span><span>
-</span><span id="line-31"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Maybe</span></span><span>             </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">catMaybes</span></span><span class="hs-special">)</span><span>
-</span><span id="line-32"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span>              </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
-</span><span id="line-33"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Network.Wreq</span></span><span>           </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">FormParam</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-34"></span><span>
-</span><span id="line-35"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Auth.html"><span class="hs-identifier">Tesla.Auth</span></a></span><span>
-</span><span id="line-36"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Internal.HTTP.html"><span class="hs-identifier">Tesla.Internal.HTTP</span></a></span><span>
-</span><span id="line-37"></span><span>
-</span><span id="line-38"></span><span class="annot"><a href="Tesla.html#baseURL"><span class="hs-identifier hs-type">baseURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-39"></span><span id="baseURL"><span class="annot"><span class="annottext">baseURL :: String
-</span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var hs-var">baseURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;https://owner-api.teslamotors.com/&quot;</span></span><span>
-</span><span id="line-40"></span><span class="annot"><a href="Tesla.html#authURL"><span class="hs-identifier hs-type">authURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-41"></span><span id="authURL"><span class="annot"><span class="annottext">authURL :: String
-</span><a href="Tesla.html#authURL"><span class="hs-identifier hs-var hs-var">authURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var">baseURL</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
-forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="hs-string">&quot;oauth/token&quot;</span></span><span>
-</span><span id="line-42"></span><span class="annot"><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-type">authRefreshURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-43"></span><span id="authRefreshURL"><span class="annot"><span class="annottext">authRefreshURL :: String
-</span><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-var hs-var">authRefreshURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var">baseURL</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
-forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="hs-string">&quot;oauth/token&quot;</span></span><span>
-</span><span id="line-44"></span><span class="annot"><a href="Tesla.html#productsURL"><span class="hs-identifier hs-type">productsURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-45"></span><span id="productsURL"><span class="annot"><span class="annottext">productsURL :: String
+</span><span id="line-25"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad</span></span><span>              </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">when</span></span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.Catch</span></span><span>        </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">SomeException</span></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.IO.Class</span></span><span>     </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadIO</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Retry</span></span><span>              </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">defaultLogMsg</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">exponentialBackoff</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">limitRetries</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">logRetries</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">recovering</span></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Crypto.Hash</span></span><span>                </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">SHA256</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">hashWith</span></span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Value</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">encode</span></span><span class="hs-special">)</span><span>
+</span><span id="line-31"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Aeson.Lens</span></span><span>            </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">_Array</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">_Integer</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">_String</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">key</span></span><span class="hs-special">)</span><span>
+</span><span id="line-32"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteArray</span></span><span>             </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">BA</span></span><span>
+</span><span id="line-33"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString</span></span><span>            </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">BS</span></span><span>
+</span><span id="line-34"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString.Base64.URL</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">B64</span></span><span>
+</span><span id="line-35"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString.Char8</span></span><span>      </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">BC</span></span><span>
+</span><span id="line-36"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString.Lazy</span></span><span>       </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">BL</span></span><span>
+</span><span id="line-37"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Foldable</span></span><span>              </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">asum</span></span><span class="hs-special">)</span><span>
+</span><span id="line-38"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span>            </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Map</span></span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span>            </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Map</span></span><span>
+</span><span id="line-40"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Maybe</span></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">catMaybes</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">mapMaybe</span></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span>                  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-42"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span>                  </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">T</span></span><span>
+</span><span id="line-43"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text.Encoding</span></span><span>         </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">TE</span></span><span>
+</span><span id="line-44"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Network.Wreq</span></span><span>               </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">FormParam</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">asJSON</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">checkResponse</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">defaults</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">header</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">hrRedirects</span></span><span class="hs-special">,</span><span>
+</span><span id="line-45"></span><span>                                             </span><span class="annot"><span class="hs-identifier">params</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">redirects</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">responseBody</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">responseHeader</span></span><span class="hs-special">)</span><span>
+</span><span id="line-46"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Network.Wreq.Session</span></span><span>       </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Sess</span></span><span>
+</span><span id="line-47"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">System.Random</span></span><span>
+</span><span id="line-48"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Text.HTML.TagSoup</span></span><span>          </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">fromAttrib</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">isTagOpenName</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">parseTags</span></span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Auth.html"><span class="hs-identifier">Tesla.Auth</span></a></span><span>
+</span><span id="line-51"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Internal.HTTP.html"><span class="hs-identifier">Tesla.Internal.HTTP</span></a></span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span class="annot"><a href="Tesla.html#baseURL"><span class="hs-identifier hs-type">baseURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-54"></span><span id="baseURL"><span class="annot"><span class="annottext">baseURL :: String
+</span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var hs-var">baseURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>  </span><span class="annot"><span class="hs-string">&quot;https://owner-api.teslamotors.com/&quot;</span></span><span>
+</span><span id="line-55"></span><span class="annot"><a href="Tesla.html#authURL"><span class="hs-identifier hs-type">authURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-56"></span><span id="authURL"><span class="annot"><span class="annottext">authURL :: String
+</span><a href="Tesla.html#authURL"><span class="hs-identifier hs-var hs-var">authURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;https://auth.tesla.com/oauth2/v3/authorize&quot;</span></span><span>
+</span><span id="line-57"></span><span class="annot"><a href="Tesla.html#authTokenURL"><span class="hs-identifier hs-type">authTokenURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-58"></span><span id="authTokenURL"><span class="annot"><span class="annottext">authTokenURL :: String
+</span><a href="Tesla.html#authTokenURL"><span class="hs-identifier hs-var hs-var">authTokenURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;https://owner-api.teslamotors.com/oauth/token&quot;</span></span><span>
+</span><span id="line-59"></span><span class="annot"><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-type">authRefreshURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-60"></span><span id="authRefreshURL"><span class="annot"><span class="annottext">authRefreshURL :: String
+</span><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-var hs-var">authRefreshURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;https://auth.tesla.com/oauth2/v3/token&quot;</span></span><span>
+</span><span id="line-61"></span><span class="annot"><a href="Tesla.html#productsURL"><span class="hs-identifier hs-type">productsURL</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-62"></span><span id="productsURL"><span class="annot"><span class="annottext">productsURL :: String
 </span><a href="Tesla.html#productsURL"><span class="hs-identifier hs-var hs-var">productsURL</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
 </span><a href="Tesla.html#baseURL"><span class="hs-identifier hs-var">baseURL</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="hs-string">&quot;api/1/products&quot;</span></span><span>
-</span><span id="line-46"></span><span>
-</span><span id="line-47"></span><span>
-</span><span id="line-48"></span><span class="hs-comment">-- | Authenticate to the Tesla service.</span><span>
-</span><span id="line-49"></span><span class="annot"><a href="Tesla.html#authenticate"><span class="hs-identifier hs-type">authenticate</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span>
-</span><span id="line-50"></span><span id="authenticate"><span class="annot"><span class="annottext">authenticate :: AuthInfo -&gt; IO AuthResponse
-</span><a href="Tesla.html#authenticate"><span class="hs-identifier hs-var hs-var">authenticate</span></a></span></span><span> </span><span id="local-6989586621679266503"><span id="local-6989586621679266504"><span id="local-6989586621679266505"><span id="local-6989586621679266506"><span id="local-6989586621679266507"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-51"></span><span>  </span><span class="annot"><span class="annottext">Options -&gt; String -&gt; [FormParam] -&gt; IO AuthResponse
-forall j a (m :: * -&gt; *).
-(FromJSON j, Postable a, MonadIO m) =&gt;
-Options -&gt; String -&gt; a -&gt; m j
-</span><a href="Tesla.Internal.HTTP.html#jpostWith"><span class="hs-identifier hs-var">jpostWith</span></a></span><span> </span><span class="annot"><span class="annottext">Options
-</span><a href="Tesla.Internal.HTTP.html#defOpts"><span class="hs-identifier hs-var">defOpts</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="Tesla.html#authURL"><span class="hs-identifier hs-var">authURL</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;grant_type&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;password&quot;</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><span id="line-52"></span><span>                             </span><span class="annot"><span class="hs-string">&quot;client_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266507"><span class="hs-identifier hs-var">_clientID</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-53"></span><span>                             </span><span class="annot"><span class="hs-string">&quot;client_secret&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266506"><span class="hs-identifier hs-var">_clientSecret</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-54"></span><span>                             </span><span class="annot"><span class="hs-string">&quot;email&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266505"><span class="hs-identifier hs-var">_email</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-55"></span><span>                             </span><span class="annot"><span class="hs-string">&quot;password&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266504"><span class="hs-identifier hs-var">_password</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-56"></span><span>
-</span><span id="line-57"></span><span class="hs-comment">-- | Refresh authentication credentials using a refresh token.</span><span>
-</span><span id="line-58"></span><span class="annot"><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-type">refreshAuth</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span>
-</span><span id="line-59"></span><span id="refreshAuth"><span class="annot"><span class="annottext">refreshAuth :: AuthInfo -&gt; AuthResponse -&gt; IO AuthResponse
-</span><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-var hs-var">refreshAuth</span></a></span></span><span> </span><span id="local-6989586621679266489"><span id="local-6989586621679266490"><span id="local-6989586621679266491"><span id="local-6989586621679266492"><span id="local-6989586621679266493"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span></span></span><span> </span><span id="local-6989586621679266486"><span id="local-6989586621679266487"><span id="local-6989586621679266488"><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-60"></span><span>  </span><span class="annot"><span class="annottext">Options -&gt; String -&gt; [FormParam] -&gt; IO AuthResponse
-forall j a (m :: * -&gt; *).
-(FromJSON j, Postable a, MonadIO m) =&gt;
-Options -&gt; String -&gt; a -&gt; m j
-</span><a href="Tesla.Internal.HTTP.html#jpostWith"><span class="hs-identifier hs-var">jpostWith</span></a></span><span> </span><span class="annot"><span class="annottext">Options
-</span><a href="Tesla.Internal.HTTP.html#defOpts"><span class="hs-identifier hs-var">defOpts</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-var">authRefreshURL</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;grant_type&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;refresh_token&quot;</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><span id="line-61"></span><span>                                    </span><span class="annot"><span class="hs-string">&quot;client_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266493"><span class="hs-identifier hs-var">_clientID</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-62"></span><span>                                    </span><span class="annot"><span class="hs-string">&quot;client_secret&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266492"><span class="hs-identifier hs-var">_clientSecret</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-63"></span><span>                                    </span><span class="annot"><span class="hs-string">&quot;refresh_token&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
-forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679266486"><span class="hs-identifier hs-var">_refresh_token</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-64"></span><span>
-</span><span id="line-65"></span><span>
-</span><span id="line-66"></span><span class="hs-comment">-- | A VehicleID.</span><span>
-</span><span id="line-67"></span><span class="hs-keyword">type</span><span> </span><span id="VehicleID"><span class="annot"><a href="Tesla.html#VehicleID"><span class="hs-identifier hs-var">VehicleID</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-68"></span><span>
-</span><span id="line-69"></span><span class="hs-comment">-- | An energy site ID.</span><span>
-</span><span id="line-70"></span><span class="hs-keyword">type</span><span> </span><span id="EnergyID"><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-var">EnergyID</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Integer</span></span><span>
+</span><span id="line-63"></span><span>
+</span><span id="line-64"></span><span class="hs-comment">-- | Authenticate to the Tesla service.</span><span>
+</span><span id="line-65"></span><span class="annot"><a href="Tesla.html#authenticate"><span class="hs-identifier hs-type">authenticate</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span>
+</span><span id="line-66"></span><span id="authenticate"><span class="annot"><span class="annottext">authenticate :: AuthInfo -&gt; IO AuthResponse
+</span><a href="Tesla.html#authenticate"><span class="hs-identifier hs-var hs-var">authenticate</span></a></span></span><span> </span><span id="local-6989586621679280814"><span class="annot"><span class="annottext">ai :: AuthInfo
+</span><a href="#local-6989586621679280814"><span class="hs-identifier hs-var">ai</span></a></span></span><span class="hs-glyph">@</span><span id="local-6989586621679280809"><span id="local-6989586621679280810"><span id="local-6989586621679280811"><span id="local-6989586621679280812"><span id="local-6989586621679280813"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RetryPolicyM IO
+-&gt; [RetryStatus -&gt; Handler IO Bool]
+-&gt; (RetryStatus -&gt; IO AuthResponse)
+-&gt; IO AuthResponse
+forall (m :: * -&gt; *) a.
+(MonadIO m, MonadMask m) =&gt;
+RetryPolicyM m
+-&gt; [RetryStatus -&gt; Handler m Bool] -&gt; (RetryStatus -&gt; m a) -&gt; m a
+</span><span class="hs-identifier hs-var">recovering</span></span><span> </span><span class="annot"><span class="annottext">RetryPolicyM IO
+</span><a href="#local-6989586621679280802"><span class="hs-identifier hs-var">policy</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">RetryStatus -&gt; Handler IO Bool
+</span><a href="#local-6989586621679280801"><span class="hs-identifier hs-var">retryOnAnyStatus</span></a></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">((RetryStatus -&gt; IO AuthResponse) -&gt; IO AuthResponse)
+-&gt; (RetryStatus -&gt; IO AuthResponse) -&gt; IO AuthResponse
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-identifier">_</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-67"></span><span>  </span><span id="local-6989586621679280800"><span class="annot"><span class="annottext">Session
+</span><a href="#local-6989586621679280800"><span class="hs-identifier hs-var">sess</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Session
+</span><span class="hs-identifier hs-var">Sess.newSession</span></span><span>
+</span><span id="line-68"></span><span>  </span><span id="local-6989586621679280798"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679280798"><span class="hs-identifier hs-var">verifier</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; ByteString)
+-&gt; (StdGen -&gt; [Word8]) -&gt; StdGen -&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Word8] -&gt; [Word8]
+forall a. Int -&gt; [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">take</span></span><span> </span><span class="annot"><span class="hs-number">86</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; [Word8]) -&gt; (StdGen -&gt; [Word8]) -&gt; StdGen -&gt; [Word8]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">StdGen -&gt; [Word8]
+forall a g. (Random a, RandomGen g) =&gt; g -&gt; [a]
+</span><span class="hs-identifier hs-var">randoms</span></span><span> </span><span class="annot"><span class="annottext">(StdGen -&gt; ByteString) -&gt; IO StdGen -&gt; IO ByteString
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">IO StdGen
+</span><span class="hs-identifier hs-var">getStdGen</span></span><span>
+</span><span id="line-69"></span><span>  </span><span id="local-6989586621679280791"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280791"><span class="hs-identifier hs-var">state</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><a href="Tesla.html#clean64"><span class="hs-identifier hs-var">clean64</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Text) -&gt; (StdGen -&gt; ByteString) -&gt; StdGen -&gt; Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; ByteString)
+-&gt; (StdGen -&gt; [Word8]) -&gt; StdGen -&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Word8] -&gt; [Word8]
+forall a. Int -&gt; [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">take</span></span><span> </span><span class="annot"><span class="hs-number">16</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; [Word8]) -&gt; (StdGen -&gt; [Word8]) -&gt; StdGen -&gt; [Word8]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">StdGen -&gt; [Word8]
+forall a g. (Random a, RandomGen g) =&gt; g -&gt; [a]
+</span><span class="hs-identifier hs-var">randoms</span></span><span> </span><span class="annot"><span class="annottext">(StdGen -&gt; Text) -&gt; IO StdGen -&gt; IO Text
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">IO StdGen
+</span><span class="hs-identifier hs-var">getStdGen</span></span><span>
+</span><span id="line-70"></span><span>  </span><span class="annot"><span class="annottext">Session -&gt; ByteString -&gt; Text -&gt; AuthInfo -&gt; IO AuthResponse
+</span><a href="Tesla.html#authenticate%27"><span class="hs-identifier hs-var">authenticate'</span></a></span><span> </span><span class="annot"><span class="annottext">Session
+</span><a href="#local-6989586621679280800"><span class="hs-identifier hs-var">sess</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679280798"><span class="hs-identifier hs-var">verifier</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280791"><span class="hs-identifier hs-var">state</span></a></span><span> </span><span class="annot"><span class="annottext">AuthInfo
+</span><a href="#local-6989586621679280814"><span class="hs-identifier hs-var">ai</span></a></span><span>
 </span><span id="line-71"></span><span>
-</span><span id="line-72"></span><span class="hs-comment">-- | Tesla Product Types.</span><span>
-</span><span id="line-73"></span><span class="hs-keyword">data</span><span> </span><span id="Product"><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-var">Product</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ProductVehicle"><span class="annot"><a href="Tesla.html#ProductVehicle"><span class="hs-identifier hs-var">ProductVehicle</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="_vehicleName"><span class="annot"><span class="annottext">Product -&gt; Text
+</span><span id="line-72"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-73"></span><span>    </span><span id="local-6989586621679280802"><span class="annot"><span class="annottext">policy :: RetryPolicyM IO
+</span><a href="#local-6989586621679280802"><span class="hs-identifier hs-var hs-var">policy</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; RetryPolicy
+</span><span class="hs-identifier hs-var">exponentialBackoff</span></span><span> </span><span class="annot"><span class="hs-number">2000000</span></span><span> </span><span class="annot"><span class="annottext">RetryPolicyM IO -&gt; RetryPolicyM IO -&gt; RetryPolicyM IO
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; RetryPolicy
+</span><span class="hs-identifier hs-var">limitRetries</span></span><span> </span><span class="annot"><span class="hs-number">9</span></span><span>
+</span><span id="line-74"></span><span>    </span><span id="local-6989586621679280801"><span class="annot"><span class="annottext">retryOnAnyStatus :: RetryStatus -&gt; Handler IO Bool
+</span><a href="#local-6989586621679280801"><span class="hs-identifier hs-var hs-var">retryOnAnyStatus</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(SomeException -&gt; IO Bool)
+-&gt; (Bool -&gt; SomeException -&gt; RetryStatus -&gt; IO ())
+-&gt; RetryStatus
+-&gt; Handler IO Bool
+forall (m :: * -&gt; *) e.
+(Monad m, Exception e) =&gt;
+(e -&gt; m Bool)
+-&gt; (Bool -&gt; e -&gt; RetryStatus -&gt; m ())
+-&gt; RetryStatus
+-&gt; Handler m Bool
+</span><span class="hs-identifier hs-var">logRetries</span></span><span> </span><span class="annot"><span class="annottext">SomeException -&gt; IO Bool
+</span><a href="#local-6989586621679280788"><span class="hs-identifier hs-var">retryOnAnyError</span></a></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; SomeException -&gt; RetryStatus -&gt; IO ()
+forall e. Exception e =&gt; Bool -&gt; e -&gt; RetryStatus -&gt; IO ()
+</span><a href="#local-6989586621679280787"><span class="hs-identifier hs-var">reportError</span></a></span><span>
+</span><span id="line-75"></span><span>    </span><span class="annot"><a href="#local-6989586621679280788"><span class="hs-identifier hs-type">retryOnAnyError</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">SomeException</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
+</span><span id="line-76"></span><span>    </span><span id="local-6989586621679280788"><span class="annot"><span class="annottext">retryOnAnyError :: SomeException -&gt; IO Bool
+</span><a href="#local-6989586621679280788"><span class="hs-identifier hs-var hs-var">retryOnAnyError</span></a></span></span><span> </span><span class="hs-identifier">_</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; IO Bool
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">True</span></span><span>
+</span><span id="line-77"></span><span>    </span><span id="local-6989586621679280787"><span class="annot"><span class="annottext">reportError :: Bool -&gt; e -&gt; RetryStatus -&gt; IO ()
+</span><a href="#local-6989586621679280787"><span class="hs-identifier hs-var hs-var">reportError</span></a></span></span><span> </span><span id="local-6989586621679280786"><span class="annot"><span class="annottext">retriedOrCrashed :: Bool
+</span><a href="#local-6989586621679280786"><span class="hs-identifier hs-var">retriedOrCrashed</span></a></span></span><span> </span><span id="local-6989586621679280785"><span class="annot"><span class="annottext">err :: e
+</span><a href="#local-6989586621679280785"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span id="local-6989586621679280784"><span class="annot"><span class="annottext">retryStatus :: RetryStatus
+</span><a href="#local-6989586621679280784"><span class="hs-identifier hs-var">retryStatus</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; IO ()) -&gt; String -&gt; IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; e -&gt; RetryStatus -&gt; String
+forall e. Exception e =&gt; Bool -&gt; e -&gt; RetryStatus -&gt; String
+</span><span class="hs-identifier hs-var">defaultLogMsg</span></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679280786"><span class="hs-identifier hs-var">retriedOrCrashed</span></a></span><span> </span><span class="annot"><span class="annottext">e
+</span><a href="#local-6989586621679280785"><span class="hs-identifier hs-var">err</span></a></span><span> </span><span class="annot"><span class="annottext">RetryStatus
+</span><a href="#local-6989586621679280784"><span class="hs-identifier hs-var">retryStatus</span></a></span><span>
+</span><span id="line-78"></span><span>
+</span><span id="line-79"></span><span class="annot"><a href="Tesla.html#clean64"><span class="hs-identifier hs-type">clean64</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BC.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-80"></span><span id="clean64"><span class="annot"><span class="annottext">clean64 :: ByteString -&gt; Text
+</span><a href="Tesla.html#clean64"><span class="hs-identifier hs-var hs-var">clean64</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><span class="hs-identifier hs-var">TE.decodeUtf8</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Text)
+-&gt; (ByteString -&gt; ByteString) -&gt; ByteString -&gt; Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString
+</span><span class="hs-identifier hs-var">BS.reverse</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; ByteString)
+-&gt; (ByteString -&gt; ByteString) -&gt; ByteString -&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Word8 -&gt; Bool) -&gt; ByteString -&gt; ByteString
+</span><span class="hs-identifier hs-var">BS.dropWhile</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word8 -&gt; Word8 -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="hs-number">61</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; ByteString)
+-&gt; (ByteString -&gt; ByteString) -&gt; ByteString -&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString
+</span><span class="hs-identifier hs-var">BS.reverse</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; ByteString)
+-&gt; (ByteString -&gt; ByteString) -&gt; ByteString -&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString
+</span><span class="hs-identifier hs-var">B64.encode</span></span><span>
+</span><span id="line-81"></span><span>
+</span><span id="line-82"></span><span class="annot"><a href="Tesla.html#authenticate%27"><span class="hs-identifier hs-type">authenticate'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Sess.Session</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BC.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span>
+</span><span id="line-83"></span><span id="authenticate%27"><span class="annot"><span class="annottext">authenticate' :: Session -&gt; ByteString -&gt; Text -&gt; AuthInfo -&gt; IO AuthResponse
+</span><a href="Tesla.html#authenticate%27"><span class="hs-identifier hs-var hs-var">authenticate'</span></a></span></span><span> </span><span id="local-6989586621679280778"><span class="annot"><span class="annottext">sess :: Session
+</span><a href="#local-6989586621679280778"><span class="hs-identifier hs-var">sess</span></a></span></span><span> </span><span id="local-6989586621679280777"><span class="annot"><span class="annottext">verifier :: ByteString
+</span><a href="#local-6989586621679280777"><span class="hs-identifier hs-var">verifier</span></a></span></span><span> </span><span id="local-6989586621679280776"><span class="annot"><span class="annottext">state :: Text
+</span><a href="#local-6989586621679280776"><span class="hs-identifier hs-var">state</span></a></span></span><span> </span><span id="local-6989586621679280771"><span id="local-6989586621679280772"><span id="local-6989586621679280773"><span id="local-6989586621679280774"><span id="local-6989586621679280775"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-84"></span><span>  </span><span class="hs-comment">-- First, grab the form.</span><span>
+</span><span id="line-85"></span><span>  </span><span id="local-6989586621679280770"><span class="annot"><span class="annottext">[FormParam]
+</span><a href="#local-6989586621679280770"><span class="hs-identifier hs-var">form</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; [FormParam]
+</span><a href="#local-6989586621679280769"><span class="hs-identifier hs-var">formFields</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; [FormParam])
+-&gt; (Response ByteString -&gt; ByteString)
+-&gt; Response ByteString
+-&gt; [FormParam]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString
+</span><span class="hs-identifier hs-var">BL.toStrict</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; ByteString)
+-&gt; (Response ByteString -&gt; ByteString)
+-&gt; Response ByteString
+-&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Getting ByteString (Response ByteString) ByteString
+-&gt; Response ByteString -&gt; ByteString
+forall s (m :: * -&gt; *) a. MonadReader s m =&gt; Getting a s a -&gt; m a
+</span><span class="hs-identifier hs-var">view</span></span><span> </span><span class="annot"><span class="annottext">Getting ByteString (Response ByteString) ByteString
+forall body0 body1.
+Lens (Response body0) (Response body1) body0 body1
+</span><span class="hs-identifier hs-var">responseBody</span></span><span> </span><span class="annot"><span class="annottext">(Response ByteString -&gt; [FormParam])
+-&gt; IO (Response ByteString) -&gt; IO [FormParam]
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Options -&gt; Session -&gt; String -&gt; IO (Response ByteString)
+</span><span class="hs-identifier hs-var">Sess.getWith</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Options
+</span><a href="#local-6989586621679280765"><span class="hs-identifier hs-var">opts</span></a></span><span> </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">([(Text, Text)] -&gt; Identity [(Text, Text)])
+-&gt; Options -&gt; Identity Options
+Lens' Options [(Text, Text)]
+</span><span class="hs-identifier hs-var">params</span></span><span> </span><span class="annot"><span class="annottext">(([(Text, Text)] -&gt; Identity [(Text, Text)])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [(Text, Text)] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="annot"><span class="annottext">[(Text, Text)]
+</span><a href="#local-6989586621679280762"><span class="hs-identifier hs-var">gparams</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Session
+</span><a href="#local-6989586621679280778"><span class="hs-identifier hs-var">sess</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="Tesla.html#authURL"><span class="hs-identifier hs-var">authURL</span></a></span><span>
+</span><span id="line-86"></span><span>  </span><span class="hs-comment">-- There are required hidden fields -- if we didn't get them, we got the wrong http response</span><span>
+</span><span id="line-87"></span><span>  </span><span class="annot"><span class="annottext">Bool -&gt; IO () -&gt; IO ()
+forall (f :: * -&gt; *). Applicative f =&gt; Bool -&gt; f () -&gt; f ()
+</span><span class="hs-identifier hs-var">when</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[FormParam] -&gt; Bool
+forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Bool
+</span><span class="hs-identifier hs-var">null</span></span><span> </span><span class="annot"><span class="annottext">[FormParam]
+</span><a href="#local-6989586621679280770"><span class="hs-identifier hs-var">form</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(IO () -&gt; IO ()) -&gt; IO () -&gt; IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; IO ()
+forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
+</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="hs-string">&quot;tesla didn't return login form&quot;</span></span><span>
+</span><span id="line-88"></span><span>
+</span><span id="line-89"></span><span>  </span><span class="hs-comment">-- Now we post the form with all of our credentials.</span><span>
+</span><span id="line-90"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679280760"><span class="annot"><span class="annottext">form' :: [FormParam]
+</span><a href="#local-6989586621679280760"><span class="hs-identifier hs-var hs-var">form'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[FormParam]
+</span><a href="#local-6989586621679280770"><span class="hs-identifier hs-var">form</span></a></span><span> </span><span class="annot"><span class="annottext">[FormParam] -&gt; [FormParam] -&gt; [FormParam]
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;identity&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
+forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
+</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280773"><span class="hs-identifier hs-var">_email</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;credential&quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String -&gt; FormParam
+forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
+</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280772"><span class="hs-identifier hs-var">_password</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-91"></span><span>  </span><span id="local-6989586621679280758"><span class="annot"><span class="annottext">HistoriedResponse ByteString
+</span><a href="#local-6989586621679280758"><span class="hs-identifier hs-var">r2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String
+-&gt; Options
+-&gt; Session
+-&gt; String
+-&gt; [FormParam]
+-&gt; IO (HistoriedResponse ByteString)
+forall a.
+Postable a =&gt;
+String
+-&gt; Options
+-&gt; Session
+-&gt; String
+-&gt; a
+-&gt; IO (HistoriedResponse ByteString)
+</span><span class="hs-identifier hs-var">Sess.customHistoriedPayloadMethodWith</span></span><span> </span><span class="annot"><span class="hs-string">&quot;POST&quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Options
+</span><a href="#local-6989586621679280756"><span class="hs-identifier hs-var">fopts</span></a></span><span>
+</span><span id="line-92"></span><span>                                                       </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">([(Text, Text)] -&gt; Identity [(Text, Text)])
+-&gt; Options -&gt; Identity Options
+Lens' Options [(Text, Text)]
+</span><span class="hs-identifier hs-var">params</span></span><span> </span><span class="annot"><span class="annottext">(([(Text, Text)] -&gt; Identity [(Text, Text)])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [(Text, Text)] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="annot"><span class="annottext">[(Text, Text)]
+</span><a href="#local-6989586621679280762"><span class="hs-identifier hs-var">gparams</span></a></span><span>
+</span><span id="line-93"></span><span>                                                       </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Identity Int) -&gt; Options -&gt; Identity Options
+Lens' Options Int
+</span><span class="hs-identifier hs-var">redirects</span></span><span> </span><span class="annot"><span class="annottext">((Int -&gt; Identity Int) -&gt; Options -&gt; Identity Options)
+-&gt; Int -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="annot"><span class="hs-number">3</span></span><span>
+</span><span id="line-94"></span><span>                                                       </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">(Maybe ResponseChecker -&gt; Identity (Maybe ResponseChecker))
+-&gt; Options -&gt; Identity Options
+Lens' Options (Maybe ResponseChecker)
+</span><span class="hs-identifier hs-var">checkResponse</span></span><span> </span><span class="annot"><span class="annottext">((Maybe ResponseChecker -&gt; Identity (Maybe ResponseChecker))
+ -&gt; Options -&gt; Identity Options)
+-&gt; ResponseChecker -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-identifier">_</span><span> </span><span class="hs-identifier">_</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">() -&gt; IO ()
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-95"></span><span>                                                     </span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Session
+</span><a href="#local-6989586621679280778"><span class="hs-identifier hs-var">sess</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="Tesla.html#authURL"><span class="hs-identifier hs-var">authURL</span></a></span><span> </span><span class="annot"><span class="annottext">[FormParam]
+</span><a href="#local-6989586621679280760"><span class="hs-identifier hs-var">form'</span></a></span><span>
+</span><span id="line-96"></span><span>  </span><span class="hs-comment">-- Extract the &quot;code&quot; from the URL we were redirected to... we can't actually follow the redirect :/</span><span>
+</span><span id="line-97"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679280754"><span class="annot"><span class="annottext">code :: Text
+</span><a href="#local-6989586621679280754"><span class="hs-identifier hs-var">code</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">HistoriedResponse ByteString
+</span><a href="#local-6989586621679280758"><span class="hs-identifier hs-var">r2</span></a></span><span> </span><span class="annot"><span class="annottext">HistoriedResponse ByteString
+-&gt; Getting (First Text) (HistoriedResponse ByteString) Text
+-&gt; Maybe Text
+forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">([(Request, Response ByteString)]
+ -&gt; Const (First Text) [(Request, Response ByteString)])
+-&gt; HistoriedResponse ByteString
+-&gt; Const (First Text) (HistoriedResponse ByteString)
+forall body.
+Lens' (HistoriedResponse body) [(Request, Response ByteString)]
+</span><span class="hs-identifier hs-var">hrRedirects</span></span><span> </span><span class="annot"><span class="annottext">(([(Request, Response ByteString)]
+  -&gt; Const (First Text) [(Request, Response ByteString)])
+ -&gt; HistoriedResponse ByteString
+ -&gt; Const (First Text) (HistoriedResponse ByteString))
+-&gt; ((Text -&gt; Const (First Text) Text)
+    -&gt; [(Request, Response ByteString)]
+    -&gt; Const (First Text) [(Request, Response ByteString)])
+-&gt; Getting (First Text) (HistoriedResponse ByteString) Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">((Request, Response ByteString)
+ -&gt; Const (First Text) (Request, Response ByteString))
+-&gt; [(Request, Response ByteString)]
+-&gt; Const (First Text) [(Request, Response ByteString)]
+forall (f :: * -&gt; *) a. Foldable f =&gt; IndexedFold Int (f a) a
+</span><span class="hs-identifier hs-var">folded</span></span><span> </span><span class="annot"><span class="annottext">(((Request, Response ByteString)
+  -&gt; Const (First Text) (Request, Response ByteString))
+ -&gt; [(Request, Response ByteString)]
+ -&gt; Const (First Text) [(Request, Response ByteString)])
+-&gt; ((Text -&gt; Const (First Text) Text)
+    -&gt; (Request, Response ByteString)
+    -&gt; Const (First Text) (Request, Response ByteString))
+-&gt; (Text -&gt; Const (First Text) Text)
+-&gt; [(Request, Response ByteString)]
+-&gt; Const (First Text) [(Request, Response ByteString)]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Response ByteString -&gt; Const (First Text) (Response ByteString))
+-&gt; (Request, Response ByteString)
+-&gt; Const (First Text) (Request, Response ByteString)
+forall s t a b. Field2 s t a b =&gt; Lens s t a b
+</span><span class="hs-identifier hs-var">_2</span></span><span> </span><span class="annot"><span class="annottext">((Response ByteString -&gt; Const (First Text) (Response ByteString))
+ -&gt; (Request, Response ByteString)
+ -&gt; Const (First Text) (Request, Response ByteString))
+-&gt; ((Text -&gt; Const (First Text) Text)
+    -&gt; Response ByteString -&gt; Const (First Text) (Response ByteString))
+-&gt; (Text -&gt; Const (First Text) Text)
+-&gt; (Request, Response ByteString)
+-&gt; Const (First Text) (Request, Response ByteString)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Traversal' (Response ByteString) ByteString
+forall body. HeaderName -&gt; Traversal' (Response body) ByteString
+</span><span class="hs-identifier hs-var">responseHeader</span></span><span> </span><span class="annot"><span class="hs-string">&quot;Location&quot;</span></span><span> </span><span class="annot"><span class="annottext">((ByteString -&gt; Const (First Text) ByteString)
+ -&gt; Response ByteString -&gt; Const (First Text) (Response ByteString))
+-&gt; ((Text -&gt; Const (First Text) Text)
+    -&gt; ByteString -&gt; Const (First Text) ByteString)
+-&gt; (Text -&gt; Const (First Text) Text)
+-&gt; Response ByteString
+-&gt; Const (First Text) (Response ByteString)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Text)
+-&gt; (Text -&gt; Const (First Text) Text)
+-&gt; ByteString
+-&gt; Const (First Text) ByteString
+forall (p :: * -&gt; * -&gt; *) (f :: * -&gt; *) s a.
+(Profunctor p, Contravariant f) =&gt;
+(s -&gt; a) -&gt; Optic' p f s a
+</span><span class="hs-identifier hs-var">to</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><a href="#local-6989586621679280749"><span class="hs-identifier hs-var">xcode</span></a></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Text) -&gt; (ByteString -&gt; String) -&gt; ByteString -&gt; Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; String
+</span><span class="hs-identifier hs-var">BC.unpack</span></span><span class="hs-special">)</span><span>
+</span><span id="line-98"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679280747"><span class="annot"><span class="annottext">jreq :: ByteString
+</span><a href="#local-6989586621679280747"><span class="hs-identifier hs-var hs-var">jreq</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Value -&gt; ByteString
+forall a. ToJSON a =&gt; a -&gt; ByteString
+</span><span class="hs-identifier hs-var">encode</span></span><span> </span><span class="annot"><span class="annottext">(Value -&gt; ByteString) -&gt; Value -&gt; ByteString
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Value
+</span><span class="hs-identifier hs-var">Object</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Object
+forall a. Monoid a =&gt; a
+</span><span class="hs-identifier hs-var">mempty</span></span><span>
+</span><span id="line-99"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;grant_type&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;authorization_code&quot;</span></span><span>
+</span><span id="line-100"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;client_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;ownerapi&quot;</span></span><span>
+</span><span id="line-101"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;code&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value
+</span><span class="hs-identifier hs-var">String</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280754"><span class="hs-identifier hs-var">code</span></a></span><span>
+</span><span id="line-102"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;code_verifier&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value
+</span><span class="hs-identifier hs-var">String</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280743"><span class="hs-identifier hs-var">verifierHash</span></a></span><span>
+</span><span id="line-103"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;redirect_uri&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;https://auth.tesla.com/void/callback&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-104"></span><span>
+</span><span id="line-105"></span><span>  </span><span class="hs-comment">-- Posting that code and other junk back to the token URL gets us temporary credentials.</span><span>
+</span><span id="line-106"></span><span>  </span><span id="local-6989586621679280742"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280742"><span class="hs-identifier hs-var">token</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">AuthResponse -&gt; String
+</span><a href="Tesla.Auth.html#_access_token"><span class="hs-identifier hs-var hs-var">_access_token</span></a></span><span> </span><span class="annot"><span class="annottext">(AuthResponse -&gt; String)
+-&gt; (Response AuthResponse -&gt; AuthResponse)
+-&gt; Response AuthResponse
+-&gt; String
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Getting AuthResponse (Response AuthResponse) AuthResponse
+-&gt; Response AuthResponse -&gt; AuthResponse
+forall s (m :: * -&gt; *) a. MonadReader s m =&gt; Getting a s a -&gt; m a
+</span><span class="hs-identifier hs-var">view</span></span><span> </span><span class="annot"><span class="annottext">Getting AuthResponse (Response AuthResponse) AuthResponse
+forall body0 body1.
+Lens (Response body0) (Response body1) body0 body1
+</span><span class="hs-identifier hs-var">responseBody</span></span><span> </span><span class="annot"><span class="annottext">(Response AuthResponse -&gt; String)
+-&gt; IO (Response AuthResponse) -&gt; IO String
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Options
+-&gt; Session -&gt; String -&gt; ByteString -&gt; IO (Response ByteString)
+forall a.
+Postable a =&gt;
+Options -&gt; Session -&gt; String -&gt; a -&gt; IO (Response ByteString)
+</span><span class="hs-identifier hs-var">Sess.postWith</span></span><span> </span><span class="annot"><span class="annottext">Options
+</span><a href="#local-6989586621679280739"><span class="hs-identifier hs-var">jopts</span></a></span><span> </span><span class="annot"><span class="annottext">Session
+</span><a href="#local-6989586621679280778"><span class="hs-identifier hs-var">sess</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-var">authRefreshURL</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679280747"><span class="hs-identifier hs-var">jreq</span></a></span><span> </span><span class="annot"><span class="annottext">IO (Response ByteString)
+-&gt; (Response ByteString -&gt; IO (Response AuthResponse))
+-&gt; IO (Response AuthResponse)
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="annot"><span class="annottext">Response ByteString -&gt; IO (Response AuthResponse)
+forall (m :: * -&gt; *) a.
+(MonadThrow m, FromJSON a) =&gt;
+Response ByteString -&gt; m (Response a)
+</span><span class="hs-identifier hs-var">asJSON</span></span><span class="hs-special">)</span><span>
+</span><span id="line-107"></span><span>
+</span><span id="line-108"></span><span>  </span><span class="hs-comment">-- And we finally get the useful credentials by exchanging the temporary credentials.</span><span>
+</span><span id="line-109"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679280738"><span class="annot"><span class="annottext">jreq2 :: ByteString
+</span><a href="#local-6989586621679280738"><span class="hs-identifier hs-var hs-var">jreq2</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Value -&gt; ByteString
+forall a. ToJSON a =&gt; a -&gt; ByteString
+</span><span class="hs-identifier hs-var">encode</span></span><span> </span><span class="annot"><span class="annottext">(Value -&gt; ByteString) -&gt; Value -&gt; ByteString
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Value
+</span><span class="hs-identifier hs-var">Object</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Object
+forall a. Monoid a =&gt; a
+</span><span class="hs-identifier hs-var">mempty</span></span><span>
+</span><span id="line-110"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;grant_type&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;urn:ietf:params:oauth:grant-type:jwt-bearer&quot;</span></span><span>
+</span><span id="line-111"></span><span>                               </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;client_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value
+</span><span class="hs-identifier hs-var">String</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280775"><span class="hs-identifier hs-var">_clientID</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-112"></span><span>                              </span><span class="hs-special">)</span><span>
+</span><span id="line-113"></span><span>
+</span><span id="line-114"></span><span>  </span><span class="annot"><span class="annottext">Options -&gt; String -&gt; ByteString -&gt; IO AuthResponse
+forall j a (m :: * -&gt; *).
+(FromJSON j, Postable a, MonadIO m) =&gt;
+Options -&gt; String -&gt; a -&gt; m j
+</span><a href="Tesla.Internal.HTTP.html#jpostWith"><span class="hs-identifier hs-var">jpostWith</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Options
+</span><a href="#local-6989586621679280739"><span class="hs-identifier hs-var">jopts</span></a></span><span> </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;Authorization&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;bearer &quot;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; ByteString
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ByteString
+</span><span class="hs-identifier hs-var">BC.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280742"><span class="hs-identifier hs-var">token</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="Tesla.html#authTokenURL"><span class="hs-identifier hs-var">authTokenURL</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679280738"><span class="hs-identifier hs-var">jreq2</span></a></span><span>
+</span><span id="line-115"></span><span>
+</span><span id="line-116"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-117"></span><span>    </span><span id="local-6989586621679280743"><span class="annot"><span class="annottext">verifierHash :: Text
+</span><a href="#local-6989586621679280743"><span class="hs-identifier hs-var hs-var">verifierHash</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><a href="Tesla.html#clean64"><span class="hs-identifier hs-var">clean64</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Text)
+-&gt; (Digest SHA256 -&gt; ByteString) -&gt; Digest SHA256 -&gt; Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; ByteString)
+-&gt; (Digest SHA256 -&gt; [Word8]) -&gt; Digest SHA256 -&gt; ByteString
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Digest SHA256 -&gt; [Word8]
+forall a. ByteArrayAccess a =&gt; a -&gt; [Word8]
+</span><span class="hs-identifier hs-var">BA.unpack</span></span><span> </span><span class="annot"><span class="annottext">(Digest SHA256 -&gt; Text) -&gt; Digest SHA256 -&gt; Text
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">SHA256 -&gt; ByteString -&gt; Digest SHA256
+forall ba alg.
+(ByteArrayAccess ba, HashAlgorithm alg) =&gt;
+alg -&gt; ba -&gt; Digest alg
+</span><span class="hs-identifier hs-var">hashWith</span></span><span> </span><span class="annot"><span class="annottext">SHA256
+</span><span class="hs-identifier hs-var">SHA256</span></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679280777"><span class="hs-identifier hs-var">verifier</span></a></span><span>
+</span><span id="line-118"></span><span>    </span><span id="local-6989586621679280762"><span class="annot"><span class="annottext">gparams :: [(Text, Text)]
+</span><a href="#local-6989586621679280762"><span class="hs-identifier hs-var hs-var">gparams</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;client_id&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;ownerapi&quot;</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-119"></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;code_challenge&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280743"><span class="hs-identifier hs-var">verifierHash</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-120"></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;code_challenge_method&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;S256&quot;</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-121"></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;redirect_uri&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;https://auth.tesla.com/void/callback&quot;</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-122"></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;response_type&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;code&quot;</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-123"></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;scope&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-string">&quot;openid email offline_access&quot;</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-124"></span><span>                 </span><span class="hs-special">(</span><span class="annot"><span class="hs-string">&quot;state&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280776"><span class="hs-identifier hs-var">state</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-125"></span><span>    </span><span class="hs-comment">-- extract all the non-empty form fields from an HTML response</span><span>
+</span><span id="line-126"></span><span>    </span><span id="local-6989586621679280769"><span class="annot"><span class="annottext">formFields :: ByteString -&gt; [FormParam]
+</span><a href="#local-6989586621679280769"><span class="hs-identifier hs-var hs-var">formFields</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Tag ByteString -&gt; FormParam) -&gt; [Tag ByteString] -&gt; [FormParam]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679280732"><span class="annot"><span class="annottext">t :: Tag ByteString
+</span><a href="#local-6989586621679280732"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Tag ByteString -&gt; ByteString
+forall str.
+(Show str, Eq str, StringLike str) =&gt;
+str -&gt; Tag str -&gt; str
+</span><span class="hs-identifier hs-var">fromAttrib</span></span><span> </span><span class="annot"><span class="hs-string">&quot;name&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tag ByteString
+</span><a href="#local-6989586621679280732"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; FormParam
+forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
+</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Tag ByteString -&gt; ByteString
+forall str.
+(Show str, Eq str, StringLike str) =&gt;
+str -&gt; Tag str -&gt; str
+</span><span class="hs-identifier hs-var">fromAttrib</span></span><span> </span><span class="annot"><span class="hs-string">&quot;value&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tag ByteString
+</span><a href="#local-6989586621679280732"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-127"></span><span>                 </span><span class="annot"><span class="annottext">([Tag ByteString] -&gt; [FormParam])
+-&gt; (ByteString -&gt; [Tag ByteString]) -&gt; ByteString -&gt; [FormParam]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Tag ByteString -&gt; Bool) -&gt; [Tag ByteString] -&gt; [Tag ByteString]
+forall a. (a -&gt; Bool) -&gt; [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">filter</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679280731"><span class="annot"><span class="annottext">t :: Tag ByteString
+</span><a href="#local-6989586621679280731"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Tag ByteString -&gt; Bool
+forall str. Eq str =&gt; str -&gt; Tag str -&gt; Bool
+</span><span class="hs-identifier hs-var">isTagOpenName</span></span><span> </span><span class="annot"><span class="hs-string">&quot;input&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tag ByteString
+</span><a href="#local-6989586621679280731"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Bool -&gt; Bool
+</span><span class="hs-operator hs-var">&amp;&amp;</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Tag ByteString -&gt; ByteString
+forall str.
+(Show str, Eq str, StringLike str) =&gt;
+str -&gt; Tag str -&gt; str
+</span><span class="hs-identifier hs-var">fromAttrib</span></span><span> </span><span class="annot"><span class="hs-string">&quot;value&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tag ByteString
+</span><a href="#local-6989586621679280731"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="hs-string">&quot;&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-128"></span><span>                 </span><span class="annot"><span class="annottext">([Tag ByteString] -&gt; [Tag ByteString])
+-&gt; (ByteString -&gt; [Tag ByteString])
+-&gt; ByteString
+-&gt; [Tag ByteString]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; [Tag ByteString]
+forall str. StringLike str =&gt; str -&gt; [Tag str]
+</span><span class="hs-identifier hs-var">parseTags</span></span><span>
+</span><span id="line-129"></span><span>    </span><span id="local-6989586621679280765"><span class="annot"><span class="annottext">opts :: Options
+</span><a href="#local-6989586621679280765"><span class="hs-identifier hs-var hs-var">opts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Options
+</span><span class="hs-identifier hs-var">defaults</span></span><span>
+</span><span id="line-130"></span><span>           </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;Accept&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;*/*&quot;</span></span><span class="hs-special">]</span><span>
+</span><span id="line-131"></span><span>           </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;User-Agent&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679280728"><span class="hs-identifier hs-var">ua</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-132"></span><span>           </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;x-tesla-user-agent&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">ByteString
+</span><a href="Tesla.Internal.HTTP.html#userAgent"><span class="hs-identifier hs-var">userAgent</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-133"></span><span>           </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;X-Requested-With&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;com.teslamotors.tesla&quot;</span></span><span class="hs-special">]</span><span>
+</span><span id="line-134"></span><span>    </span><span id="local-6989586621679280756"><span class="annot"><span class="annottext">fopts :: Options
+</span><a href="#local-6989586621679280756"><span class="hs-identifier hs-var hs-var">fopts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Options
+</span><a href="#local-6989586621679280765"><span class="hs-identifier hs-var">opts</span></a></span><span> </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;content-type&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;application/x-www-form-urlencoded&quot;</span></span><span class="hs-special">]</span><span>
+</span><span id="line-135"></span><span>    </span><span id="local-6989586621679280739"><span class="annot"><span class="annottext">jopts :: Options
+</span><a href="#local-6989586621679280739"><span class="hs-identifier hs-var hs-var">jopts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Options
+</span><a href="#local-6989586621679280765"><span class="hs-identifier hs-var">opts</span></a></span><span> </span><span class="annot"><span class="annottext">Options -&gt; (Options -&gt; Options) -&gt; Options
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">HeaderName -&gt; Lens' Options [ByteString]
+</span><span class="hs-identifier hs-var">header</span></span><span> </span><span class="annot"><span class="hs-string">&quot;content-type&quot;</span></span><span> </span><span class="annot"><span class="annottext">(([ByteString] -&gt; Identity [ByteString])
+ -&gt; Options -&gt; Identity Options)
+-&gt; [ByteString] -&gt; Options -&gt; Options
+forall s t a b. ASetter s t a b -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">.~</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-string">&quot;application/json&quot;</span></span><span class="hs-special">]</span><span>
+</span><span id="line-136"></span><span>    </span><span id="local-6989586621679280728"><span class="annot"><span class="annottext">ua :: ByteString
+</span><a href="#local-6989586621679280728"><span class="hs-identifier hs-var hs-var">ua</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;Mozilla/5.0 (Linux; Android 10; Pixel 3 Build/QQ2A.200305.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/85.0.4183.81 Mobile Safari/537.36&quot;</span></span><span>
+</span><span id="line-137"></span><span>    </span><span class="hs-comment">-- xua = &quot;TeslaApp/3.10.9-433/adff2e065/android/10&quot;</span><span>
+</span><span id="line-138"></span><span>    </span><span id="local-6989586621679280749"><span class="annot"><span class="annottext">xcode :: String -&gt; Text
+</span><a href="#local-6989586621679280749"><span class="hs-identifier hs-var hs-var">xcode</span></a></span></span><span> </span><span id="local-6989586621679280726"><span class="annot"><span class="annottext">u :: String
+</span><a href="#local-6989586621679280726"><span class="hs-identifier hs-var">u</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Text
+forall a. [a] -&gt; a
+</span><span class="hs-identifier hs-var">head</span></span><span> </span><span class="annot"><span class="annottext">([Text] -&gt; Text) -&gt; ([Text] -&gt; [Text]) -&gt; [Text] -&gt; Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Maybe Text) -&gt; [Text] -&gt; [Text]
+forall a b. (a -&gt; Maybe b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">mapMaybe</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679280724"><span class="annot"><span class="annottext">s :: Text
+</span><a href="#local-6989586621679280724"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">let</span><span> </span><span class="hs-special">[</span><span id="local-6989586621679280723"><span class="annot"><span class="annottext">k :: Text
+</span><a href="#local-6989586621679280723"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span id="local-6989586621679280722"><span class="annot"><span class="annottext">v :: Text
+</span><a href="#local-6989586621679280722"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; [Text]
+</span><span class="hs-identifier hs-var">T.splitOn</span></span><span> </span><span class="annot"><span class="hs-string">&quot;=&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280724"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="hs-keyword">in</span><span> </span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280723"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="hs-string">&quot;code&quot;</span></span><span> </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text
+forall a. a -&gt; Maybe a
+</span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679280722"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="hs-keyword">else</span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">([Text] -&gt; Text) -&gt; [Text] -&gt; Text
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; [Text]
+</span><span class="hs-identifier hs-var">T.splitOn</span></span><span> </span><span class="annot"><span class="hs-string">&quot;&amp;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; [Text]
+</span><span class="hs-identifier hs-var">T.splitOn</span></span><span> </span><span class="annot"><span class="hs-string">&quot;?&quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280726"><span class="hs-identifier hs-var">u</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Int -&gt; Text
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">1</span></span><span class="hs-special">)</span><span>
+</span><span id="line-139"></span><span>
+</span><span id="line-140"></span><span class="hs-comment">-- | Refresh authentication credentials using a refresh token.</span><span>
+</span><span id="line-141"></span><span class="annot"><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-type">refreshAuth</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span>
+</span><span id="line-142"></span><span id="refreshAuth"><span class="annot"><span class="annottext">refreshAuth :: AuthInfo -&gt; AuthResponse -&gt; IO AuthResponse
+</span><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-var hs-var">refreshAuth</span></a></span></span><span> </span><span id="local-6989586621679280715"><span id="local-6989586621679280716"><span id="local-6989586621679280717"><span id="local-6989586621679280718"><span id="local-6989586621679280719"><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span></span></span><span> </span><span id="local-6989586621679280712"><span id="local-6989586621679280713"><span id="local-6989586621679280714"><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span class="hs-special">{</span><span class="hs-glyph">..</span><span class="hs-special">}</span></span></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-143"></span><span>  </span><span class="annot"><span class="annottext">Options -&gt; String -&gt; ByteString -&gt; IO AuthResponse
+forall j a (m :: * -&gt; *).
+(FromJSON j, Postable a, MonadIO m) =&gt;
+Options -&gt; String -&gt; a -&gt; m j
+</span><a href="Tesla.Internal.HTTP.html#jpostWith"><span class="hs-identifier hs-var">jpostWith</span></a></span><span> </span><span class="annot"><span class="annottext">Options
+</span><a href="Tesla.Internal.HTTP.html#defOpts"><span class="hs-identifier hs-var">defOpts</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="Tesla.html#authRefreshURL"><span class="hs-identifier hs-var">authRefreshURL</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Value -&gt; ByteString
+forall a. ToJSON a =&gt; a -&gt; ByteString
+</span><span class="hs-identifier hs-var">encode</span></span><span> </span><span class="annot"><span class="annottext">(Value -&gt; ByteString) -&gt; Value -&gt; ByteString
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Value
+</span><span class="hs-identifier hs-var">Object</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Object
+forall a. Monoid a =&gt; a
+</span><span class="hs-identifier hs-var">mempty</span></span><span>
+</span><span id="line-144"></span><span>                                                     </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;grant_type&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;refresh_token&quot;</span></span><span>
+</span><span id="line-145"></span><span>                                                     </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;client_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;ownerapi&quot;</span></span><span>
+</span><span id="line-146"></span><span>                                                     </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;refresh_token&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value
+</span><span class="hs-identifier hs-var">String</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280712"><span class="hs-identifier hs-var">_refresh_token</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-147"></span><span>                                                     </span><span class="annot"><span class="annottext">Object -&gt; (Object -&gt; Object) -&gt; Object
+forall a b. a -&gt; (a -&gt; b) -&gt; b
+</span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">Index Object -&gt; Lens' Object (Maybe (IxValue Object))
+forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
+</span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="hs-string">&quot;scope&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Maybe Value -&gt; Identity (Maybe Value))
+ -&gt; Object -&gt; Identity Object)
+-&gt; Value -&gt; Object -&gt; Object
+forall s t a b. ASetter s t a (Maybe b) -&gt; b -&gt; s -&gt; t
+</span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="hs-string">&quot;openid email offline_access&quot;</span></span><span>
+</span><span id="line-148"></span><span>                                                    </span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-149"></span><span>
+</span><span id="line-150"></span><span class="hs-comment">-- | A VehicleID.</span><span>
+</span><span id="line-151"></span><span class="hs-keyword">type</span><span> </span><span id="VehicleID"><span class="annot"><a href="Tesla.html#VehicleID"><span class="hs-identifier hs-var">VehicleID</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-152"></span><span>
+</span><span id="line-153"></span><span class="hs-comment">-- | An energy site ID.</span><span>
+</span><span id="line-154"></span><span class="hs-keyword">type</span><span> </span><span id="EnergyID"><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-var">EnergyID</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Integer</span></span><span>
+</span><span id="line-155"></span><span>
+</span><span id="line-156"></span><span class="hs-comment">-- | Tesla Product Types.</span><span>
+</span><span id="line-157"></span><span class="hs-keyword">data</span><span> </span><span id="Product"><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-var">Product</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ProductVehicle"><span class="annot"><a href="Tesla.html#ProductVehicle"><span class="hs-identifier hs-var">ProductVehicle</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="_vehicleName"><span class="annot"><span class="annottext">Product -&gt; Text
 </span><a href="Tesla.html#_vehicleName"><span class="hs-identifier hs-var hs-var">_vehicleName</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span> </span><span id="_vehicleID"><span class="annot"><span class="annottext">Product -&gt; Text
 </span><a href="Tesla.html#_vehicleID"><span class="hs-identifier hs-var hs-var">_vehicleID</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.html#VehicleID"><span class="hs-identifier hs-type">VehicleID</span></a></span><span> </span><span class="hs-special">}</span><span>
-</span><span id="line-74"></span><span>             </span><span class="hs-glyph">|</span><span> </span><span id="ProductEnergy"><span class="annot"><a href="Tesla.html#ProductEnergy"><span class="hs-identifier hs-var">ProductEnergy</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="_energyID"><span class="annot"><span class="annottext">Product -&gt; EnergyID
+</span><span id="line-158"></span><span>             </span><span class="hs-glyph">|</span><span> </span><span id="ProductEnergy"><span class="annot"><a href="Tesla.html#ProductEnergy"><span class="hs-identifier hs-var">ProductEnergy</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="_energyID"><span class="annot"><span class="annottext">Product -&gt; EnergyID
 </span><a href="Tesla.html#_energyID"><span class="hs-identifier hs-var hs-var">_energyID</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span><span> </span><span class="hs-special">}</span><span>
-</span><span id="line-75"></span><span>             </span><span class="hs-glyph">|</span><span> </span><span id="ProductPowerWall"><span class="annot"><a href="Tesla.html#ProductPowerWall"><span class="hs-identifier hs-var">ProductPowerWall</span></a></span></span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679266470"><span id="local-6989586621679266472"><span id="local-6989586621679266474"><span class="annot"><span class="annottext">Int -&gt; Product -&gt; String -&gt; String
+</span><span id="line-159"></span><span>             </span><span class="hs-glyph">|</span><span> </span><span id="ProductPowerWall"><span class="annot"><a href="Tesla.html#ProductPowerWall"><span class="hs-identifier hs-var">ProductPowerWall</span></a></span></span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679280696"><span id="local-6989586621679280698"><span id="local-6989586621679280700"><span class="annot"><span class="annottext">Int -&gt; Product -&gt; String -&gt; String
 [Product] -&gt; String -&gt; String
 Product -&gt; String
 (Int -&gt; Product -&gt; String -&gt; String)
@@ -143,7 +789,7 @@ show :: Product -&gt; String
 $cshow :: Product -&gt; String
 showsPrec :: Int -&gt; Product -&gt; String -&gt; String
 $cshowsPrec :: Int -&gt; Product -&gt; String -&gt; String
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679266461"><span id="local-6989586621679266463"><span id="local-6989586621679266465"><span id="local-6989586621679266467"><span class="annot"><span class="annottext">ReadPrec [Product]
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679280687"><span id="local-6989586621679280689"><span id="local-6989586621679280691"><span id="local-6989586621679280693"><span class="annot"><span class="annottext">ReadPrec [Product]
 ReadPrec Product
 Int -&gt; ReadS Product
 ReadS [Product]
@@ -163,7 +809,7 @@ readList :: ReadS [Product]
 $creadList :: ReadS [Product]
 readsPrec :: Int -&gt; ReadS Product
 $creadsPrec :: Int -&gt; ReadS Product
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Read</span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679266456"><span id="local-6989586621679266458"><span class="annot"><span class="annottext">Product -&gt; Product -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Read</span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679280682"><span id="local-6989586621679280684"><span class="annot"><span class="annottext">Product -&gt; Product -&gt; Bool
 (Product -&gt; Product -&gt; Bool)
 -&gt; (Product -&gt; Product -&gt; Bool) -&gt; Eq Product
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -172,12 +818,12 @@ $c/= :: Product -&gt; Product -&gt; Bool
 == :: Product -&gt; Product -&gt; Bool
 $c== :: Product -&gt; Product -&gt; Bool
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
-</span><span id="line-76"></span><span>
-</span><span id="line-77"></span><span id="_ProductPowerWall"><span id="_ProductEnergy"><span id="_ProductVehicle"><span class="hs-identifier">makePrisms</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">Product</span></span></span></span><span>
-</span><span id="line-78"></span><span id="energyID"><span id="vehicleID"><span id="vehicleName"><span class="hs-identifier">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">Product</span></span></span></span><span>
-</span><span id="line-79"></span><span>
-</span><span id="line-80"></span><span class="annot"><a href="Tesla.html#decodeProducts"><span class="hs-identifier hs-type">decodeProducts</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Value</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-81"></span><span id="decodeProducts"><span class="annot"><span class="annottext">decodeProducts :: Value -&gt; [Product]
+</span><span id="line-160"></span><span>
+</span><span id="line-161"></span><span id="_ProductPowerWall"><span id="_ProductEnergy"><span id="_ProductVehicle"><span class="hs-identifier">makePrisms</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">Product</span></span></span></span><span>
+</span><span id="line-162"></span><span id="energyID"><span id="vehicleID"><span id="vehicleName"><span class="hs-identifier">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">Product</span></span></span></span><span>
+</span><span id="line-163"></span><span>
+</span><span id="line-164"></span><span class="annot"><a href="Tesla.html#decodeProducts"><span class="hs-identifier hs-type">decodeProducts</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Value</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-165"></span><span id="decodeProducts"><span class="annot"><span class="annottext">decodeProducts :: Value -&gt; [Product]
 </span><a href="Tesla.html#decodeProducts"><span class="hs-identifier hs-var hs-var">decodeProducts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Maybe Product] -&gt; [Product]
 forall a. [Maybe a] -&gt; [a]
 </span><span class="hs-identifier hs-var">catMaybes</span></span><span> </span><span class="annot"><span class="annottext">([Maybe Product] -&gt; [Product])
@@ -219,26 +865,26 @@ forall (p :: * -&gt; * -&gt; *) (f :: * -&gt; *) s a.
 (s -&gt; a) -&gt; Optic' p f s a
 </span><span class="hs-identifier hs-var">to</span></span><span> </span><span class="annot"><span class="annottext">Value -&gt; Maybe Product
 forall s. AsValue s =&gt; s -&gt; Maybe Product
-</span><a href="#local-6989586621679266450"><span class="hs-identifier hs-var">prod</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-82"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-83"></span><span>    </span><span id="local-6989586621679266450"><span class="annot"><span class="annottext">prod :: s -&gt; Maybe Product
-</span><a href="#local-6989586621679266450"><span class="hs-identifier hs-var hs-var">prod</span></a></span></span><span> </span><span id="local-6989586621679266449"><span class="annot"><span class="annottext">o :: s
-</span><a href="#local-6989586621679266449"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Maybe Product] -&gt; Maybe Product
+</span><a href="#local-6989586621679280679"><span class="hs-identifier hs-var">prod</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-166"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-167"></span><span>    </span><span id="local-6989586621679280679"><span class="annot"><span class="annottext">prod :: s -&gt; Maybe Product
+</span><a href="#local-6989586621679280679"><span class="hs-identifier hs-var hs-var">prod</span></a></span></span><span> </span><span id="local-6989586621679280678"><span class="annot"><span class="annottext">o :: s
+</span><a href="#local-6989586621679280678"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Maybe Product] -&gt; Maybe Product
 forall (t :: * -&gt; *) (f :: * -&gt; *) a.
 (Foldable t, Alternative f) =&gt;
 t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">asum</span></span><span> </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Maybe Product
-</span><a href="#local-6989586621679266448"><span class="hs-identifier hs-var">prodCar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
-</span><a href="#local-6989586621679266447"><span class="hs-identifier hs-var">prodSolar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
+</span><a href="#local-6989586621679280677"><span class="hs-identifier hs-var">prodCar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
+</span><a href="#local-6989586621679280676"><span class="hs-identifier hs-var">prodSolar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
 forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-special">]</span><span>
-</span><span id="line-84"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-85"></span><span>        </span><span id="local-6989586621679266448"><span class="annot"><span class="annottext">prodCar :: Maybe Product
-</span><a href="#local-6989586621679266448"><span class="hs-identifier hs-var hs-var">prodCar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Product
+</span><span id="line-168"></span><span>      </span><span class="hs-keyword">where</span><span>
+</span><span id="line-169"></span><span>        </span><span id="local-6989586621679280677"><span class="annot"><span class="annottext">prodCar :: Maybe Product
+</span><a href="#local-6989586621679280677"><span class="hs-identifier hs-var hs-var">prodCar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Product
 </span><a href="Tesla.html#ProductVehicle"><span class="hs-identifier hs-var">ProductVehicle</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text -&gt; Product) -&gt; Maybe Text -&gt; Maybe (Text -&gt; Product)
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">s
-</span><a href="#local-6989586621679266449"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">s -&gt; Getting (First Text) s Text -&gt; Maybe Text
+</span><a href="#local-6989586621679280678"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">s -&gt; Getting (First Text) s Text -&gt; Maybe Text
 forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Traversal' s Value
 forall t. AsValue t =&gt; Text -&gt; Traversal' t Value
@@ -253,7 +899,7 @@ forall t. AsPrimitive t =&gt; Prism' t Text
 </span><span class="hs-identifier hs-var">_String</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Maybe (Text -&gt; Product) -&gt; Maybe Text -&gt; Maybe Product
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">s
-</span><a href="#local-6989586621679266449"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">s -&gt; Getting (First Text) s Text -&gt; Maybe Text
+</span><a href="#local-6989586621679280678"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">s -&gt; Getting (First Text) s Text -&gt; Maybe Text
 forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Traversal' s Value
 forall t. AsValue t =&gt; Text -&gt; Traversal' t Value
@@ -266,12 +912,12 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 -&gt; Value -&gt; Const (First Text) Value
 forall t. AsPrimitive t =&gt; Prism' t Text
 </span><span class="hs-identifier hs-var">_String</span></span><span class="hs-special">)</span><span>
-</span><span id="line-86"></span><span>        </span><span id="local-6989586621679266447"><span class="annot"><span class="annottext">prodSolar :: Maybe Product
-</span><a href="#local-6989586621679266447"><span class="hs-identifier hs-var hs-var">prodSolar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; Product
+</span><span id="line-170"></span><span>        </span><span id="local-6989586621679280676"><span class="annot"><span class="annottext">prodSolar :: Maybe Product
+</span><a href="#local-6989586621679280676"><span class="hs-identifier hs-var hs-var">prodSolar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; Product
 </span><a href="Tesla.html#ProductEnergy"><span class="hs-identifier hs-var">ProductEnergy</span></a></span><span> </span><span class="annot"><span class="annottext">(EnergyID -&gt; Product) -&gt; Maybe EnergyID -&gt; Maybe Product
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">s
-</span><a href="#local-6989586621679266449"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">s -&gt; Getting (First EnergyID) s EnergyID -&gt; Maybe EnergyID
+</span><a href="#local-6989586621679280678"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">s -&gt; Getting (First EnergyID) s EnergyID -&gt; Maybe EnergyID
 forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Traversal' s Value
 forall t. AsValue t =&gt; Text -&gt; Traversal' t Value
@@ -285,12 +931,12 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 -&gt; Value -&gt; Const (First EnergyID) Value
 forall t. AsNumber t =&gt; Prism' t EnergyID
 </span><span class="hs-identifier hs-var">_Integer</span></span><span class="hs-special">)</span><span>
-</span><span id="line-87"></span><span>
-</span><span id="line-88"></span><span class="hs-comment">-- | Get all products associated with this account.</span><span>
-</span><span id="line-89"></span><span id="local-6989586621679266444"><span class="annot"><a href="Tesla.html#products"><span class="hs-identifier hs-type">products</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679266444"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679266444"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span></span><span>
-</span><span id="line-90"></span><span id="products"><span class="annot"><span class="annottext">products :: AuthInfo -&gt; m [Product]
-</span><a href="Tesla.html#products"><span class="hs-identifier hs-var hs-var">products</span></a></span></span><span> </span><span id="local-6989586621679266443"><span class="annot"><span class="annottext">ai :: AuthInfo
-</span><a href="#local-6989586621679266443"><span class="hs-identifier hs-var">ai</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Value -&gt; [Product]
+</span><span id="line-171"></span><span>
+</span><span id="line-172"></span><span class="hs-comment">-- | Get all products associated with this account.</span><span>
+</span><span id="line-173"></span><span id="local-6989586621679280675"><span class="annot"><a href="Tesla.html#products"><span class="hs-identifier hs-type">products</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679280675"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679280675"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span></span><span>
+</span><span id="line-174"></span><span id="products"><span class="annot"><span class="annottext">products :: AuthInfo -&gt; m [Product]
+</span><a href="Tesla.html#products"><span class="hs-identifier hs-var hs-var">products</span></a></span></span><span> </span><span id="local-6989586621679280674"><span class="annot"><span class="annottext">ai :: AuthInfo
+</span><a href="#local-6989586621679280674"><span class="hs-identifier hs-var">ai</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Value -&gt; [Product]
 </span><a href="Tesla.html#decodeProducts"><span class="hs-identifier hs-var">decodeProducts</span></a></span><span> </span><span class="annot"><span class="annottext">(Value -&gt; [Product]) -&gt; m Value -&gt; m [Product]
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Options -&gt; String -&gt; m Value
@@ -299,12 +945,12 @@ forall j (m :: * -&gt; *).
 Options -&gt; String -&gt; m j
 </span><a href="Tesla.Internal.HTTP.html#jgetWith"><span class="hs-identifier hs-var">jgetWith</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">AuthInfo -&gt; Options
 </span><a href="Tesla.Internal.HTTP.html#authOpts"><span class="hs-identifier hs-var">authOpts</span></a></span><span> </span><span class="annot"><span class="annottext">AuthInfo
-</span><a href="#local-6989586621679266443"><span class="hs-identifier hs-var">ai</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679280674"><span class="hs-identifier hs-var">ai</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
 </span><a href="Tesla.html#productsURL"><span class="hs-identifier hs-var">productsURL</span></a></span><span>
-</span><span id="line-91"></span><span>
-</span><span id="line-92"></span><span class="hs-comment">-- | Get a mapping of vehicle name to vehicle ID.</span><span>
-</span><span id="line-93"></span><span class="annot"><a href="Tesla.html#vehicles"><span class="hs-identifier hs-type">vehicles</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Map</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-94"></span><span id="vehicles"><span class="annot"><span class="annottext">vehicles :: [Product] -&gt; Map Text Text
+</span><span id="line-175"></span><span>
+</span><span id="line-176"></span><span class="hs-comment">-- | Get a mapping of vehicle name to vehicle ID.</span><span>
+</span><span id="line-177"></span><span class="annot"><a href="Tesla.html#vehicles"><span class="hs-identifier hs-type">vehicles</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Map</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-178"></span><span id="vehicles"><span class="annot"><span class="annottext">vehicles :: [Product] -&gt; Map Text Text
 </span><a href="Tesla.html#vehicles"><span class="hs-identifier hs-var hs-var">vehicles</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Text, Text)] -&gt; Map Text Text
 forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
 </span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="annot"><span class="annottext">([(Text, Text)] -&gt; Map Text Text)
@@ -326,10 +972,10 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 -&gt; Product -&gt; Const (Endo [(Text, Text)]) Product
 Prism' Product (Text, Text)
 </span><a href="Tesla.html#_ProductVehicle"><span class="hs-identifier hs-var">_ProductVehicle</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-95"></span><span>
-</span><span id="line-96"></span><span class="hs-comment">-- | Get a list of Solar ID installations.</span><span>
-</span><span id="line-97"></span><span class="annot"><a href="Tesla.html#energyIDs"><span class="hs-identifier hs-type">energyIDs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-98"></span><span id="energyIDs"><span class="annot"><span class="annottext">energyIDs :: [Product] -&gt; [EnergyID]
+</span><span id="line-179"></span><span>
+</span><span id="line-180"></span><span class="hs-comment">-- | Get a list of Solar ID installations.</span><span>
+</span><span id="line-181"></span><span class="annot"><a href="Tesla.html#energyIDs"><span class="hs-identifier hs-type">energyIDs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#EnergyID"><span class="hs-identifier hs-type">EnergyID</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-182"></span><span id="energyIDs"><span class="annot"><span class="annottext">energyIDs :: [Product] -&gt; [EnergyID]
 </span><a href="Tesla.html#energyIDs"><span class="hs-identifier hs-var hs-var">energyIDs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Getting (Endo [EnergyID]) [Product] EnergyID
 -&gt; [Product] -&gt; [EnergyID]
 forall a s. Getting (Endo [a]) s a -&gt; s -&gt; [a]
@@ -346,4 +992,4 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 -&gt; Product -&gt; Const (Endo [EnergyID]) Product
 Traversal' Product EnergyID
 </span><a href="Tesla.html#energyID"><span class="hs-identifier hs-var">energyID</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-99"></span></pre></body></html>
+</span><span id="line-183"></span></pre></body></html>

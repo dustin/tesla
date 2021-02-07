@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.3.0.0
+@version 0.3.1.0
 
 
 -- | Authentication related data structures.
@@ -45,6 +45,7 @@ refresh_token :: Lens' AuthResponse String
 class Monad m => HasTeslaAuth m
 teslaAuth :: HasTeslaAuth m => m AuthInfo
 instance Data.Aeson.Types.FromJSON.FromJSON Tesla.Auth.AuthResponse
+instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Auth.AuthResponse
 instance GHC.Show.Show Tesla.Auth.AuthResponse
 instance GHC.Generics.Generic Tesla.Auth.AuthResponse
 instance GHC.Show.Show Tesla.Auth.AuthInfo
@@ -188,8 +189,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_aEMc. Prism' (OpenState a_aEMc) a_aEMc
-_Closed :: forall a_aEMc. Prism' (OpenState a_aEMc) a_aEMc
+_Open :: forall a_aLgo. Prism' (OpenState a_aLgo) a_aLgo
+_Closed :: forall a_aLgo. Prism' (OpenState a_aLgo) a_aLgo
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
