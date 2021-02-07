@@ -41,8 +41,8 @@ import           Data.Maybe                 (catMaybes, mapMaybe)
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
 import qualified Data.Text.Encoding         as TE
-import           Network.Wreq               (FormParam (..), asJSON, checkResponse, defaults, header, hrRedirects,
-                                             params, redirects, responseBody, responseHeader)
+import           Network.Wreq               (FormParam (..), Options, asJSON, checkResponse, defaults, header,
+                                             hrRedirects, params, redirects, responseBody, responseHeader)
 import qualified Network.Wreq.Session       as Sess
 import           System.Random
 import           Text.HTML.TagSoup          (fromAttrib, isTagOpenName, parseTags)
@@ -80,13 +80,13 @@ clean64 :: BC.ByteString -> Text
 clean64 = TE.decodeUtf8 . BS.reverse . BS.dropWhile (== 61) . BS.reverse . B64.encode
 
 authenticate' :: Sess.Session -> BC.ByteString -> Text -> AuthInfo -> IO AuthResponse
-authenticate' sess verifier state AuthInfo{..} = do
-  -- First, grab the form.
-  form <- formFields . BL.toStrict . view responseBody <$> Sess.getWith (opts & params .~ gparams) sess authURL
+authenticate' sess verifier state ai@AuthInfo{..} = do
+  -- 1. First, grab the form.
+  form <- formFields . BL.toStrict . view responseBody <$> Sess.getWith (aOpts & params .~ gparams) sess authURL
   -- There are required hidden fields -- if we didn't get them, we got the wrong http response
   when (null form) $ fail "tesla didn't return login form"
 
-  -- Now we post the form with all of our credentials.
+  -- 2. Now we post the form with all of our credentials.
   let form' = form <> ["identity" := _email, "credential" := _password]
   r2 <- Sess.customHistoriedPayloadMethodWith "POST" (fopts
                                                        & params .~ gparams
@@ -102,16 +102,9 @@ authenticate' sess verifier state AuthInfo{..} = do
                                & at "code_verifier" ?~ String verifierHash
                                & at "redirect_uri" ?~ "https://auth.tesla.com/void/callback")
 
-  -- Posting that code and other junk back to the token URL gets us temporary credentials.
-  token <- _access_token . view responseBody <$> (Sess.postWith jopts sess authRefreshURL jreq >>= asJSON)
-
-  -- And we finally get the useful credentials by exchanging the temporary credentials.
-  let jreq2 = encode $ Object (mempty
-                               & at "grant_type" ?~ "urn:ietf:params:oauth:grant-type:jwt-bearer"
-                               & at "client_id" ?~ String (T.pack _clientID)
-                              )
-
-  jpostWith (jopts & header "Authorization" .~ ["bearer " <> BC.pack token]) authTokenURL jreq2
+  -- 3. Posting that code and other junk back to the token URL gets us temporary credentials.
+  ar <- view responseBody <$> (Sess.postWith jOpts sess authRefreshURL jreq >>= asJSON)
+  translateCreds ai ar
 
   where
     verifierHash = clean64 . BS.pack . BA.unpack $ hashWith SHA256 verifier
@@ -126,26 +119,42 @@ authenticate' sess verifier state AuthInfo{..} = do
     formFields = map (\t -> fromAttrib "name" t := fromAttrib "value" t)
                  . filter (\t -> isTagOpenName "input" t && fromAttrib "value" t /= "")
                  . parseTags
-    opts = defaults
-           & header "Accept" .~ ["*/*"]
-           & header "User-Agent" .~ [ua]
-           & header "x-tesla-user-agent" .~ [userAgent]
-           & header "X-Requested-With" .~ ["com.teslamotors.tesla"]
-    fopts = opts & header "content-type" .~ ["application/x-www-form-urlencoded"]
-    jopts = opts & header "content-type" .~ ["application/json"]
-    ua = "Mozilla/5.0 (Linux; Android 10; Pixel 3 Build/QQ2A.200305.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/85.0.4183.81 Mobile Safari/537.36"
-    -- xua = "TeslaApp/3.10.9-433/adff2e065/android/10"
+    fopts = aOpts & header "content-type" .~ ["application/x-www-form-urlencoded"]
     xcode u = head . mapMaybe (\s -> let [k,v] = T.splitOn "=" s in if k == "code" then Just v else Nothing) $ T.splitOn "&" (T.splitOn "?" (T.pack u) !! 1)
+
+translateCreds :: AuthInfo -> AuthResponse -> IO AuthResponse
+translateCreds ai@AuthInfo{..} AuthResponse{..} = do
+  -- 4. And we finally get the useful credentials by exchanging the temporary credentials.
+  let jreq2 = encode $ Object (mempty
+                               & at "grant_type" ?~ "urn:ietf:params:oauth:grant-type:jwt-bearer"
+                               & at "client_id" ?~ String (T.pack _clientID)
+                              )
+
+  ar <- jpostWith (jOpts & header "Authorization" .~ ["bearer " <> BC.pack _access_token]) authTokenURL jreq2
+  pure (ar & refresh_token .~ _refresh_token) -- replace the refresh token with the one from step 3
+
 
 -- | Refresh authentication credentials using a refresh token.
 refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
-refreshAuth AuthInfo{..} AuthResponse{..} =
-  jpostWith defOpts authRefreshURL (encode $ Object (mempty
-                                                     & at "grant_type" ?~ "refresh_token"
-                                                     & at "client_id" ?~ "ownerapi"
-                                                     & at "refresh_token" ?~ String (T.pack _refresh_token)
-                                                     & at "scope" ?~ "openid email offline_access"
-                                                    ))
+refreshAuth ai@AuthInfo{..} AuthResponse{..} = do
+  ar <- jpostWith jOpts authRefreshURL (encode $ Object (mempty
+                                                         & at "grant_type" ?~ "refresh_token"
+                                                         & at "client_id" ?~ "ownerapi"
+                                                         & at "refresh_token" ?~ String (T.pack _refresh_token)
+                                                         & at "scope" ?~ "openid email offline_access"
+                                                        ))
+  translateCreds ai ar
+
+jOpts :: Options
+jOpts = aOpts & header "content-type" .~ ["application/json"]
+
+aOpts :: Options
+aOpts = defaults
+        & header "Accept" .~ ["*/*"]
+        & header "User-Agent" .~ [ua]
+        & header "x-tesla-user-agent" .~ [userAgent]
+        & header "X-Requested-With" .~ ["com.teslamotors.tesla"]
+  where ua = "Mozilla/5.0 (Linux; Android 10; Pixel 3 Build/QQ2A.200305.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/85.0.4183.81 Mobile Safari/537.36"
 
 -- | A VehicleID.
 type VehicleID = Text
