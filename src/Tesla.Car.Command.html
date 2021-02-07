@@ -31,36 +31,36 @@ Executing commands within the Car Monad.
 </span><span id="line-31"></span><span class="hs-keyword">type</span><span> </span><span id="CommandResponse"><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-var">CommandResponse</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-32"></span><span>
 </span><span id="line-33"></span><span class="hs-comment">-- | Run a command with a payload.</span><span>
-</span><span id="line-34"></span><span id="local-6989586621679282124"><span id="local-6989586621679282125"><span class="annot"><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-type">runCmd</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679282125"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Postable</span></span><span> </span><span class="annot"><a href="#local-6989586621679282124"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679282124"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282125"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span></span><span>
+</span><span id="line-34"></span><span id="local-6989586621679282445"><span id="local-6989586621679282446"><span class="annot"><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-type">runCmd</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679282446"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Postable</span></span><span> </span><span class="annot"><a href="#local-6989586621679282445"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679282445"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282446"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span></span><span>
 </span><span id="line-35"></span><span id="runCmd"><span class="annot"><span class="annottext">runCmd :: String -&gt; p -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var hs-var">runCmd</span></a></span></span><span> </span><span id="local-6989586621679282071"><span class="annot"><span class="annottext">cmd :: String
-</span><a href="#local-6989586621679282071"><span class="hs-identifier hs-var">cmd</span></a></span></span><span> </span><span id="local-6989586621679282070"><span class="annot"><span class="annottext">p :: p
-</span><a href="#local-6989586621679282070"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-36"></span><span>  </span><span id="local-6989586621679282069"><span class="annot"><span class="annottext">VehicleID
-</span><a href="#local-6989586621679282069"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Car m VehicleID
+</span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var hs-var">runCmd</span></a></span></span><span> </span><span id="local-6989586621679282392"><span class="annot"><span class="annottext">cmd :: String
+</span><a href="#local-6989586621679282392"><span class="hs-identifier hs-var">cmd</span></a></span></span><span> </span><span id="local-6989586621679282391"><span class="annot"><span class="annottext">p :: p
+</span><a href="#local-6989586621679282391"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-36"></span><span>  </span><span id="local-6989586621679282390"><span class="annot"><span class="annottext">VehicleID
+</span><a href="#local-6989586621679282390"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Car m VehicleID
 forall (m :: * -&gt; *). MonadReader CarEnv m =&gt; m VehicleID
 </span><a href="Tesla.Car.html#currentVehicleID"><span class="hs-identifier hs-var">currentVehicleID</span></a></span><span>
-</span><span id="line-37"></span><span>  </span><span id="local-6989586621679282067"><span class="annot"><span class="annottext">Value
-</span><a href="#local-6989586621679282067"><span class="hs-identifier hs-var">j</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Value</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String -&gt; p -&gt; Car m Value
+</span><span id="line-37"></span><span>  </span><span id="local-6989586621679282388"><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679282388"><span class="hs-identifier hs-var">j</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Value</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String -&gt; p -&gt; Car m Value
 forall (m :: * -&gt; *) j a.
 (HasTeslaAuth m, FromJSON j, Postable a, MonadIO m) =&gt;
 String -&gt; a -&gt; m j
 </span><a href="Tesla.Internal.HTTP.html#jpostAuth"><span class="hs-identifier hs-var">jpostAuth</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">VehicleID -&gt; String -&gt; String
 </span><a href="Tesla.Car.html#vehicleURL"><span class="hs-identifier hs-var">vehicleURL</span></a></span><span> </span><span class="annot"><span class="annottext">VehicleID
-</span><a href="#local-6989586621679282069"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">(String -&gt; String) -&gt; String -&gt; String
+</span><a href="#local-6989586621679282390"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">(String -&gt; String) -&gt; String -&gt; String
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="hs-string">&quot;command/&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282071"><span class="hs-identifier hs-var">cmd</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679282070"><span class="hs-identifier hs-var">p</span></a></span><span>
+</span><a href="#local-6989586621679282392"><span class="hs-identifier hs-var">cmd</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">p
+</span><a href="#local-6989586621679282391"><span class="hs-identifier hs-var">p</span></a></span><span>
 </span><span id="line-38"></span><span>  </span><span class="annot"><span class="annottext">CommandResponse -&gt; Car m CommandResponse
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(CommandResponse -&gt; Car m CommandResponse)
 -&gt; CommandResponse -&gt; Car m CommandResponse
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Value
-</span><a href="#local-6989586621679282067"><span class="hs-identifier hs-var">j</span></a></span><span> </span><span class="annot"><span class="annottext">Value -&gt; Getting (First Bool) Value Bool -&gt; Maybe Bool
+</span><a href="#local-6989586621679282388"><span class="hs-identifier hs-var">j</span></a></span><span> </span><span class="annot"><span class="annottext">Value -&gt; Getting (First Bool) Value Bool -&gt; Maybe Bool
 forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">VehicleID -&gt; Traversal' Value Value
 forall t. AsValue t =&gt; VehicleID -&gt; Traversal' t Value
@@ -87,7 +87,7 @@ forall a b. a -&gt; Either a b
 </span><span class="hs-identifier hs-var">Left</span></span><span> </span><span class="annot"><span class="annottext">(VehicleID -&gt; CommandResponse) -&gt; VehicleID -&gt; CommandResponse
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Value
-</span><a href="#local-6989586621679282067"><span class="hs-identifier hs-var">j</span></a></span><span> </span><span class="annot"><span class="annottext">Value -&gt; Getting VehicleID Value VehicleID -&gt; VehicleID
+</span><a href="#local-6989586621679282388"><span class="hs-identifier hs-var">j</span></a></span><span> </span><span class="annot"><span class="annottext">Value -&gt; Getting VehicleID Value VehicleID -&gt; VehicleID
 forall s a. s -&gt; Getting a s a -&gt; a
 </span><span class="hs-operator hs-var">^.</span></span><span> </span><span class="annot"><span class="annottext">VehicleID -&gt; Traversal' Value Value
 forall t. AsValue t =&gt; VehicleID -&gt; Traversal' t Value
@@ -108,30 +108,30 @@ forall t. AsPrimitive t =&gt; Prism' t VehicleID
 </span><span class="hs-identifier hs-var">_String</span></span><span>
 </span><span id="line-41"></span><span>
 </span><span id="line-42"></span><span class="hs-comment">-- | Run command without a payload</span><span>
-</span><span id="line-43"></span><span id="local-6989586621679282061"><span class="annot"><a href="Tesla.Car.Command.html#runCmd%27"><span class="hs-identifier hs-type">runCmd'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679282061"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282061"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-43"></span><span id="local-6989586621679282382"><span class="annot"><a href="Tesla.Car.Command.html#runCmd%27"><span class="hs-identifier hs-type">runCmd'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679282382"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282382"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
 </span><span id="line-44"></span><span id="runCmd%27"><span class="annot"><span class="annottext">runCmd' :: String -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.html#runCmd%27"><span class="hs-identifier hs-var hs-var">runCmd'</span></a></span></span><span> </span><span id="local-6989586621679282060"><span class="annot"><span class="annottext">cmd :: String
-</span><a href="#local-6989586621679282060"><span class="hs-identifier hs-var">cmd</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; ByteString -&gt; Car m CommandResponse
+</span><a href="Tesla.Car.Command.html#runCmd%27"><span class="hs-identifier hs-var hs-var">runCmd'</span></a></span></span><span> </span><span id="local-6989586621679282381"><span class="annot"><span class="annottext">cmd :: String
+</span><a href="#local-6989586621679282381"><span class="hs-identifier hs-var">cmd</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; ByteString -&gt; Car m CommandResponse
 forall (m :: * -&gt; *) p.
 (MonadIO m, Postable p) =&gt;
 String -&gt; p -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282060"><span class="hs-identifier hs-var">cmd</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679282381"><span class="hs-identifier hs-var">cmd</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString
 </span><span class="hs-identifier hs-var">BL.empty</span></span><span>
 </span><span id="line-45"></span><span>
 </span><span id="line-46"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FormValue</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-47"></span><span>  </span><span id="local-6989586621679282056"><span class="annot"><span class="annottext">renderFormValue :: Bool -&gt; ByteString
+</span><span id="line-47"></span><span>  </span><span id="local-6989586621679282377"><span class="annot"><span class="annottext">renderFormValue :: Bool -&gt; ByteString
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">renderFormValue</span></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">True</span></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;true&quot;</span></span><span>
 </span><span id="line-48"></span><span>  </span><span class="annot"><span class="hs-identifier hs-var">renderFormValue</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">False</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-string">&quot;false&quot;</span></span><span>
 </span><span id="line-49"></span><span>
 </span><span id="line-50"></span><span class="hs-comment">-- | Build a simple named command car that posts to the given named endpoint.</span><span>
 </span><span id="line-51"></span><span class="annot"><a href="Tesla.Car.Command.html#mkCommand"><span class="hs-identifier hs-type">mkCommand</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Q</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Dec</span></span><span class="hs-special">]</span><span>
 </span><span id="line-52"></span><span id="mkCommand"><span class="annot"><span class="annottext">mkCommand :: String -&gt; String -&gt; Q [Dec]
-</span><a href="Tesla.Car.Command.html#mkCommand"><span class="hs-identifier hs-var hs-var">mkCommand</span></a></span></span><span> </span><span id="local-6989586621679282054"><span class="annot"><span class="annottext">s :: String
-</span><a href="#local-6989586621679282054"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span id="local-6989586621679282053"><span class="annot"><span class="annottext">u :: String
-</span><a href="#local-6989586621679282053"><span class="hs-identifier hs-var">u</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-53"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679282052"><span class="annot"><span class="annottext">m :: Name
-</span><a href="#local-6989586621679282052"><span class="hs-identifier hs-var hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Name
+</span><a href="Tesla.Car.Command.html#mkCommand"><span class="hs-identifier hs-var hs-var">mkCommand</span></a></span></span><span> </span><span id="local-6989586621679282375"><span class="annot"><span class="annottext">s :: String
+</span><a href="#local-6989586621679282375"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span id="local-6989586621679282374"><span class="annot"><span class="annottext">u :: String
+</span><a href="#local-6989586621679282374"><span class="hs-identifier hs-var">u</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-53"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679282373"><span class="annot"><span class="annottext">m :: Name
+</span><a href="#local-6989586621679282373"><span class="hs-identifier hs-var hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="hs-string">&quot;m&quot;</span></span><span>
 </span><span id="line-54"></span><span>  </span><span class="annot"><span class="annottext">[Dec] -&gt; Q [Dec]
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
@@ -139,46 +139,46 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span id="line-55"></span><span>    </span><span class="annot"><span class="annottext">Name -&gt; Type -&gt; Dec
 </span><span class="hs-identifier hs-var">SigD</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282054"><span class="hs-identifier hs-var">s</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[TyVarBndr] -&gt; Cxt -&gt; Type -&gt; Type
+</span><a href="#local-6989586621679282375"><span class="hs-identifier hs-var">s</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[TyVarBndr] -&gt; Cxt -&gt; Type -&gt; Type
 </span><span class="hs-identifier hs-var">ForallT</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Name -&gt; TyVarBndr
 </span><span class="hs-identifier hs-var">PlainTV</span></span><span> </span><span class="annot"><span class="annottext">Name
-</span><a href="#local-6989586621679282052"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Type -&gt; Type -&gt; Type
+</span><a href="#local-6989586621679282373"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Type -&gt; Type -&gt; Type
 </span><span class="hs-identifier hs-var">AppT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Type
 </span><span class="hs-identifier hs-var">ConT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="hs-string">&quot;MonadIO&quot;</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Type
 </span><span class="hs-identifier hs-var">VarT</span></span><span> </span><span class="annot"><span class="annottext">Name
-</span><a href="#local-6989586621679282052"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679282373"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
 </span><span id="line-56"></span><span>                     </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Type -&gt; Type -&gt; Type
 </span><span class="hs-identifier hs-var">AppT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Type -&gt; Type -&gt; Type
 </span><span class="hs-identifier hs-var">AppT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Type
 </span><span class="hs-identifier hs-var">ConT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="hs-string">&quot;Car&quot;</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Type
 </span><span class="hs-identifier hs-var">VarT</span></span><span> </span><span class="annot"><span class="annottext">Name
-</span><a href="#local-6989586621679282052"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Type
+</span><a href="#local-6989586621679282373"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Type
 </span><span class="hs-identifier hs-var">ConT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="hs-string">&quot;CommandResponse&quot;</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-57"></span><span>    </span><span class="annot"><span class="annottext">Name -&gt; [Clause] -&gt; Dec
 </span><span class="hs-identifier hs-var">FunD</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282054"><span class="hs-identifier hs-var">s</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">[Pat] -&gt; Body -&gt; [Dec] -&gt; Clause
+</span><a href="#local-6989586621679282375"><span class="hs-identifier hs-var">s</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">[Pat] -&gt; Body -&gt; [Dec] -&gt; Clause
 </span><span class="hs-identifier hs-var">Clause</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Exp -&gt; Body
 </span><span class="hs-identifier hs-var">NormalB</span></span><span> </span><span class="annot"><span class="annottext">Exp
-</span><a href="#local-6989586621679282042"><span class="hs-identifier hs-var">expr</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">]</span><span class="hs-special">]</span><span>
-</span><span id="line-58"></span><span>  </span><span class="hs-keyword">where</span><span> </span><span id="local-6989586621679282042"><span class="annot"><span class="annottext">expr :: Exp
-</span><a href="#local-6989586621679282042"><span class="hs-identifier hs-var hs-var">expr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Pat] -&gt; Exp -&gt; Exp
+</span><a href="#local-6989586621679282363"><span class="hs-identifier hs-var">expr</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">]</span><span class="hs-special">]</span><span>
+</span><span id="line-58"></span><span>  </span><span class="hs-keyword">where</span><span> </span><span id="local-6989586621679282363"><span class="annot"><span class="annottext">expr :: Exp
+</span><a href="#local-6989586621679282363"><span class="hs-identifier hs-var hs-var">expr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Pat] -&gt; Exp -&gt; Exp
 </span><span class="hs-identifier hs-var">LamE</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Exp -&gt; Exp -&gt; Exp
 </span><span class="hs-identifier hs-var">AppE</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; Exp
 </span><span class="hs-identifier hs-var">VarE</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
 </span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="hs-string">&quot;runCmd'&quot;</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Lit -&gt; Exp
 </span><span class="hs-identifier hs-var">LitE</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Lit
 </span><span class="hs-identifier hs-var">StringL</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282053"><span class="hs-identifier hs-var">u</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679282374"><span class="hs-identifier hs-var">u</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
 </span><span id="line-59"></span><span>
-</span><span id="line-60"></span><span id="local-6989586621679282103"><span id="local-6989586621679282104"><span id="local-6989586621679282105"><span class="annot"><a href="Tesla.Car.Command.html#cmapM"><span class="hs-identifier hs-type">cmapM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Monoid</span></span><span> </span><span class="annot"><a href="#local-6989586621679282105"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Applicative</span></span><span> </span><span class="annot"><a href="#local-6989586621679282104"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679282103"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679282104"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282105"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679282103"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679282104"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282105"><span class="hs-identifier hs-type">b</span></a></span></span></span></span><span>
+</span><span id="line-60"></span><span id="local-6989586621679282424"><span id="local-6989586621679282425"><span id="local-6989586621679282426"><span class="annot"><a href="Tesla.Car.Command.html#cmapM"><span class="hs-identifier hs-type">cmapM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Monoid</span></span><span> </span><span class="annot"><a href="#local-6989586621679282426"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Applicative</span></span><span> </span><span class="annot"><a href="#local-6989586621679282425"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679282424"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679282425"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282426"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679282424"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679282425"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679282426"><span class="hs-identifier hs-type">b</span></a></span></span></span></span><span>
 </span><span id="line-61"></span><span id="cmapM"><span class="annot"><span class="annottext">cmapM :: (a -&gt; f b) -&gt; [a] -&gt; f b
-</span><a href="Tesla.Car.Command.html#cmapM"><span class="hs-identifier hs-var hs-var">cmapM</span></a></span></span><span> </span><span id="local-6989586621679282035"><span class="annot"><span class="annottext">f :: a -&gt; f b
-</span><a href="#local-6989586621679282035"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679282034"><span class="annot"><span class="annottext">xs :: [a]
-</span><a href="#local-6989586621679282034"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[b] -&gt; b
+</span><a href="Tesla.Car.Command.html#cmapM"><span class="hs-identifier hs-var hs-var">cmapM</span></a></span></span><span> </span><span id="local-6989586621679282356"><span class="annot"><span class="annottext">f :: a -&gt; f b
+</span><a href="#local-6989586621679282356"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679282355"><span class="annot"><span class="annottext">xs :: [a]
+</span><a href="#local-6989586621679282355"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[b] -&gt; b
 forall a. Monoid a =&gt; [a] -&gt; a
 </span><span class="hs-identifier hs-var">mconcat</span></span><span> </span><span class="annot"><span class="annottext">([b] -&gt; b) -&gt; f [b] -&gt; f b
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
@@ -187,53 +187,53 @@ forall (t :: * -&gt; *) (f :: * -&gt; *) a b.
 (Traversable t, Applicative f) =&gt;
 (a -&gt; f b) -&gt; t a -&gt; f (t b)
 </span><span class="hs-identifier hs-var">traverse</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; f b
-</span><a href="#local-6989586621679282035"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">[a]
-</span><a href="#local-6989586621679282034"><span class="hs-identifier hs-var">xs</span></a></span><span>
+</span><a href="#local-6989586621679282356"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679282355"><span class="hs-identifier hs-var">xs</span></a></span><span>
 </span><span id="line-62"></span><span>
 </span><span id="line-63"></span><span class="hs-comment">-- | Build a bunch of commands from a list of named endpoints, defining</span><span>
 </span><span id="line-64"></span><span class="hs-comment">-- functions by removing the common prefix.</span><span>
 </span><span id="line-65"></span><span class="annot"><a href="Tesla.Car.Command.html#mkCommands"><span class="hs-identifier hs-type">mkCommands</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Q</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Dec</span></span><span class="hs-special">]</span><span>
 </span><span id="line-66"></span><span id="mkCommands"><span class="annot"><span class="annottext">mkCommands :: [String] -&gt; Q [Dec]
-</span><a href="Tesla.Car.Command.html#mkCommands"><span class="hs-identifier hs-var hs-var">mkCommands</span></a></span></span><span> </span><span id="local-6989586621679282031"><span class="annot"><span class="annottext">targets :: [String]
-</span><a href="#local-6989586621679282031"><span class="hs-identifier hs-var">targets</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Q [Dec]) -&gt; [String] -&gt; Q [Dec]
+</span><a href="Tesla.Car.Command.html#mkCommands"><span class="hs-identifier hs-var hs-var">mkCommands</span></a></span></span><span> </span><span id="local-6989586621679282352"><span class="annot"><span class="annottext">targets :: [String]
+</span><a href="#local-6989586621679282352"><span class="hs-identifier hs-var">targets</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Q [Dec]) -&gt; [String] -&gt; Q [Dec]
 forall b (f :: * -&gt; *) a.
 (Monoid b, Applicative f) =&gt;
 (a -&gt; f b) -&gt; [a] -&gt; f b
 </span><a href="Tesla.Car.Command.html#cmapM"><span class="hs-identifier hs-var">cmapM</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; Q [Dec]
-</span><a href="#local-6989586621679282030"><span class="hs-identifier hs-var">easyCMD</span></a></span><span> </span><span class="annot"><span class="annottext">[String]
-</span><a href="#local-6989586621679282031"><span class="hs-identifier hs-var">targets</span></a></span><span>
+</span><a href="#local-6989586621679282351"><span class="hs-identifier hs-var">easyCMD</span></a></span><span> </span><span class="annot"><span class="annottext">[String]
+</span><a href="#local-6989586621679282352"><span class="hs-identifier hs-var">targets</span></a></span><span>
 </span><span id="line-67"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-68"></span><span>    </span><span id="local-6989586621679282029"><span class="annot"><span class="annottext">prefix :: String
-</span><a href="#local-6989586621679282029"><span class="hs-identifier hs-var hs-var">prefix</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[String] -&gt; String
-</span><a href="#local-6989586621679282028"><span class="hs-identifier hs-var">commonPrefix</span></a></span><span> </span><span class="annot"><span class="annottext">[String]
-</span><a href="#local-6989586621679282031"><span class="hs-identifier hs-var">targets</span></a></span><span>
-</span><span id="line-69"></span><span>    </span><span class="annot"><a href="#local-6989586621679282030"><span class="hs-identifier hs-type">easyCMD</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Q</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Dec</span></span><span class="hs-special">]</span><span>
-</span><span id="line-70"></span><span>    </span><span id="local-6989586621679282030"><span class="annot"><span class="annottext">easyCMD :: String -&gt; Q [Dec]
-</span><a href="#local-6989586621679282030"><span class="hs-identifier hs-var hs-var">easyCMD</span></a></span></span><span> </span><span id="local-6989586621679282027"><span class="annot"><span class="annottext">target :: String
-</span><a href="#local-6989586621679282027"><span class="hs-identifier hs-var">target</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-71"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679282026"><span class="annot"><span class="annottext">s :: String
-</span><a href="#local-6989586621679282026"><span class="hs-identifier hs-var hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; String -&gt; String
+</span><span id="line-68"></span><span>    </span><span id="local-6989586621679282350"><span class="annot"><span class="annottext">prefix :: String
+</span><a href="#local-6989586621679282350"><span class="hs-identifier hs-var hs-var">prefix</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[String] -&gt; String
+</span><a href="#local-6989586621679282349"><span class="hs-identifier hs-var">commonPrefix</span></a></span><span> </span><span class="annot"><span class="annottext">[String]
+</span><a href="#local-6989586621679282352"><span class="hs-identifier hs-var">targets</span></a></span><span>
+</span><span id="line-69"></span><span>    </span><span class="annot"><a href="#local-6989586621679282351"><span class="hs-identifier hs-type">easyCMD</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Q</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Dec</span></span><span class="hs-special">]</span><span>
+</span><span id="line-70"></span><span>    </span><span id="local-6989586621679282351"><span class="annot"><span class="annottext">easyCMD :: String -&gt; Q [Dec]
+</span><a href="#local-6989586621679282351"><span class="hs-identifier hs-var hs-var">easyCMD</span></a></span></span><span> </span><span id="local-6989586621679282348"><span class="annot"><span class="annottext">target :: String
+</span><a href="#local-6989586621679282348"><span class="hs-identifier hs-var">target</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-71"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679282347"><span class="annot"><span class="annottext">s :: String
+</span><a href="#local-6989586621679282347"><span class="hs-identifier hs-var hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; String -&gt; String
 forall a. Int -&gt; [a] -&gt; [a]
 </span><span class="hs-identifier hs-var">drop</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Int
 forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
 </span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282029"><span class="hs-identifier hs-var">prefix</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282027"><span class="hs-identifier hs-var">target</span></a></span><span>
-</span><span id="line-72"></span><span>          </span><span id="local-6989586621679282023"><span class="annot"><span class="annottext">mn :: String
-</span><a href="#local-6989586621679282023"><span class="hs-identifier hs-var hs-var">mn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Identifier String -&gt; String
+</span><a href="#local-6989586621679282350"><span class="hs-identifier hs-var">prefix</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679282348"><span class="hs-identifier hs-var">target</span></a></span><span>
+</span><span id="line-72"></span><span>          </span><span id="local-6989586621679282344"><span class="annot"><span class="annottext">mn :: String
+</span><a href="#local-6989586621679282344"><span class="hs-identifier hs-var hs-var">mn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Identifier String -&gt; String
 </span><span class="hs-identifier hs-var">toCamel</span></span><span> </span><span class="annot"><span class="annottext">(Identifier String -&gt; String)
 -&gt; (String -&gt; Identifier String) -&gt; String -&gt; String
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Identifier String
 </span><span class="hs-identifier hs-var">fromSnake</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282026"><span class="hs-identifier hs-var">s</span></a></span><span>
+</span><a href="#local-6989586621679282347"><span class="hs-identifier hs-var">s</span></a></span><span>
 </span><span id="line-73"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; String -&gt; Q [Dec]
 </span><a href="Tesla.Car.Command.html#mkCommand"><span class="hs-identifier hs-var">mkCommand</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282023"><span class="hs-identifier hs-var">mn</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282027"><span class="hs-identifier hs-var">target</span></a></span><span>
+</span><a href="#local-6989586621679282344"><span class="hs-identifier hs-var">mn</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679282348"><span class="hs-identifier hs-var">target</span></a></span><span>
 </span><span id="line-74"></span><span>
-</span><span id="line-75"></span><span>    </span><span id="local-6989586621679282028"><span class="annot"><span class="annottext">commonPrefix :: [String] -&gt; String
-</span><a href="#local-6989586621679282028"><span class="hs-identifier hs-var hs-var">commonPrefix</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Char) -&gt; [String] -&gt; String
+</span><span id="line-75"></span><span>    </span><span id="local-6989586621679282349"><span class="annot"><span class="annottext">commonPrefix :: [String] -&gt; String
+</span><a href="#local-6989586621679282349"><span class="hs-identifier hs-var hs-var">commonPrefix</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Char) -&gt; [String] -&gt; String
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Char
 forall a. [a] -&gt; a
@@ -242,45 +242,45 @@ forall a. [a] -&gt; a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Bool) -&gt; [String] -&gt; [String]
 forall a. (a -&gt; Bool) -&gt; [a] -&gt; [a]
-</span><span class="hs-identifier hs-var">takeWhile</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679282020"><span class="annot"><span class="annottext">x :: Char
-</span><a href="#local-6989586621679282020"><span class="hs-identifier hs-var">x</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679282019"><span class="annot"><span class="annottext">xs :: String
-</span><a href="#local-6989586621679282019"><span class="hs-identifier hs-var">xs</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Char -&gt; Bool) -&gt; String -&gt; Bool
+</span><span class="hs-identifier hs-var">takeWhile</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679282341"><span class="annot"><span class="annottext">x :: Char
+</span><a href="#local-6989586621679282341"><span class="hs-identifier hs-var">x</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679282340"><span class="annot"><span class="annottext">xs :: String
+</span><a href="#local-6989586621679282340"><span class="hs-identifier hs-var">xs</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Char -&gt; Bool) -&gt; String -&gt; Bool
 forall (t :: * -&gt; *) a. Foldable t =&gt; (a -&gt; Bool) -&gt; t a -&gt; Bool
 </span><span class="hs-identifier hs-var">all</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char -&gt; Char -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">Char
-</span><a href="#local-6989586621679282020"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679282019"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">([String] -&gt; [String])
+</span><a href="#local-6989586621679282341"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679282340"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">([String] -&gt; [String])
 -&gt; ([String] -&gt; [String]) -&gt; [String] -&gt; [String]
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">[String] -&gt; [String]
 forall (f :: * -&gt; *) a. (Foldable f, Functor f) =&gt; f [a] -&gt; [f a]
-</span><a href="#local-6989586621679282017"><span class="hs-identifier hs-var">tp</span></a></span><span>
+</span><a href="#local-6989586621679282338"><span class="hs-identifier hs-var">tp</span></a></span><span>
 </span><span id="line-76"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-77"></span><span>        </span><span id="local-6989586621679282017"><span class="annot"><span class="annottext">tp :: f [a] -&gt; [f a]
-</span><a href="#local-6989586621679282017"><span class="hs-identifier hs-var hs-var">tp</span></a></span></span><span> </span><span id="local-6989586621679282016"><span class="annot"><span class="annottext">xs :: f [a]
-</span><a href="#local-6989586621679282016"><span class="hs-identifier hs-var">xs</span></a></span></span><span>
+</span><span id="line-77"></span><span>        </span><span id="local-6989586621679282338"><span class="annot"><span class="annottext">tp :: f [a] -&gt; [f a]
+</span><a href="#local-6989586621679282338"><span class="hs-identifier hs-var hs-var">tp</span></a></span></span><span> </span><span id="local-6989586621679282337"><span class="annot"><span class="annottext">xs :: f [a]
+</span><a href="#local-6989586621679282337"><span class="hs-identifier hs-var">xs</span></a></span></span><span>
 </span><span id="line-78"></span><span>          </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">([a] -&gt; Bool) -&gt; f [a] -&gt; Bool
 forall (t :: * -&gt; *) a. Foldable t =&gt; (a -&gt; Bool) -&gt; t a -&gt; Bool
 </span><span class="hs-identifier hs-var">any</span></span><span> </span><span class="annot"><span class="annottext">[a] -&gt; Bool
 forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Bool
 </span><span class="hs-identifier hs-var">null</span></span><span> </span><span class="annot"><span class="annottext">f [a]
-</span><a href="#local-6989586621679282016"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679282337"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
 </span><span id="line-79"></span><span>          </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[a] -&gt; a
 forall a. [a] -&gt; a
 </span><span class="hs-identifier hs-var">head</span></span><span> </span><span class="annot"><span class="annottext">([a] -&gt; a) -&gt; f [a] -&gt; f a
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">f [a]
-</span><a href="#local-6989586621679282016"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">f a -&gt; [f a] -&gt; [f a]
+</span><a href="#local-6989586621679282337"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">f a -&gt; [f a] -&gt; [f a]
 forall a. a -&gt; [a] -&gt; [a]
 </span><span class="hs-glyph hs-var">:</span></span><span> </span><span class="annot"><span class="annottext">f [a] -&gt; [f a]
-</span><a href="#local-6989586621679282017"><span class="hs-identifier hs-var">tp</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[a] -&gt; [a]
+</span><a href="#local-6989586621679282338"><span class="hs-identifier hs-var">tp</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[a] -&gt; [a]
 forall a. [a] -&gt; [a]
 </span><span class="hs-identifier hs-var">tail</span></span><span> </span><span class="annot"><span class="annottext">([a] -&gt; [a]) -&gt; f [a] -&gt; f [a]
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">f [a]
-</span><a href="#local-6989586621679282016"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679282337"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-80"></span><span>
 </span><span id="line-81"></span><span class="hs-comment">-- | Make commands with given names.</span><span>
 </span><span id="line-82"></span><span class="annot"><a href="Tesla.Car.Command.html#mkNamedCommands"><span class="hs-identifier hs-type">mkNamedCommands</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Q</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Dec</span></span><span class="hs-special">]</span><span>
