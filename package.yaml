@@ -1,5 +1,5 @@
 name:                tesla
-version:             0.3.0.1
+version:             0.3.1.0
 github:              "dustin/tesla"
 license:             BSD3
 author:              "Dustin Sallings"
@@ -37,6 +37,12 @@ dependencies:
 - exceptions
 - monad-logger
 - unliftio-core
+- random
+- memory
+- cryptonite
+- base64-bytestring
+- tagsoup
+- retry
 
 library:
   source-dirs: src

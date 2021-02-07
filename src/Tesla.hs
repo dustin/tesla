@@ -22,46 +22,130 @@ module Tesla
 
 
 import           Control.Lens
-import           Control.Monad.IO.Class (MonadIO (..))
-import           Data.Aeson             (Value (..))
-import           Data.Aeson.Lens        (key, _Array, _Integer, _String)
-import           Data.Foldable          (asum)
-import           Data.Map.Strict        (Map)
-import qualified Data.Map.Strict        as Map
-import           Data.Maybe             (catMaybes)
-import           Data.Text              (Text)
-import           Network.Wreq           (FormParam (..))
+import           Control.Monad              (when)
+import           Control.Monad.Catch        (SomeException)
+import           Control.Monad.IO.Class     (MonadIO (..))
+import           Control.Retry              (defaultLogMsg, exponentialBackoff, limitRetries, logRetries, recovering)
+import           Crypto.Hash                (SHA256 (..), hashWith)
+import           Data.Aeson                 (Value (..), encode)
+import           Data.Aeson.Lens            (_Array, _Integer, _String, key)
+import qualified Data.ByteArray             as BA
+import qualified Data.ByteString            as BS
+import qualified Data.ByteString.Base64.URL as B64
+import qualified Data.ByteString.Char8      as BC
+import qualified Data.ByteString.Lazy       as BL
+import           Data.Foldable              (asum)
+import           Data.Map.Strict            (Map)
+import qualified Data.Map.Strict            as Map
+import           Data.Maybe                 (catMaybes, mapMaybe)
+import           Data.Text                  (Text)
+import qualified Data.Text                  as T
+import qualified Data.Text.Encoding         as TE
+import           Network.Wreq               (FormParam (..), asJSON, checkResponse, defaults, header, hrRedirects,
+                                             params, redirects, responseBody, responseHeader)
+import qualified Network.Wreq.Session       as Sess
+import           System.Random
+import           Text.HTML.TagSoup          (fromAttrib, isTagOpenName, parseTags)
 
 import           Tesla.Auth
 import           Tesla.Internal.HTTP
 
 baseURL :: String
-baseURL = "https://owner-api.teslamotors.com/"
+baseURL =  "https://owner-api.teslamotors.com/"
 authURL :: String
-authURL = baseURL <> "oauth/token"
+authURL = "https://auth.tesla.com/oauth2/v3/authorize"
+authTokenURL :: String
+authTokenURL = "https://owner-api.teslamotors.com/oauth/token"
 authRefreshURL :: String
-authRefreshURL = baseURL <> "oauth/token"
+authRefreshURL = "https://auth.tesla.com/oauth2/v3/token"
 productsURL :: String
 productsURL = baseURL <> "api/1/products"
 
-
 -- | Authenticate to the Tesla service.
 authenticate :: AuthInfo -> IO AuthResponse
-authenticate AuthInfo{..} =
-  jpostWith defOpts authURL ["grant_type" := ("password" :: String),
-                             "client_id" := _clientID,
-                             "client_secret" := _clientSecret,
-                             "email" := _email,
-                             "password" := _password]
+authenticate ai@AuthInfo{..} = recovering policy [retryOnAnyStatus] $ \_ -> do
+  sess <- Sess.newSession
+  verifier <- BS.pack . take 86 . randoms <$> getStdGen
+  state <- clean64 . BS.pack . take 16 . randoms <$> getStdGen
+  authenticate' sess verifier state ai
+
+  where
+    policy = exponentialBackoff 2000000 <> limitRetries 9
+    retryOnAnyStatus = logRetries retryOnAnyError reportError
+    retryOnAnyError :: SomeException -> IO Bool
+    retryOnAnyError _ = pure True
+    reportError retriedOrCrashed err retryStatus = putStrLn $ defaultLogMsg retriedOrCrashed err retryStatus
+
+clean64 :: BC.ByteString -> Text
+clean64 = TE.decodeUtf8 . BS.reverse . BS.dropWhile (== 61) . BS.reverse . B64.encode
+
+authenticate' :: Sess.Session -> BC.ByteString -> Text -> AuthInfo -> IO AuthResponse
+authenticate' sess verifier state AuthInfo{..} = do
+  -- First, grab the form.
+  form <- formFields . BL.toStrict . view responseBody <$> Sess.getWith (opts & params .~ gparams) sess authURL
+  -- There are required hidden fields -- if we didn't get them, we got the wrong http response
+  when (null form) $ fail "tesla didn't return login form"
+
+  -- Now we post the form with all of our credentials.
+  let form' = form <> ["identity" := _email, "credential" := _password]
+  r2 <- Sess.customHistoriedPayloadMethodWith "POST" (fopts
+                                                       & params .~ gparams
+                                                       & redirects .~ 3
+                                                       & checkResponse ?~ (\_ _ -> pure ())
+                                                     ) sess authURL form'
+  -- Extract the "code" from the URL we were redirected to... we can't actually follow the redirect :/
+  let (Just code) = r2 ^? hrRedirects . folded . _2 . responseHeader "Location" . to (xcode . BC.unpack)
+  let jreq = encode $ Object (mempty
+                               & at "grant_type" ?~ "authorization_code"
+                               & at "client_id" ?~ "ownerapi"
+                               & at "code" ?~ String code
+                               & at "code_verifier" ?~ String verifierHash
+                               & at "redirect_uri" ?~ "https://auth.tesla.com/void/callback")
+
+  -- Posting that code and other junk back to the token URL gets us temporary credentials.
+  token <- _access_token . view responseBody <$> (Sess.postWith jopts sess authRefreshURL jreq >>= asJSON)
+
+  -- And we finally get the useful credentials by exchanging the temporary credentials.
+  let jreq2 = encode $ Object (mempty
+                               & at "grant_type" ?~ "urn:ietf:params:oauth:grant-type:jwt-bearer"
+                               & at "client_id" ?~ String (T.pack _clientID)
+                              )
+
+  jpostWith (jopts & header "Authorization" .~ ["bearer " <> BC.pack token]) authTokenURL jreq2
+
+  where
+    verifierHash = clean64 . BS.pack . BA.unpack $ hashWith SHA256 verifier
+    gparams = [("client_id", "ownerapi"),
+                 ("code_challenge", verifierHash),
+                 ("code_challenge_method", "S256"),
+                 ("redirect_uri", "https://auth.tesla.com/void/callback"),
+                 ("response_type", "code"),
+                 ("scope", "openid email offline_access"),
+                 ("state", state)]
+    -- extract all the non-empty form fields from an HTML response
+    formFields = map (\t -> fromAttrib "name" t := fromAttrib "value" t)
+                 . filter (\t -> isTagOpenName "input" t && fromAttrib "value" t /= "")
+                 . parseTags
+    opts = defaults
+           & header "Accept" .~ ["*/*"]
+           & header "User-Agent" .~ [ua]
+           & header "x-tesla-user-agent" .~ [userAgent]
+           & header "X-Requested-With" .~ ["com.teslamotors.tesla"]
+    fopts = opts & header "content-type" .~ ["application/x-www-form-urlencoded"]
+    jopts = opts & header "content-type" .~ ["application/json"]
+    ua = "Mozilla/5.0 (Linux; Android 10; Pixel 3 Build/QQ2A.200305.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/85.0.4183.81 Mobile Safari/537.36"
+    -- xua = "TeslaApp/3.10.9-433/adff2e065/android/10"
+    xcode u = head . mapMaybe (\s -> let [k,v] = T.splitOn "=" s in if k == "code" then Just v else Nothing) $ T.splitOn "&" (T.splitOn "?" (T.pack u) !! 1)
 
 -- | Refresh authentication credentials using a refresh token.
 refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
 refreshAuth AuthInfo{..} AuthResponse{..} =
-  jpostWith defOpts authRefreshURL ["grant_type" := ("refresh_token" :: String),
-                                    "client_id" := _clientID,
-                                    "client_secret" := _clientSecret,
-                                    "refresh_token" := _refresh_token]
-
+  jpostWith defOpts authRefreshURL (encode $ Object (mempty
+                                                     & at "grant_type" ?~ "refresh_token"
+                                                     & at "client_id" ?~ "ownerapi"
+                                                     & at "refresh_token" ?~ String (T.pack _refresh_token)
+                                                     & at "scope" ?~ "openid email offline_access"
+                                                    ))
 
 -- | A VehicleID.
 type VehicleID = Text
