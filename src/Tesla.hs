@@ -149,12 +149,7 @@ jOpts :: Options
 jOpts = aOpts & header "content-type" .~ ["application/json"]
 
 aOpts :: Options
-aOpts = defaults
-        & header "Accept" .~ ["*/*"]
-        & header "User-Agent" .~ [ua]
-        & header "x-tesla-user-agent" .~ [userAgent]
-        & header "X-Requested-With" .~ ["com.teslamotors.tesla"]
-  where ua = "Mozilla/5.0 (Linux; Android 10; Pixel 3 Build/QQ2A.200305.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/85.0.4183.81 Mobile Safari/537.36"
+aOpts = defaults & header "Accept" .~ ["*/*"]
 
 -- | A VehicleID.
 type VehicleID = Text
