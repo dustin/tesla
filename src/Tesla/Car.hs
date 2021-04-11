@@ -23,7 +23,7 @@ module Tesla.Car (
   Car, runCar, runNamedCar,
   VehicleID,
   -- * Requests
-  vehicleData, nearbyChargers,
+  vehicleData, nearbyChargers, vehicleStatus, isAwake,
   -- * Convenience functions for examining VehicleData
   VehicleData, isUserPresent, isCharging, teslaTS, maybeTeslaTS,
   Door(..), OpenState(..), _Open, _Closed, doors, openDoors,
@@ -39,6 +39,7 @@ module Tesla.Car (
 
 import           Control.Exception       (Exception, throwIO)
 import           Control.Lens
+import Data.Foldable (fold)
 import           Control.Monad           ((<=<))
 import           Control.Monad.Catch     (MonadCatch (..), MonadMask (..), MonadThrow (..))
 import           Control.Monad.IO.Class  (MonadIO (..))
@@ -47,7 +48,7 @@ import           Control.Monad.Logger    (MonadLogger)
 import           Control.Monad.Reader    (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson              (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
                                           fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
-import           Data.Aeson.Lens         (key, values, _Bool, _Integer)
+import           Data.Aeson.Lens         (key, values, _Bool, _Integer, _String)
 import qualified Data.ByteString.Lazy    as BL
 import qualified Data.Map.Strict         as Map
 import           Data.Maybe              (fromJust, fromMaybe)
@@ -124,6 +125,18 @@ runNamedCar name ai f = do
 -- Lens when you need it but some convenience methods for common
 -- | A VehicleIDaccesses are available in this module.
 type VehicleData = BL.ByteString
+
+-- | vehicleStatus returns the current status of the current vehicle.
+vehicleStatus :: MonadIO m => Car m VehicleState
+vehicleStatus = do
+  v <- currentVehicleID
+  r <- jgetAuth (fold [baseURL, "api/1/vehicles/", unpack v])
+  let (Just x) = (r :: Value) ^? (key "response" . key "state" . _String . to vsFromString)
+  pure x
+
+-- | isAwake returns true if the current vehicle is awake and online.
+isAwake :: MonadIO m => Car m Bool
+isAwake = (== VOnline) <$> vehicleStatus
 
 -- | Fetch the VehicleData.
 vehicleData :: MonadIO m => Car m VehicleData

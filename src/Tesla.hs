@@ -13,8 +13,10 @@ documented at https://www.teslaapi.io/
 
 module Tesla
     ( authenticate, refreshAuth, AuthResponse(..),
-      Product(..), vehicleName, vehicleID, energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
+      Product(..), vehicleName, vehicleID, vehicleState,
+      energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
       VehicleID, vehicles, products,
+      VehicleState(..), vsFromString,
       EnergyID, energyIDs,
       fromToken, authOpts, baseURL,
       decodeProducts
@@ -123,7 +125,7 @@ authenticate' sess verifier state ai@AuthInfo{..} = do
     xcode u = head . mapMaybe (\s -> let [k,v] = T.splitOn "=" s in if k == "code" then Just v else Nothing) $ T.splitOn "&" (T.splitOn "?" (T.pack u) !! 1)
 
 translateCreds :: AuthInfo -> AuthResponse -> IO AuthResponse
-translateCreds ai@AuthInfo{..} AuthResponse{..} = do
+translateCreds AuthInfo{..} AuthResponse{..} = do
   -- 4. And we finally get the useful credentials by exchanging the temporary credentials.
   let jreq2 = encode $ Object (mempty
                                & at "grant_type" ?~ "urn:ietf:params:oauth:grant-type:jwt-bearer"
@@ -157,8 +159,19 @@ type VehicleID = Text
 -- | An energy site ID.
 type EnergyID = Integer
 
+-- | Possible states a vehicle may be in.
+data VehicleState = VOnline | VOffline | VAsleep | VWaking | VUnknown
+  deriving (Show, Read, Eq)
+
+vsFromString :: Text -> VehicleState
+vsFromString "online" = VOnline
+vsFromString "offline" = VOffline
+vsFromString "asleep" = VAsleep
+vsFromString "waking" = VWaking
+vsFromString _ = VUnknown
+
 -- | Tesla Product Types.
-data Product = ProductVehicle { _vehicleName :: Text, _vehicleID :: VehicleID }
+data Product = ProductVehicle { _vehicleName :: Text, _vehicleID :: VehicleID, _vehicleState :: VehicleState }
              | ProductEnergy { _energyID :: EnergyID }
              | ProductPowerWall deriving (Show, Read, Eq)
 
@@ -170,7 +183,10 @@ decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to pro
   where
     prod o = asum [ prodCar, prodSolar, Nothing ]
       where
-        prodCar = ProductVehicle <$> (o ^? key "display_name" . _String) <*> (o ^? key "id_s" . _String)
+        prodCar = ProductVehicle
+                  <$> (o ^? key "display_name" . _String)
+                  <*> (o ^? key "id_s" . _String)
+                  <*> (o ^? key "state" . _String . to vsFromString)
         prodSolar = ProductEnergy <$> (o ^? key "energy_site_id" . _Integer)
 
 -- | Get all products associated with this account.
@@ -179,7 +195,7 @@ products ai = decodeProducts <$> jgetWith (authOpts ai) productsURL
 
 -- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: [Product] -> Map Text Text
-vehicles = Map.fromList . toListOf (folded . _ProductVehicle)
+vehicles = Map.fromList . fmap (\(a,b,_) -> (a,b)) . toListOf (folded . _ProductVehicle)
 
 -- | Get a list of Solar ID installations.
 energyIDs :: [Product] -> [EnergyID]
