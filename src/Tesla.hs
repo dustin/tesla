@@ -14,7 +14,8 @@ documented at https://www.teslaapi.io/
 module Tesla
     ( authenticate, refreshAuth, AuthResponse(..),
       Product(..), vehicleName, vehicleID, vehicleState,
-      energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
+      energyID, _ProductVehicle, _ProductEnergy, _ProductPowerwall,
+      pwBatteryPower, pwCharged, pwEnergyLeft, pwID, pwName, pwTotal,
       VehicleID, vehicles, products, productsRaw,
       VehicleState(..), vsFromString,
       EnergyID, energyIDs,
@@ -30,7 +31,7 @@ import           Control.Monad.IO.Class     (MonadIO (..))
 import           Control.Retry              (defaultLogMsg, exponentialBackoff, limitRetries, logRetries, recovering)
 import           Crypto.Hash                (SHA256 (..), hashWith)
 import           Data.Aeson                 (FromJSON, Value (..), encode)
-import           Data.Aeson.Lens            (_Array, _Integer, _String, key)
+import           Data.Aeson.Lens            (_Array, _Integer, _Double, _String, key)
 import qualified Data.ByteArray             as BA
 import qualified Data.ByteString            as BS
 import qualified Data.ByteString.Base64.URL as B64
@@ -173,20 +174,34 @@ vsFromString _ = VUnknown
 -- | Tesla Product Types.
 data Product = ProductVehicle { _vehicleName :: Text, _vehicleID :: VehicleID, _vehicleState :: VehicleState }
              | ProductEnergy { _energyID :: EnergyID }
-             | ProductPowerWall deriving (Show, Read, Eq)
+             | ProductPowerwall { _pwID :: EnergyID
+                                , _pwBatteryPower :: Double
+                                , _pwEnergyLeft :: Double
+                                , _pwCharged :: Double
+                                , _pwName :: Text
+                                , _pwTotal :: Double }
+             deriving (Show, Read, Eq)
 
 makePrisms ''Product
 makeLenses ''Product
 
+-- | Decode a products response into a list of products.
 decodeProducts :: Value -> [Product]
 decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to prod)
   where
-    prod o = asum [ prodCar, prodSolar, Nothing ]
+    prod o = asum [ prodCar, prodPowerwall, prodSolar, Nothing ]
       where
         prodCar = ProductVehicle
                   <$> (o ^? key "display_name" . _String)
                   <*> (o ^? key "id_s" . _String)
                   <*> (o ^? key "state" . _String . to vsFromString)
+        prodPowerwall = ProductPowerwall
+                        <$> (o ^? key "energy_site_id" . _Integer)
+                        <*> (o ^? key "battery_power" . _Double)
+                        <*> (o ^? key "energy_left" . _Double)
+                        <*> (o ^? key "percentage_charged" . _Double)
+                        <*> (o ^? key "site_name" . _String)
+                        <*> (o ^? key "total_pack_energy" . _Double)
         prodSolar = ProductEnergy <$> (o ^? key "energy_site_id" . _Integer)
 
 -- | productsRaw retrieves the complete response for products
