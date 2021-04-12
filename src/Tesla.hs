@@ -15,7 +15,7 @@ module Tesla
     ( authenticate, refreshAuth, AuthResponse(..),
       Product(..), vehicleName, vehicleID, vehicleState,
       energyID, _ProductVehicle, _ProductEnergy, _ProductPowerWall,
-      VehicleID, vehicles, products,
+      VehicleID, vehicles, products, productsRaw,
       VehicleState(..), vsFromString,
       EnergyID, energyIDs,
       fromToken, authOpts, baseURL,
@@ -29,7 +29,7 @@ import           Control.Monad.Catch        (SomeException)
 import           Control.Monad.IO.Class     (MonadIO (..))
 import           Control.Retry              (defaultLogMsg, exponentialBackoff, limitRetries, logRetries, recovering)
 import           Crypto.Hash                (SHA256 (..), hashWith)
-import           Data.Aeson                 (Value (..), encode)
+import           Data.Aeson                 (FromJSON, Value (..), encode)
 import           Data.Aeson.Lens            (_Array, _Integer, _String, key)
 import qualified Data.ByteArray             as BA
 import qualified Data.ByteString            as BS
@@ -65,7 +65,7 @@ productsURL = baseURL <> "api/1/products"
 
 -- | Authenticate to the Tesla service.
 authenticate :: AuthInfo -> IO AuthResponse
-authenticate ai@AuthInfo{..} = recovering policy [retryOnAnyStatus] $ \_ -> do
+authenticate ai = recovering policy [retryOnAnyStatus] $ \_ -> do
   sess <- Sess.newSession
   verifier <- BS.pack . take 86 . randoms <$> getStdGen
   state <- clean64 . BS.pack . take 16 . randoms <$> getStdGen
@@ -138,7 +138,7 @@ translateCreds AuthInfo{..} AuthResponse{..} = do
 
 -- | Refresh authentication credentials using a refresh token.
 refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
-refreshAuth ai@AuthInfo{..} AuthResponse{..} = do
+refreshAuth ai AuthResponse{..} = do
   ar <- jpostWith jOpts authRefreshURL (encode $ Object (mempty
                                                          & at "grant_type" ?~ "refresh_token"
                                                          & at "client_id" ?~ "ownerapi"
@@ -189,9 +189,13 @@ decodeProducts = catMaybes . toListOf (key "response" . _Array . folded . to pro
                   <*> (o ^? key "state" . _String . to vsFromString)
         prodSolar = ProductEnergy <$> (o ^? key "energy_site_id" . _Integer)
 
+-- | productsRaw retrieves the complete response for products
+productsRaw :: (FromJSON j, MonadIO m) => AuthInfo -> m j
+productsRaw ai = jgetWith (authOpts ai) productsURL
+
 -- | Get all products associated with this account.
 products :: MonadIO m => AuthInfo -> m [Product]
-products ai = decodeProducts <$> jgetWith (authOpts ai) productsURL
+products = fmap decodeProducts . productsRaw
 
 -- | Get a mapping of vehicle name to vehicle ID.
 vehicles :: [Product] -> Map Text Text
