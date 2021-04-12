@@ -43,7 +43,7 @@ testOpenDoors =  assertEqual "open" [RearTrunk] (openDoors sampleVehicleData)
 testParseProducts :: Assertion
 testParseProducts = do
   let prods = decodeProducts sampleProducts
-  assertEqual "products" [ProductVehicle "MyCar" "848528", ProductEnergy 2848535] prods
+  assertEqual "products" [ProductVehicle "MyCar" "848528" VOnline, ProductEnergy 2848535] prods
   assertEqual "vehicles" (Map.fromList [("MyCar", "848528")]) $ vehicles prods
   assertEqual "energy" [2848535] $ energyIDs prods
 
