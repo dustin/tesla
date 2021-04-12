@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.3.1.0
+@version 0.4.1.0
 
 
 -- | Authentication related data structures.
@@ -70,18 +70,32 @@ AuthResponse :: String -> Int -> String -> AuthResponse
 
 -- | Tesla Product Types.
 data Product
-ProductVehicle :: Text -> VehicleID -> Product
+ProductVehicle :: Text -> VehicleID -> VehicleState -> Product
 [_vehicleName] :: Product -> Text
 [_vehicleID] :: Product -> VehicleID
+[_vehicleState] :: Product -> VehicleState
 ProductEnergy :: EnergyID -> Product
 [_energyID] :: Product -> EnergyID
-ProductPowerWall :: Product
+ProductPowerwall :: EnergyID -> Double -> Double -> Double -> Text -> Double -> Product
+[_pwID] :: Product -> EnergyID
+[_pwBatteryPower] :: Product -> Double
+[_pwEnergyLeft] :: Product -> Double
+[_pwCharged] :: Product -> Double
+[_pwName] :: Product -> Text
+[_pwTotal] :: Product -> Double
 vehicleName :: Traversal' Product Text
 vehicleID :: Traversal' Product VehicleID
+vehicleState :: Traversal' Product VehicleState
 energyID :: Traversal' Product EnergyID
-_ProductVehicle :: Prism' Product (Text, VehicleID)
+_ProductVehicle :: Prism' Product (Text, VehicleID, VehicleState)
 _ProductEnergy :: Prism' Product EnergyID
-_ProductPowerWall :: Prism' Product ()
+_ProductPowerwall :: Prism' Product (EnergyID, Double, Double, Double, Text, Double)
+pwBatteryPower :: Traversal' Product Double
+pwCharged :: Traversal' Product Double
+pwEnergyLeft :: Traversal' Product Double
+pwID :: Traversal' Product EnergyID
+pwName :: Traversal' Product Text
+pwTotal :: Traversal' Product Double
 
 -- | A VehicleID.
 type VehicleID = Text
@@ -91,6 +105,18 @@ vehicles :: [Product] -> Map Text Text
 
 -- | Get all products associated with this account.
 products :: MonadIO m => AuthInfo -> m [Product]
+
+-- | productsRaw retrieves the complete response for products
+productsRaw :: (FromJSON j, MonadIO m) => AuthInfo -> m j
+
+-- | Possible states a vehicle may be in.
+data VehicleState
+VOnline :: VehicleState
+VOffline :: VehicleState
+VAsleep :: VehicleState
+VWaking :: VehicleState
+VUnknown :: VehicleState
+vsFromString :: Text -> VehicleState
 
 -- | An energy site ID.
 type EnergyID = Integer
@@ -104,7 +130,12 @@ fromToken :: String -> AuthInfo
 -- | Get a set of wreq options from an <a>AuthInfo</a>.
 authOpts :: AuthInfo -> Options
 baseURL :: String
+
+-- | Decode a products response into a list of products.
 decodeProducts :: Value -> [Product]
+instance GHC.Classes.Eq Tesla.VehicleState
+instance GHC.Read.Read Tesla.VehicleState
+instance GHC.Show.Show Tesla.VehicleState
 instance GHC.Classes.Eq Tesla.Product
 instance GHC.Read.Read Tesla.Product
 instance GHC.Show.Show Tesla.Product
@@ -120,7 +151,6 @@ siteConfig :: (FromJSON j, MonadIO m) => Energy m j
 
 -- | Energy Monad for accessing energy-specific things.
 data Energy m a
-instance GHC.Classes.Eq Tesla.Energy.BadEnergyException
 instance Control.Monad.Logger.MonadLogger m => Control.Monad.Logger.MonadLogger (Tesla.Energy.Energy m)
 instance Control.Monad.Fail.MonadFail m => Control.Monad.Fail.MonadFail (Tesla.Energy.Energy m)
 instance GHC.Base.Monad m => Control.Monad.Reader.Class.MonadReader Tesla.Energy.EnergyEnv (Tesla.Energy.Energy m)
@@ -131,6 +161,7 @@ instance Control.Monad.IO.Class.MonadIO m => Control.Monad.IO.Class.MonadIO (Tes
 instance GHC.Base.Monad m => GHC.Base.Monad (Tesla.Energy.Energy m)
 instance GHC.Base.Functor m => GHC.Base.Functor (Tesla.Energy.Energy m)
 instance GHC.Base.Applicative m => GHC.Base.Applicative (Tesla.Energy.Energy m)
+instance GHC.Classes.Eq Tesla.Energy.BadEnergyException
 instance GHC.Show.Show Tesla.Energy.BadEnergyException
 instance GHC.Exception.Type.Exception Tesla.Energy.BadEnergyException
 instance Control.Monad.IO.Unlift.MonadUnliftIO m => Control.Monad.IO.Unlift.MonadUnliftIO (Tesla.Energy.Energy m)
@@ -157,6 +188,12 @@ vehicleData :: MonadIO m => Car m VehicleData
 
 -- | Get the nearby chargers.
 nearbyChargers :: MonadIO m => Car m [Charger]
+
+-- | vehicleStatus returns the current status of the current vehicle.
+vehicleStatus :: MonadIO m => Car m VehicleState
+
+-- | isAwake returns true if the current vehicle is awake and online.
+isAwake :: MonadIO m => Car m Bool
 
 -- | Giant blob of VehicleData describing all known state of the vehicle.
 --   
@@ -189,8 +226,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_aLll. Prism' (OpenState a_aLll) a_aLll
-_Closed :: forall a_aLll. Prism' (OpenState a_aLll) a_aLll
+_Open :: forall a_avT5. Prism' (OpenState a_avT5) a_avT5
+_Closed :: forall a_avT5. Prism' (OpenState a_avT5) a_avT5
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
@@ -266,13 +303,6 @@ instance GHC.Show.Show Tesla.Car.DestinationCharger
 instance Data.Aeson.Types.FromJSON.FromJSON Tesla.Car.Location
 instance GHC.Generics.Generic Tesla.Car.Location
 instance GHC.Show.Show Tesla.Car.Location
-instance GHC.Classes.Eq a => GHC.Classes.Eq (Tesla.Car.OpenState a)
-instance GHC.Show.Show a => GHC.Show.Show (Tesla.Car.OpenState a)
-instance GHC.Classes.Eq Tesla.Car.Door
-instance GHC.Enum.Enum Tesla.Car.Door
-instance GHC.Enum.Bounded Tesla.Car.Door
-instance GHC.Show.Show Tesla.Car.Door
-instance GHC.Classes.Eq Tesla.Car.BadCarException
 instance Control.Monad.Logger.MonadLogger m => Control.Monad.Logger.MonadLogger (Tesla.Car.Car m)
 instance Control.Monad.Fail.MonadFail m => Control.Monad.Fail.MonadFail (Tesla.Car.Car m)
 instance GHC.Base.Monad m => Control.Monad.Reader.Class.MonadReader Tesla.Car.CarEnv (Tesla.Car.Car m)
@@ -283,6 +313,13 @@ instance Control.Monad.IO.Class.MonadIO m => Control.Monad.IO.Class.MonadIO (Tes
 instance GHC.Base.Monad m => GHC.Base.Monad (Tesla.Car.Car m)
 instance GHC.Base.Functor m => GHC.Base.Functor (Tesla.Car.Car m)
 instance GHC.Base.Applicative m => GHC.Base.Applicative (Tesla.Car.Car m)
+instance GHC.Classes.Eq Tesla.Car.BadCarException
+instance GHC.Classes.Eq Tesla.Car.Door
+instance GHC.Enum.Enum Tesla.Car.Door
+instance GHC.Enum.Bounded Tesla.Car.Door
+instance GHC.Show.Show Tesla.Car.Door
+instance GHC.Classes.Eq a => GHC.Classes.Eq (Tesla.Car.OpenState a)
+instance GHC.Show.Show a => GHC.Show.Show (Tesla.Car.OpenState a)
 instance GHC.Show.Show Tesla.Car.BadCarException
 instance GHC.Exception.Type.Exception Tesla.Car.BadCarException
 instance Control.Monad.IO.Unlift.MonadUnliftIO m => Control.Monad.IO.Unlift.MonadUnliftIO (Tesla.Car.Car m)
