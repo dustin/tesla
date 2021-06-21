@@ -9,12 +9,12 @@
 </span><span id="line-9"></span><span>
 </span><span id="line-10"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Car.Command.html"><span class="hs-identifier">Tesla.Car.Command</span></a></span><span>
 </span><span id="line-11"></span><span>
-</span><span id="line-12"></span><span id="local-6989586621679203008"><span class="annot"><a href="Tesla.Car.Command.Sharing.html#share"><span class="hs-identifier hs-type">share</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679203008"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679203008"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-12"></span><span id="local-6989586621679204223"><span class="annot"><a href="Tesla.Car.Command.Sharing.html#share"><span class="hs-identifier hs-type">share</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679204223"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679204223"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
 </span><span id="line-13"></span><span id="share"><span class="annot"><span class="annottext">share :: Text -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Sharing.html#share"><span class="hs-identifier hs-var hs-var">share</span></a></span></span><span> </span><span id="local-6989586621679203007"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679203007"><span class="hs-identifier hs-var">to</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-14"></span><span>  </span><span id="local-6989586621679203006"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679203006"><span class="hs-identifier hs-var">now</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">(Int, POSIXTime) -&gt; Int
+</span><a href="Tesla.Car.Command.Sharing.html#share"><span class="hs-identifier hs-var hs-var">share</span></a></span></span><span> </span><span id="local-6989586621679204222"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679204222"><span class="hs-identifier hs-var">to</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-14"></span><span>  </span><span id="local-6989586621679204221"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679204221"><span class="hs-identifier hs-var">now</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">(Int, POSIXTime) -&gt; Int
 forall a b. (a, b) -&gt; a
 </span><span class="hs-identifier hs-var">fst</span></span><span> </span><span class="annot"><span class="annottext">((Int, POSIXTime) -&gt; Int)
 -&gt; (UTCTime -&gt; (Int, POSIXTime)) -&gt; UTCTime -&gt; Int
@@ -53,7 +53,7 @@ forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-string">&quot;android.intent.extra.TEXT&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679203007"><span class="hs-identifier hs-var">to</span></a></span><span> </span><span class="hs-special">]</span><span class="hs-special">,</span><span>
+</span><a href="#local-6989586621679204222"><span class="hs-identifier hs-var">to</span></a></span><span> </span><span class="hs-special">]</span><span class="hs-special">,</span><span>
 </span><span id="line-18"></span><span>    </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;locale&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
@@ -63,7 +63,7 @@ forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-string">&quot;timestamp_ms&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Int -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679203006"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679204221"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">1000</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
