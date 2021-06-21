@@ -1,5 +1,5 @@
 name:                tesla
-version:             0.4.1.0
+version:             0.4.1.1
 github:              "dustin/tesla"
 license:             BSD3
 author:              "Dustin Sallings"
@@ -29,7 +29,7 @@ dependencies:
 - time             >= 1.8 && < 1.10
 - vector           >= 0.12.0 && < 0.13
 - casing           >= 0.1.4 && < 0.2
-- generic-deriving >= 1.12 && < 1.14
+- generic-deriving >= 1.12 && < 1.15
 - lens             >= 4.17 && < 4.20
 - mtl              >= 2.2 && < 2.3
 - lens-aeson       >= 1.0 && < 1.2
