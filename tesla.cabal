@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 41843fb8ea239b0f72b123f91a66340546fa106899f8c79fbb9fbcf32c2e9321
+-- hash: a46c40d4228d31fd8b411c48be7697900a432e2505db888f99b492edfbb50ddd
 
 name:           tesla
-version:        0.4.1.0
+version:        0.4.1.1
 synopsis:       Tesla API client.
 description:    Please see the README on GitHub at <https://github.com/dustin/tesla#readme>
 category:       Web
@@ -68,7 +68,7 @@ library
     , cryptonite
     , exceptions
     , generic-deriving >=1.12 && <1.15
-    , lens >=4.17 && <4.20
+    , lens >=4.17 && <5.2
     , lens-aeson >=1.0 && <1.2
     , memory
     , monad-logger
@@ -76,7 +76,7 @@ library
     , random
     , retry
     , tagsoup
-    , template-haskell >=2.14 && <2.17
+    , template-haskell >=2.14 && <2.18
     , text ==1.2.*
     , time >=1.8 && <1.10
     , unliftio-core
@@ -107,7 +107,7 @@ test-suite tesla-test
     , cryptonite
     , exceptions
     , generic-deriving >=1.12 && <1.15
-    , lens >=4.17 && <4.20
+    , lens >=4.17 && <5.2
     , lens-aeson >=1.0 && <1.2
     , memory
     , monad-logger
@@ -118,7 +118,7 @@ test-suite tesla-test
     , tasty
     , tasty-hunit
     , tasty-quickcheck
-    , template-haskell >=2.14 && <2.17
+    , template-haskell >=2.14 && <2.18
     , tesla
     , text ==1.2.*
     , time >=1.8 && <1.10
