@@ -1,5 +1,5 @@
 name:                tesla
-version:             0.4.1.1
+version:             0.4.1.2
 github:              "dustin/tesla"
 license:             BSD3
 author:              "Dustin Sallings"
@@ -43,6 +43,7 @@ dependencies:
 - base64-bytestring
 - tagsoup
 - retry
+- http-client
 
 library:
   source-dirs: src

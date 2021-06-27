@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a46c40d4228d31fd8b411c48be7697900a432e2505db888f99b492edfbb50ddd
+-- hash: 9b0f738b0315fcb935599d7f0b6775879773cae87a953dbf8fbf0ef0d3d25fba
 
 name:           tesla
 version:        0.4.1.1
@@ -68,6 +68,7 @@ library
     , cryptonite
     , exceptions
     , generic-deriving >=1.12 && <1.15
+    , http-client
     , lens >=4.17 && <5.2
     , lens-aeson >=1.0 && <1.2
     , memory
@@ -107,6 +108,7 @@ test-suite tesla-test
     , cryptonite
     , exceptions
     , generic-deriving >=1.12 && <1.15
+    , http-client
     , lens >=4.17 && <5.2
     , lens-aeson >=1.0 && <1.2
     , memory

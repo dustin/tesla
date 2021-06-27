@@ -24,6 +24,7 @@ module Tesla
     ) where
 
 
+import           Control.Exception          (catch)
 import           Control.Lens
 import           Control.Monad              (when)
 import           Control.Monad.Catch        (SomeException)
@@ -31,7 +32,7 @@ import           Control.Monad.IO.Class     (MonadIO (..))
 import           Control.Retry              (defaultLogMsg, exponentialBackoff, limitRetries, logRetries, recovering)
 import           Crypto.Hash                (SHA256 (..), hashWith)
 import           Data.Aeson                 (FromJSON, Value (..), encode)
-import           Data.Aeson.Lens            (_Array, _Integer, _Double, _String, key)
+import           Data.Aeson.Lens            (_Array, _Double, _Integer, _String, key)
 import qualified Data.ByteArray             as BA
 import qualified Data.ByteString            as BS
 import qualified Data.ByteString.Base64.URL as B64
@@ -44,8 +45,9 @@ import           Data.Maybe                 (catMaybes, mapMaybe)
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
 import qualified Data.Text.Encoding         as TE
+import           Network.HTTP.Client        (HttpException (..), HttpExceptionContent (TooManyRedirects))
 import           Network.Wreq               (FormParam (..), Options, asJSON, checkResponse, defaults, header,
-                                             hrRedirects, params, redirects, responseBody, responseHeader)
+                                             hrFinalResponse, params, redirects, responseBody, responseHeader)
 import qualified Network.Wreq.Session       as Sess
 import           System.Random
 import           Text.HTML.TagSoup          (fromAttrib, isTagOpenName, parseTags)
@@ -91,13 +93,12 @@ authenticate' sess verifier state ai@AuthInfo{..} = do
 
   -- 2. Now we post the form with all of our credentials.
   let form' = form <> ["identity" := _email, "credential" := _password]
-  r2 <- Sess.customHistoriedPayloadMethodWith "POST" (fopts
-                                                       & params .~ gparams
-                                                       & redirects .~ 3
-                                                       & checkResponse ?~ (\_ _ -> pure ())
-                                                     ) sess authURL form'
+  Just code <- fmap (xcode . BC.unpack) <$> findRedirect authURL (fopts
+                                                                  & params .~ gparams
+                                                                  & redirects .~ 0
+                                                                  & checkResponse ?~ (\_ _ -> pure ())
+                                                                 ) form'
   -- Extract the "code" from the URL we were redirected to... we can't actually follow the redirect :/
-  let (Just code) = r2 ^? hrRedirects . folded . _2 . responseHeader "Location" . to (xcode . BC.unpack)
   let jreq = encode $ Object (mempty
                                & at "grant_type" ?~ "authorization_code"
                                & at "client_id" ?~ "ownerapi"
@@ -124,6 +125,13 @@ authenticate' sess verifier state ai@AuthInfo{..} = do
                  . parseTags
     fopts = aOpts & header "content-type" .~ ["application/x-www-form-urlencoded"]
     xcode u = head . mapMaybe (\s -> let [k,v] = T.splitOn "=" s in if k == "code" then Just v else Nothing) $ T.splitOn "&" (T.splitOn "?" (T.pack u) !! 1)
+
+
+    findRedirect u opts a = preview (_Just . responseHeader "Location") <$> (inBody `catch` inException)
+      where
+        inBody = preview hrFinalResponse <$> Sess.customHistoriedPayloadMethodWith "POST" opts sess u a
+        inException (HttpExceptionRequest _ (TooManyRedirects (r:_))) = pure (Just r)
+
 
 translateCreds :: AuthInfo -> AuthResponse -> IO AuthResponse
 translateCreds AuthInfo{..} AuthResponse{..} = do
@@ -165,21 +173,21 @@ data VehicleState = VOnline | VOffline | VAsleep | VWaking | VUnknown
   deriving (Show, Read, Eq)
 
 vsFromString :: Text -> VehicleState
-vsFromString "online" = VOnline
+vsFromString "online"  = VOnline
 vsFromString "offline" = VOffline
-vsFromString "asleep" = VAsleep
-vsFromString "waking" = VWaking
-vsFromString _ = VUnknown
+vsFromString "asleep"  = VAsleep
+vsFromString "waking"  = VWaking
+vsFromString _         = VUnknown
 
 -- | Tesla Product Types.
 data Product = ProductVehicle { _vehicleName :: Text, _vehicleID :: VehicleID, _vehicleState :: VehicleState }
              | ProductEnergy { _energyID :: EnergyID }
-             | ProductPowerwall { _pwID :: EnergyID
+             | ProductPowerwall { _pwID           :: EnergyID
                                 , _pwBatteryPower :: Double
-                                , _pwEnergyLeft :: Double
-                                , _pwCharged :: Double
-                                , _pwName :: Text
-                                , _pwTotal :: Double }
+                                , _pwEnergyLeft   :: Double
+                                , _pwCharged      :: Double
+                                , _pwName         :: Text
+                                , _pwTotal        :: Double }
              deriving (Show, Read, Eq)
 
 makePrisms ''Product
