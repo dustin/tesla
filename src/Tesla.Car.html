@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="%24maxtag_56GvVhjGJOg4WZm7Rsd0E3"><span id="%24tag2con_56GvVhjGJOg4WZm7Rsd0E3"><span id="%24con2tag_56GvVhjGJOg4WZm7Rsd0E3"></span></span></span><span class="hs-comment">{-|
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="%24maxtag_4qjXqZLZ8x0BBODF3ji1zj"><span id="%24tag2con_4qjXqZLZ8x0BBODF3ji1zj"><span id="%24con2tag_4qjXqZLZ8x0BBODF3ji1zj"></span></span></span><span class="hs-comment">{-|
 Module:      Tesla.Car
 Description: Tesla car-specific APIs.
 
@@ -502,10 +502,10 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span id="line-120"></span><span>
 </span><span id="line-121"></span><span class="hs-comment">-- | Giant blob of VehicleData describing all known state of the vehicle.</span><span>
 </span><span id="line-122"></span><span class="hs-comment">--</span><span>
-</span><span id="line-123"></span><span class="hs-comment">-- This is not separated into discrete</span><span>
-</span><span id="line-124"></span><span class="hs-comment">-- A VehicleIDfields because that's easy enough to do with Aeson and</span><span>
-</span><span id="line-125"></span><span class="hs-comment">-- Lens when you need it but some convenience methods for common</span><span>
-</span><span id="line-126"></span><span class="hs-comment">-- | A VehicleIDaccesses are available in this module.</span><span>
+</span><span id="line-123"></span><span class="hs-comment">-- This is not separated into discrete fields because that's easy</span><span>
+</span><span id="line-124"></span><span class="hs-comment">-- enough to do with Aeson and Lens when you need it but some</span><span>
+</span><span id="line-125"></span><span class="hs-comment">-- convenience methods for common accesses are available in this</span><span>
+</span><span id="line-126"></span><span class="hs-comment">-- module.</span><span>
 </span><span id="line-127"></span><span class="hs-keyword">type</span><span> </span><span id="VehicleData"><span class="annot"><a href="Tesla.Car.html#VehicleData"><span class="hs-identifier hs-var">VehicleData</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BL.ByteString</span></span><span>
 </span><span id="line-128"></span><span>
 </span><span id="line-129"></span><span class="hs-comment">-- | vehicleStatus returns the current status of the current vehicle.</span><span>
