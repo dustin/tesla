@@ -120,10 +120,10 @@ runNamedCar name ai f = do
 
 -- | Giant blob of VehicleData describing all known state of the vehicle.
 --
--- This is not separated into discrete
--- A VehicleIDfields because that's easy enough to do with Aeson and
--- Lens when you need it but some convenience methods for common
--- | A VehicleIDaccesses are available in this module.
+-- This is not separated into discrete fields because that's easy
+-- enough to do with Aeson and Lens when you need it but some
+-- convenience methods for common accesses are available in this
+-- module.
 type VehicleData = BL.ByteString
 
 -- | vehicleStatus returns the current status of the current vehicle.

@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9b0f738b0315fcb935599d7f0b6775879773cae87a953dbf8fbf0ef0d3d25fba
+-- hash: 5822d046f556526df7df83678077d331881386b90f7f164b89597b8f4997c04b
 
 name:           tesla
-version:        0.4.1.1
+version:        0.4.1.3
 synopsis:       Tesla API client.
 description:    Please see the README on GitHub at <https://github.com/dustin/tesla#readme>
 category:       Web

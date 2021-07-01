@@ -71,9 +71,12 @@ siteSummary :: (FromJSON j, MonadIO m) => Energy m j
 siteSummary = currentEnergyID >>= \e -> jget (energyURL e "status")
 -}
 
+-- | Fetch the "live_status" describing the current active state of an
+-- energy site.
 siteData :: (FromJSON j, MonadIO m) => Energy m j
 siteData = currentEnergyID >>= \e -> jgetAuth (energyURL e "live_status")
 
+-- | Fetch the "site_info" describing the basic configuration of an energy site.
 siteConfig :: (FromJSON j, MonadIO m) => Energy m j
 siteConfig = currentEnergyID >>= \e -> jgetAuth (energyURL e "site_info")
 
