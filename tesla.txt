@@ -231,8 +231,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_awcW. Prism' (OpenState a_awcW) a_awcW
-_Closed :: forall a_awcW. Prism' (OpenState a_awcW) a_awcW
+_Open :: forall a_awdO. Prism' (OpenState a_awdO) a_awdO
+_Closed :: forall a_awdO. Prism' (OpenState a_awdO) a_awdO
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
