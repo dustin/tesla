@@ -41,7 +41,7 @@ import qualified Data.ByteString.Lazy       as BL
 import           Data.Foldable              (asum)
 import           Data.Map.Strict            (Map)
 import qualified Data.Map.Strict            as Map
-import           Data.Maybe                 (catMaybes, mapMaybe)
+import           Data.Maybe                 (catMaybes)
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
 import qualified Data.Text.Encoding         as TE
@@ -124,8 +124,12 @@ authenticate' sess verifier state ai@AuthInfo{..} = do
                  . filter (\t -> isTagOpenName "input" t && fromAttrib "value" t /= "")
                  . parseTags
     fopts = aOpts & header "content-type" .~ ["application/x-www-form-urlencoded"]
-    xcode u = head . mapMaybe (\s -> let [k,v] = T.splitOn "=" s in if k == "code" then Just v else Nothing) $ T.splitOn "&" (T.splitOn "?" (T.pack u) !! 1)
-
+    xcode u = head [v | q <- tail (T.splitOn "?" (T.pack u)),
+                        kv <- T.splitOn "&" q,
+                        (k,v) <- paird (T.splitOn "=" kv),
+                        k == "code"]
+    paird [a,b] = [(a,b)]
+    paird _     = []
 
     findRedirect u opts a = preview (_Just . responseHeader "Location") <$> (inBody `catch` inException)
       where
