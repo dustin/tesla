@@ -5,7 +5,8 @@ module Tesla.Car.Command.Climate (
   hvacOn, hvacOff, heatSeat, Seat(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   maxDefrost,
-  wakeUp
+  wakeUp,
+  bioweaponMode
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
@@ -22,6 +23,12 @@ wheelHeaterOn = wheelHeater True
 
 wheelHeaterOff :: MonadIO m => Car m CommandResponse
 wheelHeaterOff = wheelHeater False
+
+-- | Turn on or off bioweapon defense mode.
+--
+-- If HVAC is off, turning on bioweapon defense mode will also turn on HVAC.
+bioweaponMode :: MonadIO m => Bool -> Car m CommandResponse
+bioweaponMode on = runCmd "set_bioweapon_mode" ["on" := on]
 
 data Seat = DriverSeat | PassengerSeat | RearLeftSeat | RearCenterSeat | RearRightSeat
 
