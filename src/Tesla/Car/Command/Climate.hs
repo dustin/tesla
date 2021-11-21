@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
@@ -6,7 +7,9 @@ module Tesla.Car.Command.Climate (
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   maxDefrost,
   wakeUp,
-  bioweaponMode
+  bioweaponMode,
+  Sometimes(..), OffPeakConfig(..), Preconditioning,
+  scheduledDepartureOff, scheduleDeparture
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
@@ -49,6 +52,41 @@ setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" := driver, "pas
 
 maxDefrost :: MonadIO m => Bool -> Car m CommandResponse
 maxDefrost on = runCmd "set_preconditioning_max" ["on" := on]
+
+scheduledDepartureOff :: MonadIO m => Car m CommandResponse
+scheduledDepartureOff = runCmd "set_scheduled_departure" [ "enable" := False ]
+
+-- | When configuring scheduled departure, preconditioning and
+-- off-peak charging both have weekday only options.
+data Sometimes = Never | Always | WeekdaysOnly
+
+-- | Type alias to make 'scheduleDeparture' more readable.
+type Preconditioning = Sometimes
+
+-- | Configuration for off-peak charging for a schedule departure.
+data OffPeakConfig = OffPeakConfig {
+  _offPeakEnabled :: Sometimes,
+  _offPeakEndTime :: Int
+  }
+
+-- | Schedule a departure.
+--
+-- Times are specified as number of minutes since midnight (local).
+--
+-- For this to do anything useful, you need to specify at least one of
+-- 'Preconditioning' and/or 'OffPeakConfig'.
+scheduleDeparture :: MonadIO m => Int -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
+scheduleDeparture t p o = runCmd "set_scheduled_departure" (["enable" := True, "departure_time" := t] <> pp <> op o)
+  where
+    pp = s "preconditioning_enabled" "preconditioning_weekdays_only" p
+    op Nothing  = opp (OffPeakConfig Never 0)
+    op (Just x) = opp x
+    opp OffPeakConfig{..} = ("end_off_peak_time" := _offPeakEndTime) : s "off_peak_charging_enabled" "off_peak_charging_weekdays_only" _offPeakEnabled
+
+    s e w = \case
+           Never        -> [e := False, w := False]
+           Always       -> [e := True, w := False]
+           WeekdaysOnly -> [e := True, w := True]
 
 mkNamedCommands [("hvacOn", "auto_conditioning_start"),
                  ("hvacOff", "auto_conditioning_stop"),
