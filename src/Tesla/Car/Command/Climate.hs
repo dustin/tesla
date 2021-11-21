@@ -66,20 +66,18 @@ type Preconditioning = Sometimes
 -- | Configuration for off-peak charging for a schedule departure.
 data OffPeakConfig = OffPeakConfig {
   _offPeakEnabled :: Sometimes,
-  _offPeakEndTime :: Int
+  _offPeakEndTime :: Time
   }
 
 -- | Schedule a departure.
 --
--- Times are specified as number of minutes since midnight (local).
---
 -- For this to do anything useful, you need to specify at least one of
 -- 'Preconditioning' and/or 'OffPeakConfig'.
-scheduleDeparture :: MonadIO m => Int -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
+scheduleDeparture :: MonadIO m => Time -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
 scheduleDeparture t p o = runCmd "set_scheduled_departure" (["enable" := True, "departure_time" := t] <> pp <> op o)
   where
     pp = s "preconditioning_enabled" "preconditioning_weekdays_only" p
-    op Nothing  = opp (OffPeakConfig Never 0)
+    op Nothing  = opp (OffPeakConfig Never (Time 0))
     op (Just x) = opp x
     opp OffPeakConfig{..} = ("end_off_peak_time" := _offPeakEndTime) : s "off_peak_charging_enabled" "off_peak_charging_weekdays_only" _offPeakEnabled
 

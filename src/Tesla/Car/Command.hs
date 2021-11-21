@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds           #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-|
@@ -9,6 +10,7 @@ Executing commands within the Car Monad.
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Tesla.Car.Command (
+  Time(..), mkTime,
   runCmd, runCmd', CommandResponse, Car,
   -- * TH support for generating commands.
   mkCommand, mkCommands, mkNamedCommands) where
@@ -16,8 +18,9 @@ module Tesla.Car.Command (
 import           Control.Lens
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson
-import           Data.Aeson.Lens        (key, _Bool, _String)
+import           Data.Aeson.Lens        (_Bool, _String, key)
 import qualified Data.ByteString.Lazy   as BL
+import           Data.Finite            (Finite, getFinite, packFinite)
 import           Data.Text              (Text)
 import           Language.Haskell.TH
 import           Network.Wreq.Types     (FormValue (..), Postable)
@@ -29,6 +32,18 @@ import           Tesla.Internal.HTTP
 -- | A CommandResponse wraps an Either such that Left represents a
 -- failure message and Right suggests the command was successful.
 type CommandResponse = Either Text ()
+
+-- | Data type representing local time in minutes since midnight.
+newtype Time = Time (Finite 1440) deriving Show
+
+-- | Make a Time from a valid number of minutes since midnight.
+--
+-- Values >= 1440 or < 0 are not valid numbers of minutes since midnight.
+mkTime :: Int -> Maybe Time
+mkTime = fmap Time . packFinite . fromIntegral
+
+instance FormValue Time where
+  renderFormValue (Time x) = renderFormValue (getFinite x)
 
 -- | Run a command with a payload.
 runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse

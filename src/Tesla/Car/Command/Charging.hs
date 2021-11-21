@@ -25,7 +25,7 @@ scheduledChargingOff :: MonadIO m => Car m CommandResponse
 scheduledChargingOff = runCmd "set_scheduled_charging" [ "enable" := False ]
 
 -- | Schedule charging for the given number of minutes after midnight (local time).
-scheduleCharging :: MonadIO m => Int -> Car m CommandResponse
+scheduleCharging :: MonadIO m => Time -> Car m CommandResponse
 scheduleCharging mins = runCmd "set_scheduled_charging" [ "enable" := True, "time" := mins ]
 
 mkNamedCommands [("startCharging", "charge_start"),

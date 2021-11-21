@@ -44,6 +44,7 @@ dependencies:
 - tagsoup
 - retry
 - http-client
+- finite-typelits
 
 library:
   source-dirs: src
