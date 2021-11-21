@@ -4,6 +4,7 @@
 module Tesla.Car.Command.Climate (
   hvacOn, hvacOff, heatSeat, Seat(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
+  maxDefrost,
   wakeUp
   ) where
 
@@ -39,6 +40,8 @@ heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" := seatNum s
 setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
 setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" := driver, "passenger_temp" := passenger]
 
+maxDefrost :: MonadIO m => Bool -> Car m CommandResponse
+maxDefrost on = runCmd "set_preconditioning_max" ["on" := on]
 
 mkNamedCommands [("hvacOn", "auto_conditioning_start"),
                  ("hvacOff", "auto_conditioning_stop"),
