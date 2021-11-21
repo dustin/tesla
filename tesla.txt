@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.4.1.3
+@version 0.5.0.0
 
 
 -- | Authentication related data structures.
@@ -231,8 +231,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_awdO. Prism' (OpenState a_awdO) a_awdO
-_Closed :: forall a_awdO. Prism' (OpenState a_awdO) a_awdO
+_Open :: forall a_awgs. Prism' (OpenState a_awgs) a_awgs
+_Closed :: forall a_awgs. Prism' (OpenState a_awgs) a_awgs
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
@@ -334,6 +334,16 @@ instance (GHC.Base.Monad m, Control.Monad.IO.Class.MonadIO m, Control.Monad.Read
 -- | Executing commands within the Car Monad.
 module Tesla.Car.Command
 
+-- | Data type representing local time in minutes since midnight.
+newtype Time
+Time :: Finite 1440 -> Time
+
+-- | Make a Time from a valid number of minutes since midnight.
+--   
+--   Values &gt;= 1440 or &lt; 0 are not valid numbers of minutes since
+--   midnight.
+mkTime :: Int -> Maybe Time
+
 -- | Run a command with a payload.
 runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
 
@@ -357,6 +367,8 @@ mkCommands :: [String] -> Q [Dec]
 
 -- | Make commands with given names.
 mkNamedCommands :: [(String, String)] -> Q [Dec]
+instance GHC.Show.Show Tesla.Car.Command.Time
+instance Network.Wreq.Internal.Types.FormValue Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue GHC.Types.Bool
 
 module Tesla.Car.Command.Windows
@@ -437,14 +449,56 @@ setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
 wheelHeater :: MonadIO m => Bool -> Car m CommandResponse
 wheelHeaterOff :: MonadIO m => Car m CommandResponse
 wheelHeaterOn :: MonadIO m => Car m CommandResponse
+maxDefrost :: MonadIO m => Bool -> Car m CommandResponse
 wakeUp :: forall m. MonadIO m => Car m CommandResponse
+
+-- | Turn on or off bioweapon defense mode.
+--   
+--   If HVAC is off, turning on bioweapon defense mode will also turn on
+--   HVAC.
+bioweaponMode :: MonadIO m => Bool -> Car m CommandResponse
+
+-- | When configuring scheduled departure, preconditioning and off-peak
+--   charging both have weekday only options.
+data Sometimes
+Never :: Sometimes
+Always :: Sometimes
+WeekdaysOnly :: Sometimes
+
+-- | Configuration for off-peak charging for a schedule departure.
+data OffPeakConfig
+OffPeakConfig :: Sometimes -> Time -> OffPeakConfig
+[_offPeakEnabled] :: OffPeakConfig -> Sometimes
+[_offPeakEndTime] :: OffPeakConfig -> Time
+
+-- | Type alias to make <a>scheduleDeparture</a> more readable.
+type Preconditioning = Sometimes
+scheduledDepartureOff :: MonadIO m => Car m CommandResponse
+
+-- | Schedule a departure.
+--   
+--   For this to do anything useful, you need to specify at least one of
+--   <a>Preconditioning</a> and/or <a>OffPeakConfig</a>.
+scheduleDeparture :: MonadIO m => Time -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
 
 module Tesla.Car.Command.Charging
 startCharging :: forall m. MonadIO m => Car m CommandResponse
 stopCharging :: forall m. MonadIO m => Car m CommandResponse
+
+-- | Set the desired charge level (percent).
 setLimit :: MonadIO m => Int -> Car m CommandResponse
 openChargePort :: forall m. MonadIO m => Car m CommandResponse
 closeChargePort :: forall m. MonadIO m => Car m CommandResponse
+
+-- | Set the charge current.
+setAmps :: MonadIO m => Int -> Car m CommandResponse
+
+-- | Disable scheduled charging.
+scheduledChargingOff :: MonadIO m => Car m CommandResponse
+
+-- | Schedule charging for the given number of minutes after midnight
+--   (local time).
+scheduleCharging :: MonadIO m => Time -> Car m CommandResponse
 
 module Tesla.Car.Command.Alerts
 honkHorn :: forall m. MonadIO m => Car m CommandResponse
