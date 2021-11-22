@@ -191,7 +191,8 @@ makePrisms ''OpenState
 doors :: VehicleData -> Maybe [OpenState Door]
 doors b = traverse ds $ zip ["df", "dr", "pf", "pr", "ft", "rt"] [minBound..]
   where
-    ds (k,d) = c d <$> b ^? vdata . key "vehicle_state" . key k . _Integer
+    vs = b ^? vdata . key "vehicle_state"
+    ds (k,d) = c d <$> vs ^? _Just . key k . _Integer
     c d 0 = Closed d
     c d _ = Open   d
 
