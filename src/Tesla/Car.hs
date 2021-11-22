@@ -30,16 +30,15 @@ module Tesla.Car (
   -- * Charger Info
   Location(..), DestinationCharger(..), Supercharger(..), Charger(..),
   superchargers, destinationChargers,
-  -- * Lenses
+  -- * Lenses/Prisms
   lat, lon, _SC, _DC,
-  name, location, distance_miles, available_stalls, total_stalls, site_closed,
+  vdata, name, location, distance_miles, available_stalls, total_stalls, site_closed,
   -- * Probably uninteresting internals
   vehicleURL, currentVehicleID
       ) where
 
 import           Control.Exception       (Exception, throwIO)
 import           Control.Lens
-import Data.Foldable (fold)
 import           Control.Monad           ((<=<))
 import           Control.Monad.Catch     (MonadCatch (..), MonadMask (..), MonadThrow (..))
 import           Control.Monad.IO.Class  (MonadIO (..))
@@ -47,9 +46,10 @@ import           Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
 import           Control.Monad.Logger    (MonadLogger)
 import           Control.Monad.Reader    (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson              (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
-                                          fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
-import           Data.Aeson.Lens         (key, values, _Bool, _Integer, _String)
+                                          encode, fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
+import           Data.Aeson.Lens         (_Bool, _Integer, _String, key, values)
 import qualified Data.ByteString.Lazy    as BL
+import           Data.Foldable           (fold)
 import qualified Data.Map.Strict         as Map
 import           Data.Maybe              (fromJust, fromMaybe)
 import           Data.Ratio
@@ -131,8 +131,7 @@ vehicleStatus :: MonadIO m => Car m VehicleState
 vehicleStatus = do
   v <- currentVehicleID
   r <- jgetAuth (fold [baseURL, "api/1/vehicles/", unpack v])
-  let (Just x) = (r :: Value) ^? (key "response" . key "state" . _String . to vsFromString)
-  pure x
+  pure $ (r :: Value) ^?! (key "response" . key "state" . _String . to vsFromString)
 
 -- | isAwake returns true if the current vehicle is awake and online.
 isAwake :: MonadIO m => Car m Bool
@@ -147,21 +146,21 @@ vehicleData = do
   pure . fromJust . inner $ r ^. responseBody
     where inner = BL.stripPrefix "{\"response\":" <=< BL.stripSuffix "}"
 
--- | Get an Aeson Value from this VehicleData.
-maybeVal :: VehicleData -> Maybe Value
-maybeVal = decode
+-- | Prism for viewing 'VehicleData' as an Aeson 'Value'.
+vdata :: Prism' VehicleData Value
+vdata = prism' encode decode
 
 -- | True if a user is present in the vehicle.
 isUserPresent :: VehicleData -> Bool
-isUserPresent = (Just True ==) . preview (_Just . key "vehicle_state" . key "is_user_present" . _Bool) . maybeVal
+isUserPresent = (Just True ==) . preview (vdata . key "vehicle_state" . key "is_user_present" . _Bool)
 
 -- | True of the vehicle is currently charging.
 isCharging :: VehicleData -> Bool
-isCharging = maybe False (> 0) . preview (_Just . key "charge_state" . key "charger_power" . _Integer) . maybeVal
+isCharging = maybe False (> 0) . preview (vdata . key "charge_state" . key "charger_power" . _Integer)
 
 -- | Get the timestamp from this VehicleData if present.
 maybeTeslaTS :: VehicleData -> Maybe UTCTime
-maybeTeslaTS b = maybeVal b ^? _Just . key "vehicle_state" . key "timestamp" . _Integer . to pt
+maybeTeslaTS b = b ^? vdata . key "vehicle_state" . key "timestamp" . _Integer . to pt
   where pt x = posixSecondsToUTCTime . fromRational $ x % 1000
 
 -- | Get the timestamp from this VehicleData or error if there isn't one.
@@ -192,7 +191,7 @@ makePrisms ''OpenState
 doors :: VehicleData -> Maybe [OpenState Door]
 doors b = traverse ds $ zip ["df", "dr", "pf", "pr", "ft", "rt"] [minBound..]
   where
-    ds (k,d) = c d <$> maybeVal b ^? _Just . key "vehicle_state" . key k . _Integer
+    ds (k,d) = c d <$> b ^? vdata . key "vehicle_state" . key k . _Integer
     c d 0 = Closed d
     c d _ = Open   d
 
