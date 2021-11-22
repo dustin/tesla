@@ -1,6 +1,9 @@
 {-# LANGUAGE DataKinds           #-}
 {-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies        #-}
+{-# LANGUAGE TypeOperators       #-}
 {-|
 Module      : Tesla.Car.Command
 Description : Commands executed on a car.
@@ -10,7 +13,7 @@ Executing commands within the Car Monad.
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Tesla.Car.Command (
-  Time(..), mkTime,
+  Time(..), mkTime, fromTime,
   runCmd, runCmd', CommandResponse, Car,
   -- * TH support for generating commands.
   mkCommand, mkCommands, mkNamedCommands) where
@@ -20,8 +23,9 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson
 import           Data.Aeson.Lens        (_Bool, _String, key)
 import qualified Data.ByteString.Lazy   as BL
-import           Data.Finite            (Finite, getFinite, packFinite)
+import           Data.Finite            (Finite, getFinite, modulo)
 import           Data.Text              (Text)
+import           GHC.TypeNats
 import           Language.Haskell.TH
 import           Network.Wreq.Types     (FormValue (..), Postable)
 import           Text.Casing            (fromSnake, toCamel)
@@ -34,16 +38,31 @@ import           Tesla.Internal.HTTP
 type CommandResponse = Either Text ()
 
 -- | Data type representing local time in minutes since midnight.
-newtype Time = Time (Finite 1440) deriving Show
+newtype Time = Time (Finite 1440)
 
--- | Make a Time from a valid number of minutes since midnight.
---
--- Values >= 1440 or < 0 are not valid numbers of minutes since midnight.
-mkTime :: Int -> Maybe Time
-mkTime = fmap Time . packFinite . fromIntegral
+instance Show Time where show (Time t) = show (toInteger t)
+
+instance Num Time where
+  fromInteger = Time . modulo
+  abs = id
+  signum = const 1
+  (Time f1) * (Time f2) = Time (f1 * f2)
+  (Time f1) + (Time f2) = Time (f1 + f2)
+  (Time f1) - (Time f2) = Time (f1 - f2)
 
 instance FormValue Time where
   renderFormValue (Time x) = renderFormValue (getFinite x)
+
+-- | Make a 'Time' with the given hours and minutes.
+mkTime :: Finite 24 -> Finite 60 -> Time
+mkTime h m = Time $ modulo (toInteger h * 60 + toInteger m)
+
+-- | Get the hours and minutes out of a 'Time'.
+fromTime :: Time -> (Finite 24, Finite 60)
+fromTime (Time t) = bimap f f (t `divMod` 60)
+  where
+    f :: forall m n. (KnownNat m, KnownNat n, n <= m) => Finite m -> Finite n
+    f = modulo . toInteger
 
 -- | Run a command with a payload.
 runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
