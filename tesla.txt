@@ -338,11 +338,11 @@ module Tesla.Car.Command
 newtype Time
 Time :: Finite 1440 -> Time
 
--- | Make a Time from a valid number of minutes since midnight.
---   
---   Values &gt;= 1440 or &lt; 0 are not valid numbers of minutes since
---   midnight.
-mkTime :: Int -> Maybe Time
+-- | Make a <a>Time</a> with the given hours and minutes.
+mkTime :: Finite 24 -> Finite 60 -> Time
+
+-- | Get the hours and minutes out of a <a>Time</a>.
+fromTime :: Time -> (Finite 24, Finite 60)
 
 -- | Run a command with a payload.
 runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
@@ -368,6 +368,7 @@ mkCommands :: [String] -> Q [Dec]
 -- | Make commands with given names.
 mkNamedCommands :: [(String, String)] -> Q [Dec]
 instance GHC.Show.Show Tesla.Car.Command.Time
+instance GHC.Num.Num Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue GHC.Types.Bool
 
