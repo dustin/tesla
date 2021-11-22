@@ -277,6 +277,9 @@ lat :: Lens' Location Double
 lon :: Lens' Location Double
 _SC :: Prism' Charger Supercharger
 _DC :: Prism' Charger DestinationCharger
+
+-- | Prism for viewing <a>VehicleData</a> as an Aeson <a>Value</a>.
+vdata :: Prism' VehicleData Value
 name :: HasName s a => Lens' s a
 location :: HasLocation s a => Lens' s a
 distance_miles :: HasDistance_miles s a => Lens' s a
