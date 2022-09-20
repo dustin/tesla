@@ -47,6 +47,7 @@ import           Control.Monad.Logger    (MonadLogger)
 import           Control.Monad.Reader    (MonadReader, ReaderT (..), asks, runReaderT)
 import           Data.Aeson              (FromJSON (..), Options (..), Result (..), Value (..), decode, defaultOptions,
                                           encode, fieldLabelModifier, fromJSON, genericParseJSON, withObject, (.:))
+import           Data.Aeson.Key          (Key)
 import           Data.Aeson.Lens         (_Bool, _Integer, _String, key, values)
 import qualified Data.ByteString.Lazy    as BL
 import           Data.Foldable           (fold)
@@ -261,7 +262,7 @@ nearbyChargers = do
   pure $ parseOne rb SC "superchargers" <> parseOne rb DC "destination_charging"
 
     where
-      parseOne :: FromJSON a => Value -> (a -> Charger) -> Text -> [Charger]
+      parseOne :: FromJSON a => Value -> (a -> Charger) -> Key -> [Charger]
       parseOne rb f k =  let rs = traverse fromJSON (rb ^.. key "response" . key k . values) in
                            f <$> case rs of
                                    Error e   -> error e

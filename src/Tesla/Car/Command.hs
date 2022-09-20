@@ -86,7 +86,7 @@ mkCommand :: String -> String -> Q [Dec]
 mkCommand s u = do
   let m = mkName "m"
   pure [
-    SigD (mkName s) (ForallT [PlainTV m] [AppT (ConT (mkName "MonadIO")) (VarT m)]
+    SigD (mkName s) (ForallT [PlainTV m inferredSpec] [AppT (ConT (mkName "MonadIO")) (VarT m)]
                      (AppT (AppT (ConT (mkName "Car")) (VarT m)) (ConT (mkName "CommandResponse")))),
     FunD (mkName s) [Clause [] (NormalB expr) []]]
   where expr = LamE [] (AppE (VarE (mkName "runCmd'")) (LitE (StringL u)))
