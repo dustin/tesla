@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.5.0.0
+@version 0.5.1.0
 
 
 -- | Authentication related data structures.
@@ -231,8 +231,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_awgs. Prism' (OpenState a_awgs) a_awgs
-_Closed :: forall a_awgs. Prism' (OpenState a_awgs) a_awgs
+_Open :: forall a_axiA. Prism' (OpenState a_axiA) a_axiA
+_Closed :: forall a_axiA. Prism' (OpenState a_axiA) a_axiA
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
@@ -383,7 +383,7 @@ closeSunroof :: MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Valet
 setValetMode :: MonadIO m => Bool -> Int -> Car m CommandResponse
-clearValetPIN :: forall m. MonadIO m => Car m CommandResponse
+clearValetPIN :: forall {m}. MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.SpeedLimit
 speedLimit :: MonadIO m => Int -> Car m CommandResponse
@@ -397,7 +397,7 @@ module Tesla.Car.Command.Software
 scheduleUpdate :: MonadIO m => Int -> Car m CommandResponse
 
 -- | Cancel a scheduled software update.
-cancelUpdate :: forall m. MonadIO m => Car m CommandResponse
+cancelUpdate :: forall {m}. MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Sharing
 share :: MonadIO m => Text -> Car m CommandResponse
@@ -414,13 +414,13 @@ module Tesla.Car.Command.RemoteStart
 remoteStart :: MonadIO m => String -> Car m CommandResponse
 
 module Tesla.Car.Command.Media
-volumeDown :: forall m. MonadIO m => Car m CommandResponse
-volumeUp :: forall m. MonadIO m => Car m CommandResponse
-prevFav :: forall m. MonadIO m => Car m CommandResponse
-nextFav :: forall m. MonadIO m => Car m CommandResponse
-prevTrack :: forall m. MonadIO m => Car m CommandResponse
-nextTrack :: forall m. MonadIO m => Car m CommandResponse
-togglePlayback :: forall m. MonadIO m => Car m CommandResponse
+volumeDown :: forall {m}. MonadIO m => Car m CommandResponse
+volumeUp :: forall {m}. MonadIO m => Car m CommandResponse
+prevFav :: forall {m}. MonadIO m => Car m CommandResponse
+nextFav :: forall {m}. MonadIO m => Car m CommandResponse
+prevTrack :: forall {m}. MonadIO m => Car m CommandResponse
+nextTrack :: forall {m}. MonadIO m => Car m CommandResponse
+togglePlayback :: forall {m}. MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Homelink
 
@@ -430,12 +430,12 @@ trigger :: MonadIO m => (Double, Double) -> Car m CommandResponse
 module Tesla.Car.Command.Doors
 actuateFrontTrunk :: MonadIO m => Car m CommandResponse
 actuateRearTrunk :: MonadIO m => Car m CommandResponse
-lockDoors :: forall m. MonadIO m => Car m CommandResponse
-unlockDoors :: forall m. MonadIO m => Car m CommandResponse
+lockDoors :: forall {m}. MonadIO m => Car m CommandResponse
+unlockDoors :: forall {m}. MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Climate
-hvacOn :: forall m. MonadIO m => Car m CommandResponse
-hvacOff :: forall m. MonadIO m => Car m CommandResponse
+hvacOn :: forall {m}. MonadIO m => Car m CommandResponse
+hvacOff :: forall {m}. MonadIO m => Car m CommandResponse
 
 -- | Set heating levels for various seats.
 heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
@@ -454,7 +454,7 @@ wheelHeater :: MonadIO m => Bool -> Car m CommandResponse
 wheelHeaterOff :: MonadIO m => Car m CommandResponse
 wheelHeaterOn :: MonadIO m => Car m CommandResponse
 maxDefrost :: MonadIO m => Bool -> Car m CommandResponse
-wakeUp :: forall m. MonadIO m => Car m CommandResponse
+wakeUp :: forall {m}. MonadIO m => Car m CommandResponse
 
 -- | Turn on or off bioweapon defense mode.
 --   
@@ -486,13 +486,13 @@ scheduledDepartureOff :: MonadIO m => Car m CommandResponse
 scheduleDeparture :: MonadIO m => Time -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
 
 module Tesla.Car.Command.Charging
-startCharging :: forall m. MonadIO m => Car m CommandResponse
-stopCharging :: forall m. MonadIO m => Car m CommandResponse
+startCharging :: forall {m}. MonadIO m => Car m CommandResponse
+stopCharging :: forall {m}. MonadIO m => Car m CommandResponse
 
 -- | Set the desired charge level (percent).
 setLimit :: MonadIO m => Int -> Car m CommandResponse
-openChargePort :: forall m. MonadIO m => Car m CommandResponse
-closeChargePort :: forall m. MonadIO m => Car m CommandResponse
+openChargePort :: forall {m}. MonadIO m => Car m CommandResponse
+closeChargePort :: forall {m}. MonadIO m => Car m CommandResponse
 
 -- | Set the charge current.
 setAmps :: MonadIO m => Int -> Car m CommandResponse
@@ -505,8 +505,8 @@ scheduledChargingOff :: MonadIO m => Car m CommandResponse
 scheduleCharging :: MonadIO m => Time -> Car m CommandResponse
 
 module Tesla.Car.Command.Alerts
-honkHorn :: forall m. MonadIO m => Car m CommandResponse
-flashLights :: forall m. MonadIO m => Car m CommandResponse
+honkHorn :: forall {m}. MonadIO m => Car m CommandResponse
+flashLights :: forall {m}. MonadIO m => Car m CommandResponse
 
 
 -- | All of the commands supported by this library.
