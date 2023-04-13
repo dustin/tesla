@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.7.
+-- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7dc4bf02fba7a28f00be8a80d8cffd2b74a70a07a4be1472703b2aacc4af947e
+-- hash: 6081130a3e57e68fe1cb9ca6e6b892e740b78eb5360f50a4df85e09ae098888b
 
 name:           tesla
 version:        0.5.1.0
@@ -59,31 +59,31 @@ library
       NamedFieldPuns
   ghc-options: -Wall
   build-depends:
-      aeson ==2.0.*
+      aeson
     , base >=4.7 && <5
     , base64-bytestring
-    , bytestring ==0.10.*
-    , casing >=0.1.4 && <0.2
-    , containers ==0.6.*
+    , bytestring
+    , casing
+    , containers
     , cryptonite
     , exceptions
     , finite-typelits
-    , generic-deriving >=1.12 && <1.15
+    , generic-deriving
     , http-client
-    , lens >=4.17 && <5.2
-    , lens-aeson ==1.2.*
+    , lens
+    , lens-aeson
     , memory
     , monad-logger
-    , mtl ==2.2.*
+    , mtl
     , random
     , retry
     , tagsoup
-    , template-haskell >=2.14 && <2.18
-    , text ==1.2.*
-    , time >=1.8 && <1.10
+    , template-haskell
+    , text
+    , time
     , unliftio-core
-    , vector >=0.12.0 && <0.13
-    , wreq ==0.5.*
+    , vector
+    , wreq
   default-language: Haskell2010
 
 test-suite tesla-test
@@ -100,33 +100,33 @@ test-suite tesla-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HUnit
-    , aeson ==2.0.*
+    , aeson
     , base >=4.7 && <5
     , base64-bytestring
-    , bytestring ==0.10.*
-    , casing >=0.1.4 && <0.2
-    , containers ==0.6.*
+    , bytestring
+    , casing
+    , containers
     , cryptonite
     , exceptions
     , finite-typelits
-    , generic-deriving >=1.12 && <1.15
+    , generic-deriving
     , http-client
-    , lens >=4.17 && <5.2
-    , lens-aeson ==1.2.*
+    , lens
+    , lens-aeson
     , memory
     , monad-logger
-    , mtl ==2.2.*
+    , mtl
     , random
     , retry
     , tagsoup
     , tasty
     , tasty-hunit
     , tasty-quickcheck
-    , template-haskell >=2.14 && <2.18
+    , template-haskell
     , tesla
-    , text ==1.2.*
-    , time >=1.8 && <1.10
+    , text
+    , time
     , unliftio-core
-    , vector >=0.12.0 && <0.13
-    , wreq ==0.5.*
+    , vector
+    , wreq
   default-language: Haskell2010
