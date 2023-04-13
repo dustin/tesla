@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.5.1.0
+@version 0.5.2.0
 
 
 -- | Authentication related data structures.
@@ -231,8 +231,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_axiA. Prism' (OpenState a_axiA) a_axiA
-_Closed :: forall a_axiA. Prism' (OpenState a_axiA) a_axiA
+_Open :: forall a_axDx. Prism' (OpenState a_axDx) a_axDx
+_Closed :: forall a_axDx. Prism' (OpenState a_axDx) a_axDx
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
