@@ -151,14 +151,13 @@ translateCreds AuthInfo{..} AuthResponse{..} = do
 
 -- | Refresh authentication credentials using a refresh token.
 refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
-refreshAuth ai AuthResponse{..} = do
-  ar <- jpostWith jOpts authRefreshURL (encode $ Object (mempty
+refreshAuth _ AuthResponse{..} = do
+  jpostWith jOpts authRefreshURL (encode $ Object (mempty
                                                          & at "grant_type" ?~ "refresh_token"
                                                          & at "client_id" ?~ "ownerapi"
                                                          & at "refresh_token" ?~ String (T.pack _refresh_token)
                                                          & at "scope" ?~ "openid email offline_access"
                                                         ))
-  translateCreds ai ar
 
 jOpts :: Options
 jOpts = aOpts & header "content-type" .~ ["application/json"]
