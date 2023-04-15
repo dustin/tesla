@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cc02fed5504d1e6d2ff83167c9f7e2f26c797865f8702f3211076327ab05698b
+-- hash: 3be41044eb302f4cad38d0467ad1524ef71256da867f42231f947697445de117
 
 name:           tesla
 version:        0.7.1.1
@@ -45,7 +45,6 @@ library
       Tesla.Car.Command.Software
       Tesla.Car.Command.SpeedLimit
       Tesla.Car.Command.Valet
-      Tesla.Car.Command.Wake
       Tesla.Car.Command.Windows
       Tesla.Car.Commands
       Tesla.Energy
