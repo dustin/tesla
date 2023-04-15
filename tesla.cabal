@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1725c4641e78097961719f44569b569c7e52a82a027e84d8d32cdf24c01ae3b0
+-- hash: 9c3f0b9596ee29b8190747eac236e03c836b2b3b6f99c5a32b8cfb444277488d
 
 name:           tesla
-version:        0.7.0.0
+version:        0.7.1.0
 synopsis:       Tesla API client.
 description:    Please see the README on GitHub at <https://github.com/dustin/tesla#readme>
 category:       Web
@@ -45,6 +45,7 @@ library
       Tesla.Car.Command.Software
       Tesla.Car.Command.SpeedLimit
       Tesla.Car.Command.Valet
+      Tesla.Car.Command.Wake
       Tesla.Car.Command.Windows
       Tesla.Car.Commands
       Tesla.Energy

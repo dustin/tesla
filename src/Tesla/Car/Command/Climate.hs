@@ -3,7 +3,8 @@
 {-# LANGUAGE TemplateHaskell   #-}
 
 module Tesla.Car.Command.Climate (
-  hvacOn, hvacOff, heatSeat, Seat(..),
+  hvacOn, hvacOff, climateKeeper,
+  heatSeat, coolSeat, Seat(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   maxDefrost,
   wakeUp,
@@ -13,6 +14,7 @@ module Tesla.Car.Command.Climate (
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
+import           Data.Aeson
 import           Tesla.Car.Command
 
 -- | Turn on the steering wheel heater
@@ -33,16 +35,21 @@ bioweaponMode on = runCmd "set_bioweapon_mode" ["on" .= on]
 
 data Seat = DriverSeat | PassengerSeat | RearLeftSeat | RearCenterSeat | RearRightSeat
 
+seatNum :: Seat -> Int
+seatNum DriverSeat     = 0
+seatNum PassengerSeat  = 1
+seatNum RearLeftSeat   = 2
+seatNum RearCenterSeat = 4
+seatNum RearRightSeat  = 5
+
+
 -- | Set heating levels for various seats.
 heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
 heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" .= seatNum seat, "level" .= level]
-  where
-    seatNum :: Seat -> Int
-    seatNum DriverSeat     = 0
-    seatNum PassengerSeat  = 1
-    seatNum RearLeftSeat   = 2
-    seatNum RearCenterSeat = 4
-    seatNum RearRightSeat  = 5
+
+-- | Set heating levels for various seats.
+coolSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
+coolSeat seat level = runCmd "remote_seat_cooler_request" ["seat_position" .= seatNum seat, "seat_cooler_level" .= level]
 
 -- | Set the main HVAC temperatures.
 setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
@@ -83,6 +90,15 @@ scheduleDeparture t p o = runCmd "set_scheduled_departure" (["enable" .= True, "
            Never        -> [e .= False, w .= False]
            Always       -> [e .= True, w .= False]
            WeekdaysOnly -> [e .= True, w .= True]
+
+data ClimateKeeper = ClimateKeeperOff | ClimateKeeperDefault | DogMode | CampMode
+  deriving (Eq, Show, Bounded, Enum)
+
+instance ToJSON ClimateKeeper where
+  toJSON = toJSON . fromEnum
+
+climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
+climateKeeper ck = runCmd "set_climate_keeper_mode" [ "climate_keeper_mode" .= ck]
 
 mkNamedCommands [("hvacOn", "auto_conditioning_start"),
                  ("hvacOff", "auto_conditioning_stop"),

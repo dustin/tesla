@@ -1,5 +1,9 @@
 # Changelog for tesla
 
+# Release 0.7.1.0
+
+Updated some available commands.
+
 # Release 0.7.0.0
 
 Authentication is no longer supported.
