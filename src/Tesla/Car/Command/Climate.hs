@@ -47,7 +47,7 @@ seatNum RearRightSeat  = 5
 heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
 heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" .= seatNum seat, "level" .= level]
 
--- | Set heating levels for various seats.
+-- | Set cooling levels for various seats.
 coolSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
 coolSeat seat level = runCmd "remote_seat_cooler_request" ["seat_position" .= seatNum seat, "seat_cooler_level" .= level]
 
