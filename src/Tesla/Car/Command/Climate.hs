@@ -3,7 +3,7 @@
 {-# LANGUAGE TemplateHaskell   #-}
 
 module Tesla.Car.Command.Climate (
-  hvacOn, hvacOff, climateKeeper,
+  hvacOn, hvacOff, ClimateKeeper(..), climateKeeper,
   heatSeat, coolSeat, Seat(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   maxDefrost,
