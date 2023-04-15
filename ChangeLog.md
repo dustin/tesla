@@ -1,5 +1,17 @@
 # Changelog for tesla
 
+# Release 0.7.0.0
+
+Authentication is no longer supported.
+
+It hasn't worked for about a year now and Tesla aggressively thwarts automation.
+
+# Release 0.6.0.0
+
+All APIs that send data use JSON now.
+
+Previously we sent form/data and that was fine, but apparently no longer is.
+
 # Release 0.5.0.0
 
 Added:

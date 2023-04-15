@@ -24,134 +24,37 @@ module Tesla
     ) where
 
 
-import           Control.Exception          (catch)
 import           Control.Lens
-import           Control.Monad              (when)
-import           Control.Monad.Catch        (SomeException)
 import           Control.Monad.IO.Class     (MonadIO (..))
-import           Control.Retry              (defaultLogMsg, exponentialBackoff, limitRetries, logRetries, recovering)
-import           Crypto.Hash                (SHA256 (..), hashWith)
 import           Data.Aeson                 (FromJSON, Value (..), encode)
 import           Data.Aeson.Lens            (_Array, _Double, _Integer, _String, key)
-import qualified Data.ByteArray             as BA
-import qualified Data.ByteString            as BS
-import qualified Data.ByteString.Base64.URL as B64
-import qualified Data.ByteString.Char8      as BC
-import qualified Data.ByteString.Lazy       as BL
 import           Data.Foldable              (asum)
 import           Data.Map.Strict            (Map)
 import qualified Data.Map.Strict            as Map
 import           Data.Maybe                 (catMaybes)
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
-import qualified Data.Text.Encoding         as TE
-import           Network.HTTP.Client        (HttpException (..), HttpExceptionContent (TooManyRedirects))
-import           Network.Wreq               (FormParam (..), Options, asJSON, checkResponse, defaults, header,
-                                             hrFinalResponse, params, redirects, responseBody, responseHeader)
-import qualified Network.Wreq.Session       as Sess
-import           System.Random
-import           Text.HTML.TagSoup          (fromAttrib, isTagOpenName, parseTags)
+import           Network.Wreq               (Options, defaults, header)
 
 import           Tesla.Auth
 import           Tesla.Internal.HTTP
 
 baseURL :: String
 baseURL =  "https://owner-api.teslamotors.com/"
-authURL :: String
-authURL = "https://auth.tesla.com/oauth2/v3/authorize"
-authTokenURL :: String
-authTokenURL = "https://owner-api.teslamotors.com/oauth/token"
 authRefreshURL :: String
 authRefreshURL = "https://auth.tesla.com/oauth2/v3/token"
 productsURL :: String
 productsURL = baseURL <> "api/1/products"
 
--- | Authenticate to the Tesla service.
+{-# DEPRECATED authenticate "Tesla busted authentication pretty hard.  See https://github.com/dustin/tesla for more info." #-}
+
+-- | Fail to authenticate to the Tesla service.
 authenticate :: AuthInfo -> IO AuthResponse
-authenticate ai = recovering policy [retryOnAnyStatus] $ \_ -> do
-  sess <- Sess.newSession
-  verifier <- BS.pack . take 86 . randoms <$> getStdGen
-  state <- clean64 . BS.pack . take 16 . randoms <$> getStdGen
-  authenticate' sess verifier state ai
-
-  where
-    policy = exponentialBackoff 2000000 <> limitRetries 9
-    retryOnAnyStatus = logRetries retryOnAnyError reportError
-    retryOnAnyError :: SomeException -> IO Bool
-    retryOnAnyError _ = pure True
-    reportError retriedOrCrashed err retryStatus = putStrLn $ defaultLogMsg retriedOrCrashed err retryStatus
-
-clean64 :: BC.ByteString -> Text
-clean64 = TE.decodeUtf8 . BS.reverse . BS.dropWhile (== 61) . BS.reverse . B64.encode
-
-authenticate' :: Sess.Session -> BC.ByteString -> Text -> AuthInfo -> IO AuthResponse
-authenticate' sess verifier state ai@AuthInfo{..} = do
-  -- 1. First, grab the form.
-  form <- formFields . BL.toStrict . view responseBody <$> Sess.getWith (aOpts & params .~ gparams) sess authURL
-  -- There are required hidden fields -- if we didn't get them, we got the wrong http response
-  when (null form) $ fail "tesla didn't return login form"
-
-  -- 2. Now we post the form with all of our credentials.
-  let form' = form <> ["identity" := _email, "credential" := _password]
-  Just code <- fmap (xcode . BC.unpack) <$> findRedirect authURL (fopts
-                                                                  & params .~ gparams
-                                                                  & redirects .~ 0
-                                                                  & checkResponse ?~ (\_ _ -> pure ())
-                                                                 ) form'
-  -- Extract the "code" from the URL we were redirected to... we can't actually follow the redirect :/
-  let jreq = encode $ Object (mempty
-                               & at "grant_type" ?~ "authorization_code"
-                               & at "client_id" ?~ "ownerapi"
-                               & at "code" ?~ String code
-                               & at "code_verifier" ?~ String verifierHash
-                               & at "redirect_uri" ?~ "https://auth.tesla.com/void/callback")
-
-  -- 3. Posting that code and other junk back to the token URL gets us temporary credentials.
-  ar <- view responseBody <$> (Sess.postWith jOpts sess authRefreshURL jreq >>= asJSON)
-  translateCreds ai ar
-
-  where
-    verifierHash = clean64 . BS.pack . BA.unpack $ hashWith SHA256 verifier
-    gparams = [("client_id", "ownerapi"),
-                 ("code_challenge", verifierHash),
-                 ("code_challenge_method", "S256"),
-                 ("redirect_uri", "https://auth.tesla.com/void/callback"),
-                 ("response_type", "code"),
-                 ("scope", "openid email offline_access"),
-                 ("state", state)]
-    -- extract all the non-empty form fields from an HTML response
-    formFields = map (\t -> fromAttrib "name" t := fromAttrib "value" t)
-                 . filter (\t -> isTagOpenName "input" t && fromAttrib "value" t /= "")
-                 . parseTags
-    fopts = aOpts & header "content-type" .~ ["application/x-www-form-urlencoded"]
-    xcode u = head [v | q <- tail (T.splitOn "?" (T.pack u)),
-                        kv <- T.splitOn "&" q,
-                        (k,v) <- paird (T.splitOn "=" kv),
-                        k == "code"]
-    paird [a,b] = [(a,b)]
-    paird _     = []
-
-    findRedirect u opts a = preview (_Just . responseHeader "Location") <$> (inBody `catch` inException)
-      where
-        inBody = preview hrFinalResponse <$> Sess.customHistoriedPayloadMethodWith "POST" opts sess u a
-        inException (HttpExceptionRequest _ (TooManyRedirects (r:_))) = pure (Just r)
-
-
-translateCreds :: AuthInfo -> AuthResponse -> IO AuthResponse
-translateCreds AuthInfo{..} AuthResponse{..} = do
-  -- 4. And we finally get the useful credentials by exchanging the temporary credentials.
-  let jreq2 = encode $ Object (mempty
-                               & at "grant_type" ?~ "urn:ietf:params:oauth:grant-type:jwt-bearer"
-                               & at "client_id" ?~ String (T.pack _clientID)
-                              )
-
-  ar <- jpostWith (jOpts & header "Authorization" .~ ["bearer " <> BC.pack _access_token]) authTokenURL jreq2
-  pure (ar & refresh_token .~ _refresh_token) -- replace the refresh token with the one from step 3
-
+authenticate _ = fail "Tesla busted authentication pretty hard.  See https://github.com/dustin/tesla for more info."
 
 -- | Refresh authentication credentials using a refresh token.
-refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
-refreshAuth _ AuthResponse{..} = do
+refreshAuth :: AuthResponse -> IO AuthResponse
+refreshAuth AuthResponse{..} = do
   jpostWith jOpts authRefreshURL (encode $ Object (mempty
                                                          & at "grant_type" ?~ "refresh_token"
                                                          & at "client_id" ?~ "ownerapi"
