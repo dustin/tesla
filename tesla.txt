@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.6.0.0
+@version 0.7.0.0
 
 
 -- | Authentication related data structures.
@@ -55,11 +55,14 @@ instance GHC.Show.Show Tesla.Auth.AuthInfo
 --   as documented at <a>https://www.teslaapi.io/</a>
 module Tesla
 
--- | Authenticate to the Tesla service.
+-- | Fail to authenticate to the Tesla service.
+
+-- | <i>Deprecated: Tesla busted authentication pretty hard. See
+--   <a>https://github.com/dustin/tesla</a> for more info.</i>
 authenticate :: AuthInfo -> IO AuthResponse
 
 -- | Refresh authentication credentials using a refresh token.
-refreshAuth :: AuthInfo -> AuthResponse -> IO AuthResponse
+refreshAuth :: AuthResponse -> IO AuthResponse
 
 -- | An Authentication response.
 data AuthResponse
@@ -231,8 +234,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_axC8. Prism' (OpenState a_axC8) a_axC8
-_Closed :: forall a_axC8. Prism' (OpenState a_axC8) a_axC8
+_Open :: forall a_aun1. Prism' (OpenState a_aun1) a_aun1
+_Closed :: forall a_aun1. Prism' (OpenState a_aun1) a_aun1
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
