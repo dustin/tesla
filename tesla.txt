@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.7.0.0
+@version 0.7.1.0
 
 
 -- | Authentication related data structures.
@@ -386,6 +386,9 @@ closeWindows :: MonadIO m => (Double, Double) -> Car m CommandResponse
 ventSunroof :: MonadIO m => Car m CommandResponse
 closeSunroof :: MonadIO m => Car m CommandResponse
 
+module Tesla.Car.Command.Wake
+wakeUp :: forall {m}. MonadIO m => Car m CommandResponse
+
 module Tesla.Car.Command.Valet
 setValetMode :: MonadIO m => Bool -> Int -> Car m CommandResponse
 clearValetPIN :: forall {m}. MonadIO m => Car m CommandResponse
@@ -411,12 +414,7 @@ module Tesla.Car.Command.Sentry
 setSentryMode :: MonadIO m => Bool -> Car m CommandResponse
 
 module Tesla.Car.Command.RemoteStart
-
--- | Enables keyless driving.
---   
---   This requires your account password, so, you know, be careful where
---   you use it.
-remoteStart :: MonadIO m => String -> Car m CommandResponse
+remoteStart :: forall {m}. MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Media
 volumeDown :: forall {m}. MonadIO m => Car m CommandResponse
@@ -441,9 +439,13 @@ unlockDoors :: forall {m}. MonadIO m => Car m CommandResponse
 module Tesla.Car.Command.Climate
 hvacOn :: forall {m}. MonadIO m => Car m CommandResponse
 hvacOff :: forall {m}. MonadIO m => Car m CommandResponse
+climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
 
 -- | Set heating levels for various seats.
 heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
+
+-- | Set heating levels for various seats.
+coolSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
 data Seat
 DriverSeat :: Seat
 PassengerSeat :: Seat
@@ -489,6 +491,11 @@ scheduledDepartureOff :: MonadIO m => Car m CommandResponse
 --   For this to do anything useful, you need to specify at least one of
 --   <a>Preconditioning</a> and/or <a>OffPeakConfig</a>.
 scheduleDeparture :: MonadIO m => Time -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
+instance GHC.Enum.Enum Tesla.Car.Command.Climate.ClimateKeeper
+instance GHC.Enum.Bounded Tesla.Car.Command.Climate.ClimateKeeper
+instance GHC.Show.Show Tesla.Car.Command.Climate.ClimateKeeper
+instance GHC.Classes.Eq Tesla.Car.Command.Climate.ClimateKeeper
+instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Climate.ClimateKeeper
 
 module Tesla.Car.Command.Charging
 startCharging :: forall {m}. MonadIO m => Car m CommandResponse
