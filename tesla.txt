@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.7.1.0
+@version 0.7.1.1
 
 
 -- | Authentication related data structures.
@@ -386,9 +386,6 @@ closeWindows :: MonadIO m => (Double, Double) -> Car m CommandResponse
 ventSunroof :: MonadIO m => Car m CommandResponse
 closeSunroof :: MonadIO m => Car m CommandResponse
 
-module Tesla.Car.Command.Wake
-wakeUp :: forall {m}. MonadIO m => Car m CommandResponse
-
 module Tesla.Car.Command.Valet
 setValetMode :: MonadIO m => Bool -> Int -> Car m CommandResponse
 clearValetPIN :: forall {m}. MonadIO m => Car m CommandResponse
@@ -444,7 +441,7 @@ climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
 -- | Set heating levels for various seats.
 heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
 
--- | Set heating levels for various seats.
+-- | Set cooling levels for various seats.
 coolSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
 data Seat
 DriverSeat :: Seat
