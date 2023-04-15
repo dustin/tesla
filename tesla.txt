@@ -436,6 +436,11 @@ unlockDoors :: forall {m}. MonadIO m => Car m CommandResponse
 module Tesla.Car.Command.Climate
 hvacOn :: forall {m}. MonadIO m => Car m CommandResponse
 hvacOff :: forall {m}. MonadIO m => Car m CommandResponse
+data ClimateKeeper
+ClimateKeeperOff :: ClimateKeeper
+ClimateKeeperDefault :: ClimateKeeper
+DogMode :: ClimateKeeper
+CampMode :: ClimateKeeper
 climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
 
 -- | Set heating levels for various seats.
