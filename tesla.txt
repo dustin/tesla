@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.5.2.1
+@version 0.6.0.0
 
 
 -- | Authentication related data structures.
@@ -347,8 +347,8 @@ mkTime :: Finite 24 -> Finite 60 -> Time
 -- | Get the hours and minutes out of a <a>Time</a>.
 fromTime :: Time -> (Finite 24, Finite 60)
 
--- | Run a command with a payload.
-runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
+-- | Run a command with a JSON payload.
+runCmd :: MonadIO m => String -> [Pair] -> Car m CommandResponse
 
 -- | Run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse
@@ -359,6 +359,7 @@ type CommandResponse = Either Text ()
 
 -- | Car Monad for accessing car-specific things.
 data Car m a
+(.=) :: (KeyValue kv, ToJSON v) => Key -> v -> kv
 
 -- | Build a simple named command car that posts to the given named
 --   endpoint.
@@ -373,6 +374,7 @@ mkNamedCommands :: [(String, String)] -> Q [Dec]
 instance GHC.Show.Show Tesla.Car.Command.Time
 instance GHC.Num.Num Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue Tesla.Car.Command.Time
+instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue GHC.Types.Bool
 
 module Tesla.Car.Command.Windows

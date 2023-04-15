@@ -3,22 +3,21 @@
 </span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Tesla.Car.Command.RemoteStart</span><span> </span><span class="hs-keyword">where</span><span>
 </span><span id="line-4"></span><span>
 </span><span id="line-5"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.IO.Class</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">MonadIO</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-6"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Network.Wreq</span></span><span>           </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">FormParam</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-7"></span><span>
-</span><span id="line-8"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Car.Command.html"><span class="hs-identifier">Tesla.Car.Command</span></a></span><span>
-</span><span id="line-9"></span><span>
-</span><span id="line-10"></span><span class="hs-comment">-- | Enables keyless driving.</span><span>
-</span><span id="line-11"></span><span class="hs-comment">--</span><span>
-</span><span id="line-12"></span><span class="hs-comment">-- This requires your account password, so, you know, be careful where you use it.</span><span>
-</span><span id="line-13"></span><span id="local-6989586621679221672"><span class="annot"><a href="Tesla.Car.Command.RemoteStart.html#remoteStart"><span class="hs-identifier hs-type">remoteStart</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679221672"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679221672"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-14"></span><span id="remoteStart"><span class="annot"><span class="annottext">remoteStart :: forall (m :: * -&gt; *). MonadIO m =&gt; String -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.RemoteStart.html#remoteStart"><span class="hs-identifier hs-var hs-var">remoteStart</span></a></span></span><span> </span><span id="local-6989586621679221651"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679221651"><span class="hs-identifier hs-var">pw</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *) p.
-(MonadIO m, Postable p) =&gt;
-String -&gt; p -&gt; Car m CommandResponse
+</span><span id="line-6"></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Car.Command.html"><span class="hs-identifier">Tesla.Car.Command</span></a></span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-comment">-- | Enables keyless driving.</span><span>
+</span><span id="line-10"></span><span class="hs-comment">--</span><span>
+</span><span id="line-11"></span><span class="hs-comment">-- This requires your account password, so, you know, be careful where you use it.</span><span>
+</span><span id="line-12"></span><span id="local-6989586621679224050"><span class="annot"><a href="Tesla.Car.Command.RemoteStart.html#remoteStart"><span class="hs-identifier hs-type">remoteStart</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679224050"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679224050"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-13"></span><span id="remoteStart"><span class="annot"><span class="annottext">remoteStart :: forall (m :: * -&gt; *). MonadIO m =&gt; String -&gt; Car m CommandResponse
+</span><a href="Tesla.Car.Command.RemoteStart.html#remoteStart"><span class="hs-identifier hs-var hs-var">remoteStart</span></a></span></span><span> </span><span id="local-6989586621679224026"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679224026"><span class="hs-identifier hs-var">pw</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+MonadIO m =&gt;
+String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;remote_start_drive&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">ByteString
-</span><span class="hs-string">&quot;password&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall v. FormValue v =&gt; ByteString -&gt; v -&gt; FormParam
-</span><span class="hs-operator hs-var">:=</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679221651"><span class="hs-identifier hs-var">pw</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-15"></span></pre></body></html>
+</span><span class="hs-string">&quot;remote_start_drive&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;password&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679224026"><span class="hs-identifier hs-var">pw</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-14"></span></pre></body></html>
