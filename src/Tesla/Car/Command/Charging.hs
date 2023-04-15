@@ -8,25 +8,24 @@ module Tesla.Car.Command.Charging (
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Network.Wreq           (FormParam (..))
 
 import           Tesla.Car.Command
 
 -- | Set the desired charge level (percent).
 setLimit :: MonadIO m => Int -> Car m CommandResponse
-setLimit to = runCmd "set_charge_limit" ["percent" := to ]
+setLimit to = runCmd "set_charge_limit" ["percent" .= to]
 
 -- | Set the charge current.
 setAmps :: MonadIO m => Int -> Car m CommandResponse
-setAmps to = runCmd "set_charging_amps" ["charging_amps" := to]
+setAmps to = runCmd "set_charging_amps" ["charging_amps" .= to]
 
 -- | Disable scheduled charging.
 scheduledChargingOff :: MonadIO m => Car m CommandResponse
-scheduledChargingOff = runCmd "set_scheduled_charging" [ "enable" := False ]
+scheduledChargingOff = runCmd "set_scheduled_charging" [ "enable" .= False ]
 
 -- | Schedule charging for the given number of minutes after midnight (local time).
 scheduleCharging :: MonadIO m => Time -> Car m CommandResponse
-scheduleCharging mins = runCmd "set_scheduled_charging" [ "enable" := True, "time" := mins ]
+scheduleCharging mins = runCmd "set_scheduled_charging" [ "enable" .= True, "time" .= mins ]
 
 mkNamedCommands [("startCharging", "charge_start"),
                  ("stopCharging", "charge_stop"),

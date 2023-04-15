@@ -13,13 +13,11 @@ module Tesla.Car.Command.Climate (
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Network.Wreq           (FormParam (..))
-
 import           Tesla.Car.Command
 
 -- | Turn on the steering wheel heater
 wheelHeater :: MonadIO m => Bool -> Car m CommandResponse
-wheelHeater on = runCmd "remote_steering_wheel_heater_request" ["on" := on]
+wheelHeater on = runCmd "remote_steering_wheel_heater_request" ["on" .= on]
 
 wheelHeaterOn :: MonadIO m => Car m CommandResponse
 wheelHeaterOn = wheelHeater True
@@ -31,13 +29,13 @@ wheelHeaterOff = wheelHeater False
 --
 -- If HVAC is off, turning on bioweapon defense mode will also turn on HVAC.
 bioweaponMode :: MonadIO m => Bool -> Car m CommandResponse
-bioweaponMode on = runCmd "set_bioweapon_mode" ["on" := on]
+bioweaponMode on = runCmd "set_bioweapon_mode" ["on" .= on]
 
 data Seat = DriverSeat | PassengerSeat | RearLeftSeat | RearCenterSeat | RearRightSeat
 
 -- | Set heating levels for various seats.
 heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
-heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" := seatNum seat, "level" := level]
+heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" .= seatNum seat, "level" .= level]
   where
     seatNum :: Seat -> Int
     seatNum DriverSeat     = 0
@@ -48,13 +46,13 @@ heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" := seatNum s
 
 -- | Set the main HVAC temperatures.
 setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
-setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" := driver, "passenger_temp" := passenger]
+setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" .= driver, "passenger_temp" .= passenger]
 
 maxDefrost :: MonadIO m => Bool -> Car m CommandResponse
-maxDefrost on = runCmd "set_preconditioning_max" ["on" := on]
+maxDefrost on = runCmd "set_preconditioning_max" ["on" .= on]
 
 scheduledDepartureOff :: MonadIO m => Car m CommandResponse
-scheduledDepartureOff = runCmd "set_scheduled_departure" [ "enable" := False ]
+scheduledDepartureOff = runCmd "set_scheduled_departure" [ "enable" .= False ]
 
 -- | When configuring scheduled departure, preconditioning and
 -- off-peak charging both have weekday only options.
@@ -74,17 +72,17 @@ data OffPeakConfig = OffPeakConfig {
 -- For this to do anything useful, you need to specify at least one of
 -- 'Preconditioning' and/or 'OffPeakConfig'.
 scheduleDeparture :: MonadIO m => Time -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
-scheduleDeparture t p o = runCmd "set_scheduled_departure" (["enable" := True, "departure_time" := t] <> pp <> op o)
+scheduleDeparture t p o = runCmd "set_scheduled_departure" (["enable" .= True, "departure_time" .= t] <> pp <> op o)
   where
     pp = s "preconditioning_enabled" "preconditioning_weekdays_only" p
     op Nothing  = opp (OffPeakConfig Never (Time 0))
     op (Just x) = opp x
-    opp OffPeakConfig{..} = ("end_off_peak_time" := _offPeakEndTime) : s "off_peak_charging_enabled" "off_peak_charging_weekdays_only" _offPeakEnabled
+    opp OffPeakConfig{..} = ("end_off_peak_time" .= _offPeakEndTime) : s "off_peak_charging_enabled" "off_peak_charging_weekdays_only" _offPeakEnabled
 
     s e w = \case
-           Never        -> [e := False, w := False]
-           Always       -> [e := True, w := False]
-           WeekdaysOnly -> [e := True, w := True]
+           Never        -> [e .= False, w .= False]
+           Always       -> [e .= True, w .= False]
+           WeekdaysOnly -> [e .= True, w .= True]
 
 mkNamedCommands [("hvacOn", "auto_conditioning_start"),
                  ("hvacOff", "auto_conditioning_stop"),

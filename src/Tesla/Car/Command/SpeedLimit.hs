@@ -5,14 +5,13 @@ module Tesla.Car.Command.SpeedLimit (
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Network.Wreq           (FormParam (..))
 import           Tesla.Car.Command
 
 speedLimit :: MonadIO m => Int -> Car m CommandResponse
-speedLimit to = runCmd "speed_limit_set_limit" ["limit_mph" := to ]
+speedLimit to = runCmd "speed_limit_set_limit" ["limit_mph" .= to ]
 
 speedo :: MonadIO m => String -> Int -> Car m CommandResponse
-speedo c pin = runCmd c ["pin" := pin ]
+speedo c pin = runCmd c ["pin" .= pin ]
 
 activateSpeedLimit :: MonadIO m => Int -> Car m CommandResponse
 activateSpeedLimit = speedo "speed_limit_activate"

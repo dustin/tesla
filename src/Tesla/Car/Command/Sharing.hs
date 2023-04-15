@@ -12,7 +12,7 @@ import           Tesla.Car.Command
 share :: MonadIO m => Text -> Car m CommandResponse
 share to = do
   now <- fst . properFraction . utcTimeToPOSIXSeconds <$> liftIO getCurrentTime
-  runCmd "share" $ object [
+  runCmd "share" [
     "type" .= ("share_ext_content_raw" :: Text),
     "value" .= object [ "android.intent.extra.TEXT" .= to ],
     "locale" .= ("en-US" :: Text),

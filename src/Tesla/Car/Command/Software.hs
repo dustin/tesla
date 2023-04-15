@@ -6,13 +6,12 @@ module Tesla.Car.Command.Software (
   ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Network.Wreq           (FormParam (..))
 
 import           Tesla.Car.Command
 
 -- | Schedule a software update in this many seconds.
 scheduleUpdate :: MonadIO m => Int -> Car m CommandResponse
-scheduleUpdate secs = runCmd "schedule_software_update" ["offset_sec" := secs]
+scheduleUpdate secs = runCmd "schedule_software_update" ["offset_sec" .= secs]
 
 -- | Cancel a scheduled software update.
 mkCommand "cancelUpdate" "cancel_software_update"

@@ -15,10 +15,11 @@ Executing commands within the Car Monad.
 module Tesla.Car.Command (
   Time(..), mkTime, fromTime,
   runCmd, runCmd', CommandResponse, Car,
+  (.=),
   -- * TH support for generating commands.
   mkCommand, mkCommands, mkNamedCommands) where
 
-import           Control.Lens
+import           Control.Lens hiding ((.=))
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson
 import           Data.Aeson.Lens        (_Bool, _String, key)
@@ -27,11 +28,12 @@ import           Data.Finite            (Finite, getFinite, modulo)
 import           Data.Text              (Text)
 import           GHC.TypeNats
 import           Language.Haskell.TH
-import           Network.Wreq.Types     (FormValue (..), Postable)
+import           Network.Wreq.Types     (FormValue (..))
 import           Text.Casing            (fromSnake, toCamel)
 
 import           Tesla.Car
 import           Tesla.Internal.HTTP
+import Data.Aeson.Types (Pair)
 
 -- | A CommandResponse wraps an Either such that Left represents a
 -- failure message and Right suggests the command was successful.
@@ -53,6 +55,9 @@ instance Num Time where
 instance FormValue Time where
   renderFormValue (Time x) = renderFormValue (getFinite x)
 
+instance ToJSON Time where
+  toJSON (Time x) = toJSON (getFinite x)
+
 -- | Make a 'Time' with the given hours and minutes.
 mkTime :: Finite 24 -> Finite 60 -> Time
 mkTime h m = Time $ modulo (toInteger h * 60 + toInteger m)
@@ -64,18 +69,24 @@ fromTime (Time t) = bimap f f (t `divMod` 60)
     f :: forall m n. (KnownNat m, KnownNat n, n <= m) => Finite m -> Finite n
     f = modulo . toInteger
 
--- | Run a command with a payload.
-runCmd :: (MonadIO m, Postable p) => String -> p -> Car m CommandResponse
+-- | Run a command with a JSON payload.
+runCmd :: MonadIO m => String -> [Pair] -> Car m CommandResponse
 runCmd cmd p = do
   v <- currentVehicleID
-  j :: Value <- jpostAuth (vehicleURL v $ "command/" <> cmd) p
+  j :: Value <- jpostAuth (vehicleURL v $ "command/" <> cmd) (object p)
   pure $ case j ^? key "response" . key "result" . _Bool of
     Just True -> Right ()
     _         -> Left $ j ^. key "response" . key "reason" . _String
 
+
 -- | Run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse
-runCmd' cmd = runCmd cmd BL.empty
+runCmd' cmd =  do
+  v <- currentVehicleID
+  j :: Value <- jpostAuth (vehicleURL v $ "command/" <> cmd) BL.empty
+  pure $ case j ^? key "response" . key "result" . _Bool of
+    Just True -> Right ()
+    _         -> Left $ j ^. key "response" . key "reason" . _String
 
 instance FormValue Bool where
   renderFormValue True  = "true"
