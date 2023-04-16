@@ -23,7 +23,6 @@ import           Control.Lens hiding ((.=))
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson
 import           Data.Aeson.Lens        (_Bool, _String, key)
-import qualified Data.ByteString.Lazy   as BL
 import           Data.Finite            (Finite, getFinite, modulo)
 import           Data.Text              (Text)
 import           GHC.TypeNats
@@ -81,12 +80,7 @@ runCmd cmd p = do
 
 -- | Run command without a payload
 runCmd' :: MonadIO m => String -> Car m CommandResponse
-runCmd' cmd =  do
-  v <- currentVehicleID
-  j :: Value <- jpostAuth (vehicleURL v $ "command/" <> cmd) BL.empty
-  pure $ case j ^? key "response" . key "result" . _Bool of
-    Just True -> Right ()
-    _         -> Left $ j ^. key "response" . key "reason" . _String
+runCmd' = (`runCmd` [])
 
 instance FormValue Bool where
   renderFormValue True  = "true"
