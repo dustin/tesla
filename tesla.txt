@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.7.1.1
+@version 0.7.2.0
 
 
 -- | Authentication related data structures.
@@ -234,8 +234,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_aun1. Prism' (OpenState a_aun1) a_aun1
-_Closed :: forall a_aun1. Prism' (OpenState a_aun1) a_aun1
+_Open :: forall a_auqC. Prism' (OpenState a_auqC) a_auqC
+_Closed :: forall a_auqC. Prism' (OpenState a_auqC) a_auqC
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
@@ -386,6 +386,9 @@ closeWindows :: MonadIO m => (Double, Double) -> Car m CommandResponse
 ventSunroof :: MonadIO m => Car m CommandResponse
 closeSunroof :: MonadIO m => Car m CommandResponse
 
+module Tesla.Car.Command.Wake
+wakeUp :: MonadIO m => Car m (Maybe Value)
+
 module Tesla.Car.Command.Valet
 setValetMode :: MonadIO m => Bool -> Int -> Car m CommandResponse
 clearValetPIN :: forall {m}. MonadIO m => Car m CommandResponse
@@ -463,7 +466,6 @@ wheelHeater :: MonadIO m => Bool -> Car m CommandResponse
 wheelHeaterOff :: MonadIO m => Car m CommandResponse
 wheelHeaterOn :: MonadIO m => Car m CommandResponse
 maxDefrost :: MonadIO m => Bool -> Car m CommandResponse
-wakeUp :: forall {m}. MonadIO m => Car m CommandResponse
 
 -- | Turn on or off bioweapon defense mode.
 --   

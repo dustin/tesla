@@ -67,7 +67,7 @@ documented at https://www.teslaapi.io/
 </span><span id="line-55"></span><span class="hs-comment">-- | Refresh authentication credentials using a refresh token.</span><span>
 </span><span id="line-56"></span><span class="annot"><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-type">refreshAuth</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span>
 </span><span id="line-57"></span><span id="refreshAuth"><span class="annot"><span class="annottext">refreshAuth :: AuthResponse -&gt; IO AuthResponse
-</span><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-var hs-var">refreshAuth</span></a></span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span class="hs-special">{</span><span id="local-6989586621679215147"><span id="local-6989586621679215148"><span id="local-6989586621679215149"><span class="annot"><span class="annottext">Int
+</span><a href="Tesla.html#refreshAuth"><span class="hs-identifier hs-var hs-var">refreshAuth</span></a></span></span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthResponse"><span class="hs-identifier hs-type">AuthResponse</span></a></span><span class="hs-special">{</span><span id="local-6989586621679215372"><span id="local-6989586621679215373"><span id="local-6989586621679215374"><span class="annot"><span class="annottext">Int
 String
 _refresh_token :: AuthResponse -&gt; String
 _expires_in :: AuthResponse -&gt; Int
@@ -105,7 +105,7 @@ Options -&gt; String -&gt; a -&gt; m j
 </span><span class="hs-operator hs-var">?~</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value
 </span><span class="hs-identifier hs-var">String</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
 </span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679215147"><span class="hs-identifier hs-var">_refresh_token</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679215372"><span class="hs-identifier hs-var">_refresh_token</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-62"></span><span>                                                         </span><span class="annot"><span class="annottext">forall a b. a -&gt; (a -&gt; b) -&gt; b
 </span><span class="hs-operator hs-var">&amp;</span></span><span> </span><span class="annot"><span class="annottext">forall m. At m =&gt; Index m -&gt; Lens' m (Maybe (IxValue m))
 </span><span class="hs-identifier hs-var">at</span></span><span> </span><span class="annot"><span class="annottext">Key
@@ -142,7 +142,7 @@ Options -&gt; String -&gt; a -&gt; m j
 </span><span id="line-76"></span><span>
 </span><span id="line-77"></span><span class="hs-comment">-- | Possible states a vehicle may be in.</span><span>
 </span><span id="line-78"></span><span class="hs-keyword">data</span><span> </span><span id="VehicleState"><span class="annot"><a href="Tesla.html#VehicleState"><span class="hs-identifier hs-var">VehicleState</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="VOnline"><span class="annot"><a href="Tesla.html#VOnline"><span class="hs-identifier hs-var">VOnline</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="VOffline"><span class="annot"><a href="Tesla.html#VOffline"><span class="hs-identifier hs-var">VOffline</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="VAsleep"><span class="annot"><a href="Tesla.html#VAsleep"><span class="hs-identifier hs-var">VAsleep</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="VWaking"><span class="annot"><a href="Tesla.html#VWaking"><span class="hs-identifier hs-var">VWaking</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="VUnknown"><span class="annot"><a href="Tesla.html#VUnknown"><span class="hs-identifier hs-var">VUnknown</span></a></span></span><span>
-</span><span id="line-79"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679215123"><span id="local-6989586621679215125"><span id="local-6989586621679215127"><span class="annot"><span class="annottext">Int -&gt; VehicleState -&gt; ShowS
+</span><span id="line-79"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679215348"><span id="local-6989586621679215350"><span id="local-6989586621679215352"><span class="annot"><span class="annottext">Int -&gt; VehicleState -&gt; ShowS
 [VehicleState] -&gt; ShowS
 VehicleState -&gt; String
 forall a.
@@ -153,7 +153,7 @@ show :: VehicleState -&gt; String
 $cshow :: VehicleState -&gt; String
 showsPrec :: Int -&gt; VehicleState -&gt; ShowS
 $cshowsPrec :: Int -&gt; VehicleState -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215107"><span id="local-6989586621679215115"><span id="local-6989586621679215118"><span id="local-6989586621679215120"><span class="annot"><span class="annottext">ReadPrec [VehicleState]
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215332"><span id="local-6989586621679215340"><span id="local-6989586621679215343"><span id="local-6989586621679215345"><span class="annot"><span class="annottext">ReadPrec [VehicleState]
 ReadPrec VehicleState
 Int -&gt; ReadS VehicleState
 ReadS [VehicleState]
@@ -168,7 +168,7 @@ readList :: ReadS [VehicleState]
 $creadList :: ReadS [VehicleState]
 readsPrec :: Int -&gt; ReadS VehicleState
 $creadsPrec :: Int -&gt; ReadS VehicleState
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Read</span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215101"><span id="local-6989586621679215103"><span class="annot"><span class="annottext">VehicleState -&gt; VehicleState -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Read</span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215326"><span id="local-6989586621679215328"><span class="annot"><span class="annottext">VehicleState -&gt; VehicleState -&gt; Bool
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 /= :: VehicleState -&gt; VehicleState -&gt; Bool
 $c/= :: VehicleState -&gt; VehicleState -&gt; Bool
@@ -213,7 +213,7 @@ $c== :: VehicleState -&gt; VehicleState -&gt; Bool
 </span><a href="Tesla.html#_pwName"><span class="hs-identifier hs-var hs-var">_pwName</span></a></span></span><span>         </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-96"></span><span>                                </span><span class="hs-special">,</span><span> </span><span id="_pwTotal"><span class="annot"><span class="annottext">Product -&gt; Double
 </span><a href="Tesla.html#_pwTotal"><span class="hs-identifier hs-var hs-var">_pwTotal</span></a></span></span><span>        </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Double</span></span><span> </span><span class="hs-special">}</span><span>
-</span><span id="line-97"></span><span>             </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679215064"><span id="local-6989586621679215066"><span id="local-6989586621679215085"><span class="annot"><span class="annottext">Int -&gt; Product -&gt; ShowS
+</span><span id="line-97"></span><span>             </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679215289"><span id="local-6989586621679215291"><span id="local-6989586621679215310"><span class="annot"><span class="annottext">Int -&gt; Product -&gt; ShowS
 [Product] -&gt; ShowS
 Product -&gt; String
 forall a.
@@ -224,7 +224,7 @@ show :: Product -&gt; String
 $cshow :: Product -&gt; String
 showsPrec :: Int -&gt; Product -&gt; ShowS
 $cshowsPrec :: Int -&gt; Product -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215013"><span id="local-6989586621679215057"><span id="local-6989586621679215060"><span id="local-6989586621679215062"><span class="annot"><span class="annottext">ReadPrec [Product]
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215238"><span id="local-6989586621679215282"><span id="local-6989586621679215285"><span id="local-6989586621679215287"><span class="annot"><span class="annottext">ReadPrec [Product]
 ReadPrec Product
 Int -&gt; ReadS Product
 ReadS [Product]
@@ -239,7 +239,7 @@ readList :: ReadS [Product]
 $creadList :: ReadS [Product]
 readsPrec :: Int -&gt; ReadS Product
 $creadsPrec :: Int -&gt; ReadS Product
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Read</span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679214996"><span id="local-6989586621679215010"><span class="annot"><span class="annottext">Product -&gt; Product -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Read</span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679215221"><span id="local-6989586621679215235"><span class="annot"><span class="annottext">Product -&gt; Product -&gt; Bool
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 /= :: Product -&gt; Product -&gt; Bool
 $c/= :: Product -&gt; Product -&gt; Bool
@@ -267,25 +267,25 @@ $c== :: Product -&gt; Product -&gt; Bool
 (Profunctor p, Contravariant f) =&gt;
 (s -&gt; a) -&gt; Optic' p f s a
 </span><span class="hs-identifier hs-var">to</span></span><span> </span><span class="annot"><span class="annottext">forall {p}. AsValue p =&gt; p -&gt; Maybe Product
-</span><a href="#local-6989586621679214784"><span class="hs-identifier hs-var">prod</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679215009"><span class="hs-identifier hs-var">prod</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-105"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-106"></span><span>    </span><span id="local-6989586621679214784"><span class="annot"><span class="annottext">prod :: p -&gt; Maybe Product
-</span><a href="#local-6989586621679214784"><span class="hs-identifier hs-var hs-var">prod</span></a></span></span><span> </span><span id="local-6989586621679214779"><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (t :: * -&gt; *) (f :: * -&gt; *) a.
+</span><span id="line-106"></span><span>    </span><span id="local-6989586621679215009"><span class="annot"><span class="annottext">prod :: p -&gt; Maybe Product
+</span><a href="#local-6989586621679215009"><span class="hs-identifier hs-var hs-var">prod</span></a></span></span><span> </span><span id="local-6989586621679215004"><span class="annot"><span class="annottext">p
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (t :: * -&gt; *) (f :: * -&gt; *) a.
 (Foldable t, Alternative f) =&gt;
 t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">asum</span></span><span> </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Maybe Product
-</span><a href="#local-6989586621679214778"><span class="hs-identifier hs-var">prodCar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
-</span><a href="#local-6989586621679214777"><span class="hs-identifier hs-var">prodPowerwall</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
-</span><a href="#local-6989586621679214776"><span class="hs-identifier hs-var">prodSolar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">forall a. Maybe a
+</span><a href="#local-6989586621679215003"><span class="hs-identifier hs-var">prodCar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
+</span><a href="#local-6989586621679215002"><span class="hs-identifier hs-var">prodPowerwall</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe Product
+</span><a href="#local-6989586621679215001"><span class="hs-identifier hs-var">prodSolar</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-special">]</span><span>
 </span><span id="line-107"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-108"></span><span>        </span><span id="local-6989586621679214778"><span class="annot"><span class="annottext">prodCar :: Maybe Product
-</span><a href="#local-6989586621679214778"><span class="hs-identifier hs-var hs-var">prodCar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; VehicleState -&gt; Product
+</span><span id="line-108"></span><span>        </span><span id="local-6989586621679215003"><span class="annot"><span class="annottext">prodCar :: Maybe Product
+</span><a href="#local-6989586621679215003"><span class="hs-identifier hs-var hs-var">prodCar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; VehicleState -&gt; Product
 </span><a href="Tesla.html#ProductVehicle"><span class="hs-identifier hs-var">ProductVehicle</span></a></span><span>
 </span><span id="line-109"></span><span>                  </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;display_name&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -293,7 +293,7 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_String</span></span><span class="hs-special">)</span><span>
 </span><span id="line-110"></span><span>                  </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;id_s&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -301,7 +301,7 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_String</span></span><span class="hs-special">)</span><span>
 </span><span id="line-111"></span><span>                  </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;state&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -312,12 +312,12 @@ t (f a) -&gt; f a
 (s -&gt; a) -&gt; Optic' p f s a
 </span><span class="hs-identifier hs-var">to</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; VehicleState
 </span><a href="Tesla.html#vsFromString"><span class="hs-identifier hs-var">vsFromString</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-112"></span><span>        </span><span id="local-6989586621679214777"><span class="annot"><span class="annottext">prodPowerwall :: Maybe Product
-</span><a href="#local-6989586621679214777"><span class="hs-identifier hs-var hs-var">prodPowerwall</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; Double -&gt; Double -&gt; Double -&gt; Text -&gt; Double -&gt; Product
+</span><span id="line-112"></span><span>        </span><span id="local-6989586621679215002"><span class="annot"><span class="annottext">prodPowerwall :: Maybe Product
+</span><a href="#local-6989586621679215002"><span class="hs-identifier hs-var hs-var">prodPowerwall</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; Double -&gt; Double -&gt; Double -&gt; Text -&gt; Double -&gt; Product
 </span><a href="Tesla.html#ProductPowerwall"><span class="hs-identifier hs-var">ProductPowerwall</span></a></span><span>
 </span><span id="line-113"></span><span>                        </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;energy_site_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -325,7 +325,7 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_Integer</span></span><span class="hs-special">)</span><span>
 </span><span id="line-114"></span><span>                        </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;battery_power&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -333,7 +333,7 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_Double</span></span><span class="hs-special">)</span><span>
 </span><span id="line-115"></span><span>                        </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;energy_left&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -341,7 +341,7 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_Double</span></span><span class="hs-special">)</span><span>
 </span><span id="line-116"></span><span>                        </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;percentage_charged&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -349,7 +349,7 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_Double</span></span><span class="hs-special">)</span><span>
 </span><span id="line-117"></span><span>                        </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;site_name&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -357,17 +357,17 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_String</span></span><span class="hs-special">)</span><span>
 </span><span id="line-118"></span><span>                        </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;total_pack_energy&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsNumber t =&gt; Prism' t Double
 </span><span class="hs-identifier hs-var">_Double</span></span><span class="hs-special">)</span><span>
-</span><span id="line-119"></span><span>        </span><span id="local-6989586621679214776"><span class="annot"><span class="annottext">prodSolar :: Maybe Product
-</span><a href="#local-6989586621679214776"><span class="hs-identifier hs-var hs-var">prodSolar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; Product
+</span><span id="line-119"></span><span>        </span><span id="local-6989586621679215001"><span class="annot"><span class="annottext">prodSolar :: Maybe Product
+</span><a href="#local-6989586621679215001"><span class="hs-identifier hs-var hs-var">prodSolar</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">EnergyID -&gt; Product
 </span><a href="Tesla.html#ProductEnergy"><span class="hs-identifier hs-var">ProductEnergy</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p
-</span><a href="#local-6989586621679214779"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
+</span><a href="#local-6989586621679215004"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">forall s a. s -&gt; Getting (First a) s a -&gt; Maybe a
 </span><span class="hs-operator hs-var">^?</span></span><span> </span><span class="annot"><span class="annottext">forall t. AsValue t =&gt; Key -&gt; Traversal' t Value
 </span><span class="hs-identifier hs-var">key</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;energy_site_id&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -375,19 +375,19 @@ t (f a) -&gt; f a
 </span><span class="hs-identifier hs-var">_Integer</span></span><span class="hs-special">)</span><span>
 </span><span id="line-120"></span><span>
 </span><span id="line-121"></span><span class="hs-comment">-- | productsRaw retrieves the complete response for products</span><span>
-</span><span id="line-122"></span><span id="local-6989586621679215310"><span id="local-6989586621679215311"><span class="annot"><a href="Tesla.html#productsRaw"><span class="hs-identifier hs-type">productsRaw</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679215311"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679215310"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679215310"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679215311"><span class="hs-identifier hs-type">j</span></a></span></span></span><span>
+</span><span id="line-122"></span><span id="local-6989586621679215535"><span id="local-6989586621679215536"><span class="annot"><a href="Tesla.html#productsRaw"><span class="hs-identifier hs-type">productsRaw</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679215536"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679215535"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679215535"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679215536"><span class="hs-identifier hs-type">j</span></a></span></span></span><span>
 </span><span id="line-123"></span><span id="productsRaw"><span class="annot"><span class="annottext">productsRaw :: forall j (m :: * -&gt; *). (FromJSON j, MonadIO m) =&gt; AuthInfo -&gt; m j
-</span><a href="Tesla.html#productsRaw"><span class="hs-identifier hs-var hs-var">productsRaw</span></a></span></span><span> </span><span id="local-6989586621679214687"><span class="annot"><span class="annottext">AuthInfo
-</span><a href="#local-6989586621679214687"><span class="hs-identifier hs-var">ai</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall j (m :: * -&gt; *).
+</span><a href="Tesla.html#productsRaw"><span class="hs-identifier hs-var hs-var">productsRaw</span></a></span></span><span> </span><span id="local-6989586621679214912"><span class="annot"><span class="annottext">AuthInfo
+</span><a href="#local-6989586621679214912"><span class="hs-identifier hs-var">ai</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall j (m :: * -&gt; *).
 (FromJSON j, MonadIO m) =&gt;
 Options -&gt; String -&gt; m j
 </span><a href="Tesla.Internal.HTTP.html#jgetWith"><span class="hs-identifier hs-var">jgetWith</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">AuthInfo -&gt; Options
 </span><a href="Tesla.Internal.HTTP.html#authOpts"><span class="hs-identifier hs-var">authOpts</span></a></span><span> </span><span class="annot"><span class="annottext">AuthInfo
-</span><a href="#local-6989586621679214687"><span class="hs-identifier hs-var">ai</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679214912"><span class="hs-identifier hs-var">ai</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
 </span><a href="Tesla.html#productsURL"><span class="hs-identifier hs-var">productsURL</span></a></span><span>
 </span><span id="line-124"></span><span>
 </span><span id="line-125"></span><span class="hs-comment">-- | Get all products associated with this account.</span><span>
-</span><span id="line-126"></span><span id="local-6989586621679215305"><span class="annot"><a href="Tesla.html#products"><span class="hs-identifier hs-type">products</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679215305"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679215305"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span></span><span>
+</span><span id="line-126"></span><span id="local-6989586621679215530"><span class="annot"><a href="Tesla.html#products"><span class="hs-identifier hs-type">products</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679215530"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Auth.html#AuthInfo"><span class="hs-identifier hs-type">AuthInfo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679215530"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Tesla.html#Product"><span class="hs-identifier hs-type">Product</span></a></span><span class="hs-special">]</span></span><span>
 </span><span id="line-127"></span><span id="products"><span class="annot"><span class="annottext">products :: forall (m :: * -&gt; *). MonadIO m =&gt; AuthInfo -&gt; m [Product]
 </span><a href="Tesla.html#products"><span class="hs-identifier hs-var hs-var">products</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="annot"><span class="annottext">Value -&gt; [Product]
@@ -401,12 +401,12 @@ Options -&gt; String -&gt; m j
 </span><a href="Tesla.html#vehicles"><span class="hs-identifier hs-var hs-var">vehicles</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
 </span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679214674"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679214674"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">,</span><span id="local-6989586621679214673"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679214673"><span class="hs-identifier hs-var">b</span></a></span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">VehicleState
+</span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679214899"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679214899"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">,</span><span id="local-6989586621679214898"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679214898"><span class="hs-identifier hs-var">b</span></a></span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">VehicleState
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679214674"><span class="hs-identifier hs-var">a</span></a></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679214673"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="#local-6989586621679214899"><span class="hs-identifier hs-var">a</span></a></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679214898"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">forall a s. Getting (Endo [a]) s a -&gt; s -&gt; [a]
 </span><span class="hs-identifier hs-var">toListOf</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a. Foldable f =&gt; IndexedFold Int (f a) a
 </span><span class="hs-identifier hs-var">folded</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
