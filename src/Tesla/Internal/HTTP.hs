@@ -34,4 +34,4 @@ jpostWith :: (FromJSON j, Postable a, MonadIO m) => Options -> String -> a -> m 
 jpostWith opts u v = view responseBody <$> liftIO (postWith opts u v >>= asJSON)
 
 jpostAuth :: (HasTeslaAuth m, FromJSON j, Postable a, MonadIO m) => String -> a -> m j
-jpostAuth u v = teslaAuth >>= \a -> jpostWith (authOpts a) u v
+jpostAuth u v = teslaAuth >>= \a -> jpostWith (authOpts a & header "Content-Type" .~ ["application/json"]) u v

@@ -22,4 +22,5 @@ import           Tesla.Car.Command.Sharing    as CMD
 import           Tesla.Car.Command.Software   as CMD
 import           Tesla.Car.Command.SpeedLimit as CMD
 import           Tesla.Car.Command.Valet      as CMD
+import           Tesla.Car.Command.Wake       as CMD
 import           Tesla.Car.Command.Windows    as CMD

@@ -7,7 +7,6 @@ module Tesla.Car.Command.Climate (
   heatSeat, coolSeat, Seat(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   maxDefrost,
-  wakeUp,
   bioweaponMode,
   Sometimes(..), OffPeakConfig(..), Preconditioning,
   scheduledDepartureOff, scheduleDeparture
@@ -101,6 +100,5 @@ climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
 climateKeeper ck = runCmd "set_climate_keeper_mode" [ "climate_keeper_mode" .= ck]
 
 mkNamedCommands [("hvacOn", "auto_conditioning_start"),
-                 ("hvacOff", "auto_conditioning_stop"),
-                 ("wakeUp", "wake_up")]
+                 ("hvacOff", "auto_conditioning_stop")]
 
