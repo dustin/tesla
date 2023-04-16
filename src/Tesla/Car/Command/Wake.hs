@@ -1,5 +1,5 @@
-{-# LANGUAGE OverloadedStrings   #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeApplications  #-}
 
 module Tesla.Car.Command.Wake (
   wakeUp
