@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.7.2.0
+@version 0.7.3.0
 
 
 -- | Authentication related data structures.
@@ -387,7 +387,7 @@ ventSunroof :: MonadIO m => Car m CommandResponse
 closeSunroof :: MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Wake
-wakeUp :: MonadIO m => Car m (Maybe Value)
+wakeUp :: (FromJSON j, MonadIO m) => Car m j
 
 module Tesla.Car.Command.Valet
 setValetMode :: MonadIO m => Bool -> Int -> Car m CommandResponse
