@@ -14,25 +14,26 @@ Executing commands within the Car Monad.
 
 module Tesla.Car.Command (
   Time(..), mkTime, fromTime,
+  Percent(..), mkPercent,
   runCmd, runCmd', CommandResponse, Car,
   (.=),
   -- * TH support for generating commands.
   mkCommand, mkCommands, mkNamedCommands) where
 
-import           Control.Lens hiding ((.=))
+import           Control.Lens           hiding ((.=))
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson
 import           Data.Aeson.Lens        (_Bool, _String, key)
-import           Data.Finite            (Finite, getFinite, modulo)
+import           Data.Finite            (Finite, getFinite, modulo, packFinite)
 import           Data.Text              (Text)
 import           GHC.TypeNats
 import           Language.Haskell.TH
 import           Network.Wreq.Types     (FormValue (..))
 import           Text.Casing            (fromSnake, toCamel)
 
+import           Data.Aeson.Types       (Pair)
 import           Tesla.Car
 import           Tesla.Internal.HTTP
-import Data.Aeson.Types (Pair)
 
 -- | A CommandResponse wraps an Either such that Left represents a
 -- failure message and Right suggests the command was successful.
@@ -67,6 +68,17 @@ fromTime (Time t) = bimap f f (t `divMod` 60)
   where
     f :: forall m n. (KnownNat m, KnownNat n, n <= m) => Finite m -> Finite n
     f = modulo . toInteger
+
+-- | A type representing a whole number percnetage between 0 and 100 (inclusive).
+newtype Percent = Percent (Finite 100)
+
+instance Show Percent where show (Percent t) = show (toInteger t)
+
+mkPercent :: Integral n => n -> Maybe Percent
+mkPercent = fmap Percent . packFinite . toInteger
+
+instance ToJSON Percent where
+  toJSON (Percent x) = toJSON (getFinite x)
 
 -- | Run a command with a JSON payload.
 runCmd :: MonadIO m => String -> [Pair] -> Car m CommandResponse

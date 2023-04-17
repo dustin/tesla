@@ -12,7 +12,7 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Tesla.Car.Command
 
 -- | Set the desired charge level (percent).
-setLimit :: MonadIO m => Int -> Car m CommandResponse
+setLimit :: MonadIO m => Percent -> Car m CommandResponse
 setLimit to = runCmd "set_charge_limit" ["percent" .= to]
 
 -- | Set the charge current.
