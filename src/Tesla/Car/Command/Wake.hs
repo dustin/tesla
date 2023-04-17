@@ -13,5 +13,7 @@ import           Tesla.Car              (currentVehicleID, vehicleURL)
 import           Tesla.Car.Command
 import           Tesla.Internal.HTTP    (jpostAuth)
 
+-- | Request the car to wake up.
+-- This function should return pretty quickly, but the car may take a few seconds to wake up.
 wakeUp :: (FromJSON j, MonadIO m) => Car m j
 wakeUp = currentVehicleID >>= \v -> jpostAuth (vehicleURL v "wake_up") BL.empty

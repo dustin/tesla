@@ -12,9 +12,11 @@ import           Tesla.Car.Command
 windowControl :: MonadIO m => Text -> (Double, Double) -> Car m CommandResponse
 windowControl x (lat,lon) = runCmd "window_control" [ "command" .= x, "lat" .= lat, "lon" .= lon]
 
+-- | Roll the windows down slightly.
 ventWindows :: MonadIO m => Car m CommandResponse
 ventWindows = windowControl "vent" (0,0)
 
+-- | Close the windows.  This command will fail if the (lat,lon) passed in is too far from the car.
 closeWindows :: MonadIO m => (Double, Double) -> Car m CommandResponse
 closeWindows = windowControl "close"
 

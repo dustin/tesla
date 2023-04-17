@@ -9,6 +9,8 @@ import           Data.Time.Clock.POSIX  (getCurrentTime, utcTimeToPOSIXSeconds)
 
 import           Tesla.Car.Command
 
+-- | Share something to the car.
+-- The "something" in this case can be an address or video URL
 share :: MonadIO m => Text -> Car m CommandResponse
 share to = do
   now <- fst . properFraction . utcTimeToPOSIXSeconds <$> liftIO getCurrentTime

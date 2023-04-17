@@ -4,7 +4,7 @@
 
 module Tesla.Car.Command.Climate (
   hvacOn, hvacOff, ClimateKeeper(..), climateKeeper,
-  heatSeat, coolSeat, Seat(..),
+  seatClimate, Seat(..), SeatLevel(..), SeatClimate(..), SeatMode(..),
   setTemps, wheelHeater, wheelHeaterOff, wheelHeaterOn,
   maxDefrost,
   bioweaponMode,
@@ -32,7 +32,9 @@ wheelHeaterOff = wheelHeater False
 bioweaponMode :: MonadIO m => Bool -> Car m CommandResponse
 bioweaponMode on = runCmd "set_bioweapon_mode" ["on" .= on]
 
+-- | Which seat to control.
 data Seat = DriverSeat | PassengerSeat | RearLeftSeat | RearCenterSeat | RearRightSeat
+  deriving (Eq, Show, Bounded, Enum)
 
 seatNum :: Seat -> Int
 seatNum DriverSeat     = 0
@@ -41,16 +43,32 @@ seatNum RearLeftSeat   = 2
 seatNum RearCenterSeat = 4
 seatNum RearRightSeat  = 5
 
+-- | For seat climate control, how much heating or cooling to apply.
+data SeatLevel = SeatLeast | SeatMedium | SeatMost
+  deriving (Eq, Show, Bounded, Enum)
 
--- | Set heating levels for various seats.
-heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
-heatSeat seat level = runCmd "remote_seat_heater_request" ["heater" .= seatNum seat, "level" .= level]
+instance ToJSON SeatLevel where
+  toJSON = toJSON . fromEnum
 
--- | Set cooling levels for various seats.
-coolSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
-coolSeat seat level = runCmd "remote_seat_cooler_request" ["seat_position" .= seatNum seat, "seat_cooler_level" .= level]
+-- | For seat climate control, whether to heat or cool.
+data SeatMode = SeatHeat | SeatCool
+  deriving (Eq, Show, Bounded, Enum)
 
--- | Set the main HVAC temperatures.
+-- 'seatClimate' parameter for specifying whether to heat or cool and how much.
+data SeatClimate = SeatClimate SeatMode SeatLevel
+  deriving (Eq, Show)
+
+-- | Adjust the climate control settings for a seat.
+seatClimate :: MonadIO m => Seat -> Maybe SeatClimate -> Car m CommandResponse
+seatClimate seat Nothing = do
+  _ <- runCmd "remote_seat_heater_request" ["heater" .= seatNum seat, "level" .= (0::Int)]
+  runCmd "remote_seat_cooler_request" ["seat_position" .= seatNum seat, "seat_cooler_level" .= (0 :: Int)]
+seatClimate seat (Just (SeatClimate SeatHeat level)) =
+  runCmd "remote_seat_heater_request" ["heater" .= seatNum seat, "level" .= level]
+seatClimate seat (Just (SeatClimate SeatCool level)) =
+  runCmd "remote_seat_cooler_request" ["seat_position" .= seatNum seat, "seat_cooler_level" .= level]
+
+-- | Set the main HVAC temperatures (driver and passenger).
 setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
 setTemps (driver, passenger) = runCmd "set_temps" ["driver_temp" .= driver, "passenger_temp" .= passenger]
 
@@ -63,6 +81,7 @@ scheduledDepartureOff = runCmd "set_scheduled_departure" [ "enable" .= False ]
 -- | When configuring scheduled departure, preconditioning and
 -- off-peak charging both have weekday only options.
 data Sometimes = Never | Always | WeekdaysOnly
+  deriving (Eq, Show, Bounded, Enum)
 
 -- | Type alias to make 'scheduleDeparture' more readable.
 type Preconditioning = Sometimes
@@ -96,6 +115,7 @@ data ClimateKeeper = ClimateKeeperOff | ClimateKeeperDefault | DogMode | CampMod
 instance ToJSON ClimateKeeper where
   toJSON = toJSON . fromEnum
 
+-- | Configure the climate keeper.
 climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
 climateKeeper ck = runCmd "set_climate_keeper_mode" [ "climate_keeper_mode" .= ck]
 
