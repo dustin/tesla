@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.7.3.0
+@version 0.7.4.0
 
 
 -- | Authentication related data structures.
@@ -350,6 +350,12 @@ mkTime :: Finite 24 -> Finite 60 -> Time
 -- | Get the hours and minutes out of a <a>Time</a>.
 fromTime :: Time -> (Finite 24, Finite 60)
 
+-- | A type representing a whole number percnetage between 0 and 100
+--   (inclusive).
+newtype Percent
+Percent :: Finite 100 -> Percent
+mkPercent :: Integral n => n -> Maybe Percent
+
 -- | Run a command with a JSON payload.
 runCmd :: MonadIO m => String -> [Pair] -> Car m CommandResponse
 
@@ -374,6 +380,8 @@ mkCommands :: [String] -> Q [Dec]
 
 -- | Make commands with given names.
 mkNamedCommands :: [(String, String)] -> Q [Dec]
+instance GHC.Show.Show Tesla.Car.Command.Percent
+instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Percent
 instance GHC.Show.Show Tesla.Car.Command.Time
 instance GHC.Num.Num Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue Tesla.Car.Command.Time
@@ -381,15 +389,25 @@ instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Time
 instance Network.Wreq.Internal.Types.FormValue GHC.Types.Bool
 
 module Tesla.Car.Command.Windows
+
+-- | Roll the windows down slightly.
 ventWindows :: MonadIO m => Car m CommandResponse
+
+-- | Close the windows. This command will fail if the (lat,lon) passed in
+--   is too far from the car.
 closeWindows :: MonadIO m => (Double, Double) -> Car m CommandResponse
 ventSunroof :: MonadIO m => Car m CommandResponse
 closeSunroof :: MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Wake
+
+-- | Request the car to wake up. This function should return pretty
+--   quickly, but the car may take a few seconds to wake up.
 wakeUp :: (FromJSON j, MonadIO m) => Car m j
 
 module Tesla.Car.Command.Valet
+
+-- | Enable valet mode with a four digit pin.
 setValetMode :: MonadIO m => Bool -> Int -> Car m CommandResponse
 clearValetPIN :: forall {m}. MonadIO m => Car m CommandResponse
 
@@ -408,6 +426,9 @@ scheduleUpdate :: MonadIO m => Int -> Car m CommandResponse
 cancelUpdate :: forall {m}. MonadIO m => Car m CommandResponse
 
 module Tesla.Car.Command.Sharing
+
+-- | Share something to the car. The "something" in this case can be an
+--   address or video URL
 share :: MonadIO m => Text -> Car m CommandResponse
 
 module Tesla.Car.Command.Sentry
@@ -428,7 +449,7 @@ togglePlayback :: forall {m}. MonadIO m => Car m CommandResponse
 module Tesla.Car.Command.Homelink
 
 -- | Trigger nearby homelink with the given (lat,lon)
-trigger :: MonadIO m => (Double, Double) -> Car m CommandResponse
+homelink :: MonadIO m => (Double, Double) -> Car m CommandResponse
 
 module Tesla.Car.Command.Doors
 actuateFrontTrunk :: MonadIO m => Car m CommandResponse
@@ -444,13 +465,14 @@ ClimateKeeperOff :: ClimateKeeper
 ClimateKeeperDefault :: ClimateKeeper
 DogMode :: ClimateKeeper
 CampMode :: ClimateKeeper
+
+-- | Configure the climate keeper.
 climateKeeper :: MonadIO m => ClimateKeeper -> Car m CommandResponse
 
--- | Set heating levels for various seats.
-heatSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
+-- | Adjust the climate control settings for a seat.
+seatClimate :: MonadIO m => Seat -> Maybe SeatClimate -> Car m CommandResponse
 
--- | Set cooling levels for various seats.
-coolSeat :: MonadIO m => Seat -> Int -> Car m CommandResponse
+-- | Which seat to control.
 data Seat
 DriverSeat :: Seat
 PassengerSeat :: Seat
@@ -458,7 +480,20 @@ RearLeftSeat :: Seat
 RearCenterSeat :: Seat
 RearRightSeat :: Seat
 
--- | Set the main HVAC temperatures.
+-- | For seat climate control, how much heating or cooling to apply.
+data SeatLevel
+SeatLeast :: SeatLevel
+SeatMedium :: SeatLevel
+SeatMost :: SeatLevel
+data SeatClimate
+SeatClimate :: SeatMode -> SeatLevel -> SeatClimate
+
+-- | For seat climate control, whether to heat or cool.
+data SeatMode
+SeatHeat :: SeatMode
+SeatCool :: SeatMode
+
+-- | Set the main HVAC temperatures (driver and passenger).
 setTemps :: MonadIO m => (Double, Double) -> Car m CommandResponse
 
 -- | Turn on the steering wheel heater
@@ -495,18 +530,37 @@ scheduledDepartureOff :: MonadIO m => Car m CommandResponse
 --   For this to do anything useful, you need to specify at least one of
 --   <a>Preconditioning</a> and/or <a>OffPeakConfig</a>.
 scheduleDeparture :: MonadIO m => Time -> Preconditioning -> Maybe OffPeakConfig -> Car m CommandResponse
+instance GHC.Enum.Enum Tesla.Car.Command.Climate.Seat
+instance GHC.Enum.Bounded Tesla.Car.Command.Climate.Seat
+instance GHC.Show.Show Tesla.Car.Command.Climate.Seat
+instance GHC.Classes.Eq Tesla.Car.Command.Climate.Seat
+instance GHC.Enum.Enum Tesla.Car.Command.Climate.SeatLevel
+instance GHC.Enum.Bounded Tesla.Car.Command.Climate.SeatLevel
+instance GHC.Show.Show Tesla.Car.Command.Climate.SeatLevel
+instance GHC.Classes.Eq Tesla.Car.Command.Climate.SeatLevel
+instance GHC.Enum.Enum Tesla.Car.Command.Climate.SeatMode
+instance GHC.Enum.Bounded Tesla.Car.Command.Climate.SeatMode
+instance GHC.Show.Show Tesla.Car.Command.Climate.SeatMode
+instance GHC.Classes.Eq Tesla.Car.Command.Climate.SeatMode
+instance GHC.Show.Show Tesla.Car.Command.Climate.SeatClimate
+instance GHC.Classes.Eq Tesla.Car.Command.Climate.SeatClimate
+instance GHC.Enum.Enum Tesla.Car.Command.Climate.Sometimes
+instance GHC.Enum.Bounded Tesla.Car.Command.Climate.Sometimes
+instance GHC.Show.Show Tesla.Car.Command.Climate.Sometimes
+instance GHC.Classes.Eq Tesla.Car.Command.Climate.Sometimes
 instance GHC.Enum.Enum Tesla.Car.Command.Climate.ClimateKeeper
 instance GHC.Enum.Bounded Tesla.Car.Command.Climate.ClimateKeeper
 instance GHC.Show.Show Tesla.Car.Command.Climate.ClimateKeeper
 instance GHC.Classes.Eq Tesla.Car.Command.Climate.ClimateKeeper
 instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Climate.ClimateKeeper
+instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Climate.SeatLevel
 
 module Tesla.Car.Command.Charging
 startCharging :: forall {m}. MonadIO m => Car m CommandResponse
 stopCharging :: forall {m}. MonadIO m => Car m CommandResponse
 
 -- | Set the desired charge level (percent).
-setLimit :: MonadIO m => Int -> Car m CommandResponse
+setLimit :: MonadIO m => Percent -> Car m CommandResponse
 openChargePort :: forall {m}. MonadIO m => Car m CommandResponse
 closeChargePort :: forall {m}. MonadIO m => Car m CommandResponse
 

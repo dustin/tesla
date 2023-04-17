@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="local-6989586621679217676"><span id="local-6989586621679217677"></span></span><span class="hs-pragma">{-# LANGUAGE LambdaCase        #-}</span><span>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="local-6989586621679234846"><span id="local-6989586621679234847"><span id="local-6989586621679234848"><span id="local-6989586621679234849"><span id="local-6989586621679234850"><span id="local-6989586621679234851"><span id="local-6989586621679234852"><span id="local-6989586621679234853"><span id="local-6989586621679234854"><span id="local-6989586621679234855"></span></span></span></span></span></span></span></span></span></span><span class="hs-pragma">{-# LANGUAGE LambdaCase        #-}</span><span>
 </span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE OverloadedStrings #-}</span><span>
 </span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE TemplateHaskell   #-}</span><span>
 </span><span id="line-4"></span><span>
 </span><span id="line-5"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Tesla.Car.Command.Climate</span><span> </span><span class="hs-special">(</span><span>
 </span><span id="line-6"></span><span>  </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#hvacOn"><span class="hs-identifier">hvacOn</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#hvacOff"><span class="hs-identifier">hvacOff</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier">ClimateKeeper</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#climateKeeper"><span class="hs-identifier">climateKeeper</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-7"></span><span>  </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#heatSeat"><span class="hs-identifier">heatSeat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#coolSeat"><span class="hs-identifier">coolSeat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier">Seat</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-7"></span><span>  </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatClimate"><span class="hs-identifier">seatClimate</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier">Seat</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatLevel"><span class="hs-identifier">SeatLevel</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatClimate"><span class="hs-identifier">SeatClimate</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatMode"><span class="hs-identifier">SeatMode</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-8"></span><span>  </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#setTemps"><span class="hs-identifier">setTemps</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier">wheelHeater</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeaterOff"><span class="hs-identifier">wheelHeaterOff</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeaterOn"><span class="hs-identifier">wheelHeaterOn</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-9"></span><span>  </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#maxDefrost"><span class="hs-identifier">maxDefrost</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-10"></span><span>  </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#bioweaponMode"><span class="hs-identifier">bioweaponMode</span></a></span><span class="hs-special">,</span><span>
@@ -17,25 +17,25 @@
 </span><span id="line-17"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Tesla.Car.Command.html"><span class="hs-identifier">Tesla.Car.Command</span></a></span><span>
 </span><span id="line-18"></span><span>
 </span><span id="line-19"></span><span class="hs-comment">-- | Turn on the steering wheel heater</span><span>
-</span><span id="line-20"></span><span id="local-6989586621679217744"><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier hs-type">wheelHeater</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217744"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217744"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-20"></span><span id="local-6989586621679234962"><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier hs-type">wheelHeater</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234962"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234962"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
 </span><span id="line-21"></span><span id="wheelHeater"><span class="annot"><span class="annottext">wheelHeater :: forall (m :: * -&gt; *). MonadIO m =&gt; Bool -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier hs-var hs-var">wheelHeater</span></a></span></span><span> </span><span id="local-6989586621679217653"><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679217653"><span class="hs-identifier hs-var">on</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier hs-var hs-var">wheelHeater</span></a></span></span><span> </span><span id="local-6989586621679234824"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679234824"><span class="hs-identifier hs-var">on</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;remote_steering_wheel_heater_request&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;on&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679217653"><span class="hs-identifier hs-var">on</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679234824"><span class="hs-identifier hs-var">on</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-22"></span><span>
-</span><span id="line-23"></span><span id="local-6989586621679217733"><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeaterOn"><span class="hs-identifier hs-type">wheelHeaterOn</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217733"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217733"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-23"></span><span id="local-6989586621679234951"><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeaterOn"><span class="hs-identifier hs-type">wheelHeaterOn</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234951"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234951"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
 </span><span id="line-24"></span><span id="wheelHeaterOn"><span class="annot"><span class="annottext">wheelHeaterOn :: forall (m :: * -&gt; *). MonadIO m =&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.Climate.html#wheelHeaterOn"><span class="hs-identifier hs-var hs-var">wheelHeaterOn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *). MonadIO m =&gt; Bool -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier hs-var">wheelHeater</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span>
 </span><span id="line-25"></span><span>
-</span><span id="line-26"></span><span id="local-6989586621679217648"><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeaterOff"><span class="hs-identifier hs-type">wheelHeaterOff</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217648"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217648"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-26"></span><span id="local-6989586621679234819"><span class="annot"><a href="Tesla.Car.Command.Climate.html#wheelHeaterOff"><span class="hs-identifier hs-type">wheelHeaterOff</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234819"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234819"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
 </span><span id="line-27"></span><span id="wheelHeaterOff"><span class="annot"><span class="annottext">wheelHeaterOff :: forall (m :: * -&gt; *). MonadIO m =&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.Climate.html#wheelHeaterOff"><span class="hs-identifier hs-var hs-var">wheelHeaterOff</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *). MonadIO m =&gt; Bool -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.Climate.html#wheelHeater"><span class="hs-identifier hs-var">wheelHeater</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
@@ -44,47 +44,251 @@ String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><span id="line-29"></span><span class="hs-comment">-- | Turn on or off bioweapon defense mode.</span><span>
 </span><span id="line-30"></span><span class="hs-comment">--</span><span>
 </span><span id="line-31"></span><span class="hs-comment">-- If HVAC is off, turning on bioweapon defense mode will also turn on HVAC.</span><span>
-</span><span id="line-32"></span><span id="local-6989586621679217645"><span class="annot"><a href="Tesla.Car.Command.Climate.html#bioweaponMode"><span class="hs-identifier hs-type">bioweaponMode</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217645"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217645"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-32"></span><span id="local-6989586621679234816"><span class="annot"><a href="Tesla.Car.Command.Climate.html#bioweaponMode"><span class="hs-identifier hs-type">bioweaponMode</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234816"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234816"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
 </span><span id="line-33"></span><span id="bioweaponMode"><span class="annot"><span class="annottext">bioweaponMode :: forall (m :: * -&gt; *). MonadIO m =&gt; Bool -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#bioweaponMode"><span class="hs-identifier hs-var hs-var">bioweaponMode</span></a></span></span><span> </span><span id="local-6989586621679217639"><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679217639"><span class="hs-identifier hs-var">on</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><a href="Tesla.Car.Command.Climate.html#bioweaponMode"><span class="hs-identifier hs-var hs-var">bioweaponMode</span></a></span></span><span> </span><span id="local-6989586621679234810"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679234810"><span class="hs-identifier hs-var">on</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;set_bioweapon_mode&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;on&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679217639"><span class="hs-identifier hs-var">on</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679234810"><span class="hs-identifier hs-var">on</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-34"></span><span>
-</span><span id="line-35"></span><span class="hs-keyword">data</span><span> </span><span id="Seat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-var">Seat</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="DriverSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#DriverSeat"><span class="hs-identifier hs-var">DriverSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="PassengerSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#PassengerSeat"><span class="hs-identifier hs-var">PassengerSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="RearLeftSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#RearLeftSeat"><span class="hs-identifier hs-var">RearLeftSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="RearCenterSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#RearCenterSeat"><span class="hs-identifier hs-var">RearCenterSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="RearRightSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#RearRightSeat"><span class="hs-identifier hs-var">RearRightSeat</span></a></span></span><span>
-</span><span id="line-36"></span><span>
-</span><span id="line-37"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-type">seatNum</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-type">Seat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
-</span><span id="line-38"></span><span id="seatNum"><span class="annot"><span class="annottext">seatNum :: Seat -&gt; Int
+</span><span id="line-35"></span><span class="hs-comment">-- | Which seat to control.</span><span>
+</span><span id="line-36"></span><span class="hs-keyword">data</span><span> </span><span id="Seat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-var">Seat</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="DriverSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#DriverSeat"><span class="hs-identifier hs-var">DriverSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="PassengerSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#PassengerSeat"><span class="hs-identifier hs-var">PassengerSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="RearLeftSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#RearLeftSeat"><span class="hs-identifier hs-var">RearLeftSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="RearCenterSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#RearCenterSeat"><span class="hs-identifier hs-var">RearCenterSeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="RearRightSeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#RearRightSeat"><span class="hs-identifier hs-var">RearRightSeat</span></a></span></span><span>
+</span><span id="line-37"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234801"><span id="local-6989586621679234803"><span class="annot"><span class="annottext">Seat -&gt; Seat -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Seat -&gt; Seat -&gt; Bool
+$c/= :: Seat -&gt; Seat -&gt; Bool
+== :: Seat -&gt; Seat -&gt; Bool
+$c== :: Seat -&gt; Seat -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234794"><span id="local-6989586621679234796"><span id="local-6989586621679234798"><span class="annot"><span class="annottext">Int -&gt; Seat -&gt; ShowS
+[Seat] -&gt; ShowS
+Seat -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Seat] -&gt; ShowS
+$cshowList :: [Seat] -&gt; ShowS
+show :: Seat -&gt; String
+$cshow :: Seat -&gt; String
+showsPrec :: Int -&gt; Seat -&gt; ShowS
+$cshowsPrec :: Int -&gt; Seat -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234789"><span id="local-6989586621679234791"><span class="annot"><span class="annottext">Seat
+forall a. a -&gt; a -&gt; Bounded a
+maxBound :: Seat
+$cmaxBound :: Seat
+minBound :: Seat
+$cminBound :: Seat
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Bounded</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234745"><span id="local-6989586621679234747"><span id="local-6989586621679234751"><span id="local-6989586621679234755"><span id="local-6989586621679234757"><span id="local-6989586621679234771"><span id="local-6989586621679234777"><span id="local-6989586621679234785"><span class="annot"><span class="annottext">Int -&gt; Seat
+Seat -&gt; Int
+Seat -&gt; [Seat]
+Seat -&gt; Seat
+Seat -&gt; Seat -&gt; [Seat]
+Seat -&gt; Seat -&gt; Seat -&gt; [Seat]
+forall a.
+(a -&gt; a)
+-&gt; (a -&gt; a)
+-&gt; (Int -&gt; a)
+-&gt; (a -&gt; Int)
+-&gt; (a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; a -&gt; [a])
+-&gt; Enum a
+enumFromThenTo :: Seat -&gt; Seat -&gt; Seat -&gt; [Seat]
+$cenumFromThenTo :: Seat -&gt; Seat -&gt; Seat -&gt; [Seat]
+enumFromTo :: Seat -&gt; Seat -&gt; [Seat]
+$cenumFromTo :: Seat -&gt; Seat -&gt; [Seat]
+enumFromThen :: Seat -&gt; Seat -&gt; [Seat]
+$cenumFromThen :: Seat -&gt; Seat -&gt; [Seat]
+enumFrom :: Seat -&gt; [Seat]
+$cenumFrom :: Seat -&gt; [Seat]
+fromEnum :: Seat -&gt; Int
+$cfromEnum :: Seat -&gt; Int
+toEnum :: Int -&gt; Seat
+$ctoEnum :: Int -&gt; Seat
+pred :: Seat -&gt; Seat
+$cpred :: Seat -&gt; Seat
+succ :: Seat -&gt; Seat
+$csucc :: Seat -&gt; Seat
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Enum</span></span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-38"></span><span>
+</span><span id="line-39"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-type">seatNum</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-type">Seat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
+</span><span id="line-40"></span><span id="seatNum"><span class="annot"><span class="annottext">seatNum :: Seat -&gt; Int
 </span><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var hs-var">seatNum</span></a></span></span><span> </span><span class="annot"><span class="annottext">Seat
 </span><a href="Tesla.Car.Command.Climate.html#DriverSeat"><span class="hs-identifier hs-var">DriverSeat</span></a></span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0</span></span><span>
-</span><span id="line-39"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
+</span><span id="line-41"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
 </span><a href="Tesla.Car.Command.Climate.html#PassengerSeat"><span class="hs-identifier hs-var">PassengerSeat</span></a></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">1</span></span><span>
-</span><span id="line-40"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
+</span><span id="line-42"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
 </span><a href="Tesla.Car.Command.Climate.html#RearLeftSeat"><span class="hs-identifier hs-var">RearLeftSeat</span></a></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">2</span></span><span>
-</span><span id="line-41"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
+</span><span id="line-43"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
 </span><a href="Tesla.Car.Command.Climate.html#RearCenterSeat"><span class="hs-identifier hs-var">RearCenterSeat</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">4</span></span><span>
-</span><span id="line-42"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
+</span><span id="line-44"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
 </span><a href="Tesla.Car.Command.Climate.html#RearRightSeat"><span class="hs-identifier hs-var">RearRightSeat</span></a></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">5</span></span><span>
-</span><span id="line-43"></span><span>
-</span><span id="line-44"></span><span>
-</span><span id="line-45"></span><span class="hs-comment">-- | Set heating levels for various seats.</span><span>
-</span><span id="line-46"></span><span id="local-6989586621679217728"><span class="annot"><a href="Tesla.Car.Command.Climate.html#heatSeat"><span class="hs-identifier hs-type">heatSeat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217728"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-type">Seat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217728"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-47"></span><span id="heatSeat"><span class="annot"><span class="annottext">heatSeat :: forall (m :: * -&gt; *).
+</span><span id="line-45"></span><span>
+</span><span id="line-46"></span><span class="hs-comment">-- | For seat climate control, how much heating or cooling to apply.</span><span>
+</span><span id="line-47"></span><span class="hs-keyword">data</span><span> </span><span id="SeatLevel"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatLevel"><span class="hs-identifier hs-var">SeatLevel</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="SeatLeast"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatLeast"><span class="hs-identifier hs-var">SeatLeast</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="SeatMedium"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatMedium"><span class="hs-identifier hs-var">SeatMedium</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="SeatMost"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatMost"><span class="hs-identifier hs-var">SeatMost</span></a></span></span><span>
+</span><span id="line-48"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234736"><span id="local-6989586621679234738"><span class="annot"><span class="annottext">SeatLevel -&gt; SeatLevel -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: SeatLevel -&gt; SeatLevel -&gt; Bool
+$c/= :: SeatLevel -&gt; SeatLevel -&gt; Bool
+== :: SeatLevel -&gt; SeatLevel -&gt; Bool
+$c== :: SeatLevel -&gt; SeatLevel -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234730"><span id="local-6989586621679234732"><span id="local-6989586621679234734"><span class="annot"><span class="annottext">Int -&gt; SeatLevel -&gt; ShowS
+[SeatLevel] -&gt; ShowS
+SeatLevel -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [SeatLevel] -&gt; ShowS
+$cshowList :: [SeatLevel] -&gt; ShowS
+show :: SeatLevel -&gt; String
+$cshow :: SeatLevel -&gt; String
+showsPrec :: Int -&gt; SeatLevel -&gt; ShowS
+$cshowsPrec :: Int -&gt; SeatLevel -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234726"><span id="local-6989586621679234728"><span class="annot"><span class="annottext">SeatLevel
+forall a. a -&gt; a -&gt; Bounded a
+maxBound :: SeatLevel
+$cmaxBound :: SeatLevel
+minBound :: SeatLevel
+$cminBound :: SeatLevel
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Bounded</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234689"><span id="local-6989586621679234691"><span id="local-6989586621679234695"><span id="local-6989586621679234698"><span id="local-6989586621679234700"><span id="local-6989586621679234711"><span id="local-6989586621679234717"><span id="local-6989586621679234723"><span class="annot"><span class="annottext">Int -&gt; SeatLevel
+SeatLevel -&gt; Int
+SeatLevel -&gt; [SeatLevel]
+SeatLevel -&gt; SeatLevel
+SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+SeatLevel -&gt; SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+forall a.
+(a -&gt; a)
+-&gt; (a -&gt; a)
+-&gt; (Int -&gt; a)
+-&gt; (a -&gt; Int)
+-&gt; (a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; a -&gt; [a])
+-&gt; Enum a
+enumFromThenTo :: SeatLevel -&gt; SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+$cenumFromThenTo :: SeatLevel -&gt; SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+enumFromTo :: SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+$cenumFromTo :: SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+enumFromThen :: SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+$cenumFromThen :: SeatLevel -&gt; SeatLevel -&gt; [SeatLevel]
+enumFrom :: SeatLevel -&gt; [SeatLevel]
+$cenumFrom :: SeatLevel -&gt; [SeatLevel]
+fromEnum :: SeatLevel -&gt; Int
+$cfromEnum :: SeatLevel -&gt; Int
+toEnum :: Int -&gt; SeatLevel
+$ctoEnum :: Int -&gt; SeatLevel
+pred :: SeatLevel -&gt; SeatLevel
+$cpred :: SeatLevel -&gt; SeatLevel
+succ :: SeatLevel -&gt; SeatLevel
+$csucc :: SeatLevel -&gt; SeatLevel
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Enum</span></span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679234682"><span id="local-6989586621679234684"><span id="local-6989586621679234686"><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatLevel"><span class="hs-identifier hs-type">SeatLevel</span></a></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-51"></span><span>  </span><span id="local-6989586621679234677"><span class="annot"><span class="annottext">toJSON :: SeatLevel -&gt; Value
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">toJSON</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. ToJSON a =&gt; a -&gt; Value
+</span><span class="hs-identifier hs-var">toJSON</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">forall a. Enum a =&gt; a -&gt; Int
+</span><span class="hs-identifier hs-var">fromEnum</span></span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span class="hs-comment">-- | For seat climate control, whether to heat or cool.</span><span>
+</span><span id="line-54"></span><span class="hs-keyword">data</span><span> </span><span id="SeatMode"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatMode"><span class="hs-identifier hs-var">SeatMode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="SeatHeat"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatHeat"><span class="hs-identifier hs-var">SeatHeat</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="SeatCool"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatCool"><span class="hs-identifier hs-var">SeatCool</span></a></span></span><span>
+</span><span id="line-55"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234668"><span id="local-6989586621679234670"><span class="annot"><span class="annottext">SeatMode -&gt; SeatMode -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: SeatMode -&gt; SeatMode -&gt; Bool
+$c/= :: SeatMode -&gt; SeatMode -&gt; Bool
+== :: SeatMode -&gt; SeatMode -&gt; Bool
+$c== :: SeatMode -&gt; SeatMode -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234662"><span id="local-6989586621679234664"><span id="local-6989586621679234666"><span class="annot"><span class="annottext">Int -&gt; SeatMode -&gt; ShowS
+[SeatMode] -&gt; ShowS
+SeatMode -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [SeatMode] -&gt; ShowS
+$cshowList :: [SeatMode] -&gt; ShowS
+show :: SeatMode -&gt; String
+$cshow :: SeatMode -&gt; String
+showsPrec :: Int -&gt; SeatMode -&gt; ShowS
+$cshowsPrec :: Int -&gt; SeatMode -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234658"><span id="local-6989586621679234660"><span class="annot"><span class="annottext">SeatMode
+forall a. a -&gt; a -&gt; Bounded a
+maxBound :: SeatMode
+$cmaxBound :: SeatMode
+minBound :: SeatMode
+$cminBound :: SeatMode
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Bounded</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234621"><span id="local-6989586621679234623"><span id="local-6989586621679234627"><span id="local-6989586621679234630"><span id="local-6989586621679234632"><span id="local-6989586621679234643"><span id="local-6989586621679234649"><span id="local-6989586621679234655"><span class="annot"><span class="annottext">Int -&gt; SeatMode
+SeatMode -&gt; Int
+SeatMode -&gt; [SeatMode]
+SeatMode -&gt; SeatMode
+SeatMode -&gt; SeatMode -&gt; [SeatMode]
+SeatMode -&gt; SeatMode -&gt; SeatMode -&gt; [SeatMode]
+forall a.
+(a -&gt; a)
+-&gt; (a -&gt; a)
+-&gt; (Int -&gt; a)
+-&gt; (a -&gt; Int)
+-&gt; (a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; a -&gt; [a])
+-&gt; Enum a
+enumFromThenTo :: SeatMode -&gt; SeatMode -&gt; SeatMode -&gt; [SeatMode]
+$cenumFromThenTo :: SeatMode -&gt; SeatMode -&gt; SeatMode -&gt; [SeatMode]
+enumFromTo :: SeatMode -&gt; SeatMode -&gt; [SeatMode]
+$cenumFromTo :: SeatMode -&gt; SeatMode -&gt; [SeatMode]
+enumFromThen :: SeatMode -&gt; SeatMode -&gt; [SeatMode]
+$cenumFromThen :: SeatMode -&gt; SeatMode -&gt; [SeatMode]
+enumFrom :: SeatMode -&gt; [SeatMode]
+$cenumFrom :: SeatMode -&gt; [SeatMode]
+fromEnum :: SeatMode -&gt; Int
+$cfromEnum :: SeatMode -&gt; Int
+toEnum :: Int -&gt; SeatMode
+$ctoEnum :: Int -&gt; SeatMode
+pred :: SeatMode -&gt; SeatMode
+$cpred :: SeatMode -&gt; SeatMode
+succ :: SeatMode -&gt; SeatMode
+$csucc :: SeatMode -&gt; SeatMode
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Enum</span></span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-56"></span><span>
+</span><span id="line-57"></span><span class="hs-comment">-- 'seatClimate' parameter for specifying whether to heat or cool and how much.</span><span>
+</span><span id="line-58"></span><span class="hs-keyword">data</span><span> </span><span id="SeatClimate"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatClimate"><span class="hs-identifier hs-var">SeatClimate</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="SeatClimate"><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatClimate"><span class="hs-identifier hs-var">SeatClimate</span></a></span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatMode"><span class="hs-identifier hs-type">SeatMode</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatLevel"><span class="hs-identifier hs-type">SeatLevel</span></a></span><span>
+</span><span id="line-59"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234614"><span id="local-6989586621679234618"><span class="annot"><span class="annottext">SeatClimate -&gt; SeatClimate -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: SeatClimate -&gt; SeatClimate -&gt; Bool
+$c/= :: SeatClimate -&gt; SeatClimate -&gt; Bool
+== :: SeatClimate -&gt; SeatClimate -&gt; Bool
+$c== :: SeatClimate -&gt; SeatClimate -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234605"><span id="local-6989586621679234607"><span id="local-6989586621679234612"><span class="annot"><span class="annottext">Int -&gt; SeatClimate -&gt; ShowS
+[SeatClimate] -&gt; ShowS
+SeatClimate -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [SeatClimate] -&gt; ShowS
+$cshowList :: [SeatClimate] -&gt; ShowS
+show :: SeatClimate -&gt; String
+$cshow :: SeatClimate -&gt; String
+showsPrec :: Int -&gt; SeatClimate -&gt; ShowS
+$cshowsPrec :: Int -&gt; SeatClimate -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-60"></span><span>
+</span><span id="line-61"></span><span class="hs-comment">-- | Adjust the climate control settings for a seat.</span><span>
+</span><span id="line-62"></span><span id="local-6989586621679234934"><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatClimate"><span class="hs-identifier hs-type">seatClimate</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234934"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-type">Seat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatClimate"><span class="hs-identifier hs-type">SeatClimate</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234934"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-63"></span><span id="seatClimate"><span class="annot"><span class="annottext">seatClimate :: forall (m :: * -&gt; *).
 MonadIO m =&gt;
-Seat -&gt; Int -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#heatSeat"><span class="hs-identifier hs-var hs-var">heatSeat</span></a></span></span><span> </span><span id="local-6989586621679217623"><span class="annot"><span class="annottext">Seat
-</span><a href="#local-6989586621679217623"><span class="hs-identifier hs-var">seat</span></a></span></span><span> </span><span id="local-6989586621679217622"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679217622"><span class="hs-identifier hs-var">level</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+Seat -&gt; Maybe SeatClimate -&gt; Car m CommandResponse
+</span><a href="Tesla.Car.Command.Climate.html#seatClimate"><span class="hs-identifier hs-var hs-var">seatClimate</span></a></span></span><span> </span><span id="local-6989586621679234571"><span class="annot"><span class="annottext">Seat
+</span><a href="#local-6989586621679234571"><span class="hs-identifier hs-var">seat</span></a></span></span><span> </span><span class="annot"><span class="annottext">Maybe SeatClimate
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-64"></span><span>  </span><span class="annot"><span class="annottext">CommandResponse
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
@@ -92,19 +296,11 @@ String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><span class="hs-string">&quot;heater&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Seat -&gt; Int
 </span><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
-</span><a href="#local-6989586621679217623"><span class="hs-identifier hs-var">seat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234571"><span class="hs-identifier hs-var">seat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;level&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
-</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679217622"><span class="hs-identifier hs-var">level</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-48"></span><span>
-</span><span id="line-49"></span><span class="hs-comment">-- | Set cooling levels for various seats.</span><span>
-</span><span id="line-50"></span><span id="local-6989586621679217621"><span class="annot"><a href="Tesla.Car.Command.Climate.html#coolSeat"><span class="hs-identifier hs-type">coolSeat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217621"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Seat"><span class="hs-identifier hs-type">Seat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217621"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-51"></span><span id="coolSeat"><span class="annot"><span class="annottext">coolSeat :: forall (m :: * -&gt; *).
-MonadIO m =&gt;
-Seat -&gt; Int -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#coolSeat"><span class="hs-identifier hs-var hs-var">coolSeat</span></a></span></span><span> </span><span id="local-6989586621679217612"><span class="annot"><span class="annottext">Seat
-</span><a href="#local-6989586621679217612"><span class="hs-identifier hs-var">seat</span></a></span></span><span> </span><span id="local-6989586621679217611"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679217611"><span class="hs-identifier hs-var">level</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-65"></span><span>  </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
@@ -112,44 +308,76 @@ String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><span class="hs-string">&quot;seat_position&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Seat -&gt; Int
 </span><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
-</span><a href="#local-6989586621679217612"><span class="hs-identifier hs-var">seat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234571"><span class="hs-identifier hs-var">seat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;seat_cooler_level&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
-</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679217611"><span class="hs-identifier hs-var">level</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-52"></span><span>
-</span><span id="line-53"></span><span class="hs-comment">-- | Set the main HVAC temperatures.</span><span>
-</span><span id="line-54"></span><span id="local-6989586621679217725"><span class="annot"><a href="Tesla.Car.Command.Climate.html#setTemps"><span class="hs-identifier hs-type">setTemps</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217725"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Double</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Double</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217725"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-55"></span><span id="setTemps"><span class="annot"><span class="annottext">setTemps :: forall (m :: * -&gt; *).
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-66"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatClimate"><span class="hs-identifier hs-var">seatClimate</span></a></span><span> </span><span id="local-6989586621679234570"><span class="annot"><span class="annottext">Seat
+</span><a href="#local-6989586621679234570"><span class="hs-identifier hs-var">seat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatClimate"><span class="hs-identifier hs-type">SeatClimate</span></a></span><span> </span><span class="annot"><span class="annottext">SeatMode
+</span><a href="Tesla.Car.Command.Climate.html#SeatHeat"><span class="hs-identifier hs-var">SeatHeat</span></a></span><span> </span><span id="local-6989586621679234569"><span class="annot"><span class="annottext">SeatLevel
+</span><a href="#local-6989586621679234569"><span class="hs-identifier hs-var">level</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-67"></span><span>  </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+MonadIO m =&gt;
+String -&gt; [Pair] -&gt; Car m CommandResponse
+</span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;remote_seat_heater_request&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;heater&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Seat -&gt; Int
+</span><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
+</span><a href="#local-6989586621679234570"><span class="hs-identifier hs-var">seat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;level&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">SeatLevel
+</span><a href="#local-6989586621679234569"><span class="hs-identifier hs-var">level</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-68"></span><span class="annot"><a href="Tesla.Car.Command.Climate.html#seatClimate"><span class="hs-identifier hs-var">seatClimate</span></a></span><span> </span><span id="local-6989586621679234568"><span class="annot"><span class="annottext">Seat
+</span><a href="#local-6989586621679234568"><span class="hs-identifier hs-var">seat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Tesla.Car.Command.Climate.html#SeatClimate"><span class="hs-identifier hs-type">SeatClimate</span></a></span><span> </span><span class="annot"><span class="annottext">SeatMode
+</span><a href="Tesla.Car.Command.Climate.html#SeatCool"><span class="hs-identifier hs-var">SeatCool</span></a></span><span> </span><span id="local-6989586621679234567"><span class="annot"><span class="annottext">SeatLevel
+</span><a href="#local-6989586621679234567"><span class="hs-identifier hs-var">level</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-69"></span><span>  </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+MonadIO m =&gt;
+String -&gt; [Pair] -&gt; Car m CommandResponse
+</span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;remote_seat_cooler_request&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;seat_position&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Seat -&gt; Int
+</span><a href="Tesla.Car.Command.Climate.html#seatNum"><span class="hs-identifier hs-var">seatNum</span></a></span><span> </span><span class="annot"><span class="annottext">Seat
+</span><a href="#local-6989586621679234568"><span class="hs-identifier hs-var">seat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;seat_cooler_level&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">SeatLevel
+</span><a href="#local-6989586621679234567"><span class="hs-identifier hs-var">level</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-70"></span><span>
+</span><span id="line-71"></span><span class="hs-comment">-- | Set the main HVAC temperatures (driver and passenger).</span><span>
+</span><span id="line-72"></span><span id="local-6989586621679234930"><span class="annot"><a href="Tesla.Car.Command.Climate.html#setTemps"><span class="hs-identifier hs-type">setTemps</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234930"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Double</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Double</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234930"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-73"></span><span id="setTemps"><span class="annot"><span class="annottext">setTemps :: forall (m :: * -&gt; *).
 MonadIO m =&gt;
 (Double, Double) -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#setTemps"><span class="hs-identifier hs-var hs-var">setTemps</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679217601"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679217601"><span class="hs-identifier hs-var">driver</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679217600"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679217600"><span class="hs-identifier hs-var">passenger</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><a href="Tesla.Car.Command.Climate.html#setTemps"><span class="hs-identifier hs-var hs-var">setTemps</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234557"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679234557"><span class="hs-identifier hs-var">driver</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234556"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679234556"><span class="hs-identifier hs-var">passenger</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;set_temps&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;driver_temp&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679217601"><span class="hs-identifier hs-var">driver</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234557"><span class="hs-identifier hs-var">driver</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;passenger_temp&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679217600"><span class="hs-identifier hs-var">passenger</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-56"></span><span>
-</span><span id="line-57"></span><span id="local-6989586621679217599"><span class="annot"><a href="Tesla.Car.Command.Climate.html#maxDefrost"><span class="hs-identifier hs-type">maxDefrost</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217599"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217599"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-58"></span><span id="maxDefrost"><span class="annot"><span class="annottext">maxDefrost :: forall (m :: * -&gt; *). MonadIO m =&gt; Bool -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#maxDefrost"><span class="hs-identifier hs-var hs-var">maxDefrost</span></a></span></span><span> </span><span id="local-6989586621679217593"><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679217593"><span class="hs-identifier hs-var">on</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><a href="#local-6989586621679234556"><span class="hs-identifier hs-var">passenger</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-74"></span><span>
+</span><span id="line-75"></span><span id="local-6989586621679234555"><span class="annot"><a href="Tesla.Car.Command.Climate.html#maxDefrost"><span class="hs-identifier hs-type">maxDefrost</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234555"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234555"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-76"></span><span id="maxDefrost"><span class="annot"><span class="annottext">maxDefrost :: forall (m :: * -&gt; *). MonadIO m =&gt; Bool -&gt; Car m CommandResponse
+</span><a href="Tesla.Car.Command.Climate.html#maxDefrost"><span class="hs-identifier hs-var hs-var">maxDefrost</span></a></span></span><span> </span><span id="local-6989586621679234549"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679234549"><span class="hs-identifier hs-var">on</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;set_preconditioning_max&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;on&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679217593"><span class="hs-identifier hs-var">on</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-59"></span><span>
-</span><span id="line-60"></span><span id="local-6989586621679217592"><span class="annot"><a href="Tesla.Car.Command.Climate.html#scheduledDepartureOff"><span class="hs-identifier hs-type">scheduledDepartureOff</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217592"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217592"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-61"></span><span id="scheduledDepartureOff"><span class="annot"><span class="annottext">scheduledDepartureOff :: forall (m :: * -&gt; *). MonadIO m =&gt; Car m CommandResponse
+</span><a href="#local-6989586621679234549"><span class="hs-identifier hs-var">on</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-77"></span><span>
+</span><span id="line-78"></span><span id="local-6989586621679234548"><span class="annot"><a href="Tesla.Car.Command.Climate.html#scheduledDepartureOff"><span class="hs-identifier hs-type">scheduledDepartureOff</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234548"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234548"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-79"></span><span id="scheduledDepartureOff"><span class="annot"><span class="annottext">scheduledDepartureOff :: forall (m :: * -&gt; *). MonadIO m =&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.Climate.html#scheduledDepartureOff"><span class="hs-identifier hs-var hs-var">scheduledDepartureOff</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
@@ -158,34 +386,90 @@ String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><span class="hs-string">&quot;enable&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="hs-special">]</span><span>
-</span><span id="line-62"></span><span>
-</span><span id="line-63"></span><span class="hs-comment">-- | When configuring scheduled departure, preconditioning and</span><span>
-</span><span id="line-64"></span><span class="hs-comment">-- off-peak charging both have weekday only options.</span><span>
-</span><span id="line-65"></span><span class="hs-keyword">data</span><span> </span><span id="Sometimes"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Sometimes"><span class="hs-identifier hs-var">Sometimes</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Never"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Never"><span class="hs-identifier hs-var">Never</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Always"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Always"><span class="hs-identifier hs-var">Always</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="WeekdaysOnly"><span class="annot"><a href="Tesla.Car.Command.Climate.html#WeekdaysOnly"><span class="hs-identifier hs-var">WeekdaysOnly</span></a></span></span><span>
-</span><span id="line-66"></span><span>
-</span><span id="line-67"></span><span class="hs-comment">-- | Type alias to make 'scheduleDeparture' more readable.</span><span>
-</span><span id="line-68"></span><span class="hs-keyword">type</span><span> </span><span id="Preconditioning"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Preconditioning"><span class="hs-identifier hs-var">Preconditioning</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Sometimes"><span class="hs-identifier hs-type">Sometimes</span></a></span><span>
-</span><span id="line-69"></span><span>
-</span><span id="line-70"></span><span class="hs-comment">-- | Configuration for off-peak charging for a schedule departure.</span><span>
-</span><span id="line-71"></span><span class="hs-keyword">data</span><span> </span><span id="OffPeakConfig"><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-var">OffPeakConfig</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="OffPeakConfig"><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-var">OffPeakConfig</span></a></span></span><span> </span><span class="hs-special">{</span><span>
-</span><span id="line-72"></span><span>  </span><span id="_offPeakEnabled"><span class="annot"><span class="annottext">OffPeakConfig -&gt; Sometimes
+</span><span id="line-80"></span><span>
+</span><span id="line-81"></span><span class="hs-comment">-- | When configuring scheduled departure, preconditioning and</span><span>
+</span><span id="line-82"></span><span class="hs-comment">-- off-peak charging both have weekday only options.</span><span>
+</span><span id="line-83"></span><span class="hs-keyword">data</span><span> </span><span id="Sometimes"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Sometimes"><span class="hs-identifier hs-var">Sometimes</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Never"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Never"><span class="hs-identifier hs-var">Never</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Always"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Always"><span class="hs-identifier hs-var">Always</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="WeekdaysOnly"><span class="annot"><a href="Tesla.Car.Command.Climate.html#WeekdaysOnly"><span class="hs-identifier hs-var">WeekdaysOnly</span></a></span></span><span>
+</span><span id="line-84"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234536"><span id="local-6989586621679234538"><span class="annot"><span class="annottext">Sometimes -&gt; Sometimes -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Sometimes -&gt; Sometimes -&gt; Bool
+$c/= :: Sometimes -&gt; Sometimes -&gt; Bool
+== :: Sometimes -&gt; Sometimes -&gt; Bool
+$c== :: Sometimes -&gt; Sometimes -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234530"><span id="local-6989586621679234532"><span id="local-6989586621679234534"><span class="annot"><span class="annottext">Int -&gt; Sometimes -&gt; ShowS
+[Sometimes] -&gt; ShowS
+Sometimes -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Sometimes] -&gt; ShowS
+$cshowList :: [Sometimes] -&gt; ShowS
+show :: Sometimes -&gt; String
+$cshow :: Sometimes -&gt; String
+showsPrec :: Int -&gt; Sometimes -&gt; ShowS
+$cshowsPrec :: Int -&gt; Sometimes -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234526"><span id="local-6989586621679234528"><span class="annot"><span class="annottext">Sometimes
+forall a. a -&gt; a -&gt; Bounded a
+maxBound :: Sometimes
+$cmaxBound :: Sometimes
+minBound :: Sometimes
+$cminBound :: Sometimes
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Bounded</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234489"><span id="local-6989586621679234491"><span id="local-6989586621679234495"><span id="local-6989586621679234498"><span id="local-6989586621679234500"><span id="local-6989586621679234511"><span id="local-6989586621679234517"><span id="local-6989586621679234523"><span class="annot"><span class="annottext">Int -&gt; Sometimes
+Sometimes -&gt; Int
+Sometimes -&gt; [Sometimes]
+Sometimes -&gt; Sometimes
+Sometimes -&gt; Sometimes -&gt; [Sometimes]
+Sometimes -&gt; Sometimes -&gt; Sometimes -&gt; [Sometimes]
+forall a.
+(a -&gt; a)
+-&gt; (a -&gt; a)
+-&gt; (Int -&gt; a)
+-&gt; (a -&gt; Int)
+-&gt; (a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; a -&gt; [a])
+-&gt; Enum a
+enumFromThenTo :: Sometimes -&gt; Sometimes -&gt; Sometimes -&gt; [Sometimes]
+$cenumFromThenTo :: Sometimes -&gt; Sometimes -&gt; Sometimes -&gt; [Sometimes]
+enumFromTo :: Sometimes -&gt; Sometimes -&gt; [Sometimes]
+$cenumFromTo :: Sometimes -&gt; Sometimes -&gt; [Sometimes]
+enumFromThen :: Sometimes -&gt; Sometimes -&gt; [Sometimes]
+$cenumFromThen :: Sometimes -&gt; Sometimes -&gt; [Sometimes]
+enumFrom :: Sometimes -&gt; [Sometimes]
+$cenumFrom :: Sometimes -&gt; [Sometimes]
+fromEnum :: Sometimes -&gt; Int
+$cfromEnum :: Sometimes -&gt; Int
+toEnum :: Int -&gt; Sometimes
+$ctoEnum :: Int -&gt; Sometimes
+pred :: Sometimes -&gt; Sometimes
+$cpred :: Sometimes -&gt; Sometimes
+succ :: Sometimes -&gt; Sometimes
+$csucc :: Sometimes -&gt; Sometimes
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Enum</span></span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-85"></span><span>
+</span><span id="line-86"></span><span class="hs-comment">-- | Type alias to make 'scheduleDeparture' more readable.</span><span>
+</span><span id="line-87"></span><span class="hs-keyword">type</span><span> </span><span id="Preconditioning"><span class="annot"><a href="Tesla.Car.Command.Climate.html#Preconditioning"><span class="hs-identifier hs-var">Preconditioning</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Sometimes"><span class="hs-identifier hs-type">Sometimes</span></a></span><span>
+</span><span id="line-88"></span><span>
+</span><span id="line-89"></span><span class="hs-comment">-- | Configuration for off-peak charging for a schedule departure.</span><span>
+</span><span id="line-90"></span><span class="hs-keyword">data</span><span> </span><span id="OffPeakConfig"><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-var">OffPeakConfig</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="OffPeakConfig"><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-var">OffPeakConfig</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-91"></span><span>  </span><span id="_offPeakEnabled"><span class="annot"><span class="annottext">OffPeakConfig -&gt; Sometimes
 </span><a href="Tesla.Car.Command.Climate.html#_offPeakEnabled"><span class="hs-identifier hs-var hs-var">_offPeakEnabled</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Sometimes"><span class="hs-identifier hs-type">Sometimes</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-73"></span><span>  </span><span id="_offPeakEndTime"><span class="annot"><span class="annottext">OffPeakConfig -&gt; Time
+</span><span id="line-92"></span><span>  </span><span id="_offPeakEndTime"><span class="annot"><span class="annottext">OffPeakConfig -&gt; Time
 </span><a href="Tesla.Car.Command.Climate.html#_offPeakEndTime"><span class="hs-identifier hs-var hs-var">_offPeakEndTime</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#Time"><span class="hs-identifier hs-type">Time</span></a></span><span>
-</span><span id="line-74"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-75"></span><span>
-</span><span id="line-76"></span><span class="hs-comment">-- | Schedule a departure.</span><span>
-</span><span id="line-77"></span><span class="hs-comment">--</span><span>
-</span><span id="line-78"></span><span class="hs-comment">-- For this to do anything useful, you need to specify at least one of</span><span>
-</span><span id="line-79"></span><span class="hs-comment">-- 'Preconditioning' and/or 'OffPeakConfig'.</span><span>
-</span><span id="line-80"></span><span id="local-6989586621679217718"><span class="annot"><a href="Tesla.Car.Command.Climate.html#scheduleDeparture"><span class="hs-identifier hs-type">scheduleDeparture</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217718"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#Time"><span class="hs-identifier hs-type">Time</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Preconditioning"><span class="hs-identifier hs-type">Preconditioning</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-type">OffPeakConfig</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217718"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-81"></span><span id="scheduleDeparture"><span class="annot"><span class="annottext">scheduleDeparture :: forall (m :: * -&gt; *).
+</span><span id="line-93"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-94"></span><span>
+</span><span id="line-95"></span><span class="hs-comment">-- | Schedule a departure.</span><span>
+</span><span id="line-96"></span><span class="hs-comment">--</span><span>
+</span><span id="line-97"></span><span class="hs-comment">-- For this to do anything useful, you need to specify at least one of</span><span>
+</span><span id="line-98"></span><span class="hs-comment">-- 'Preconditioning' and/or 'OffPeakConfig'.</span><span>
+</span><span id="line-99"></span><span id="local-6989586621679234924"><span class="annot"><a href="Tesla.Car.Command.Climate.html#scheduleDeparture"><span class="hs-identifier hs-type">scheduleDeparture</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234924"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#Time"><span class="hs-identifier hs-type">Time</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#Preconditioning"><span class="hs-identifier hs-type">Preconditioning</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-type">OffPeakConfig</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234924"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-100"></span><span id="scheduleDeparture"><span class="annot"><span class="annottext">scheduleDeparture :: forall (m :: * -&gt; *).
 MonadIO m =&gt;
 Time -&gt; Sometimes -&gt; Maybe OffPeakConfig -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#scheduleDeparture"><span class="hs-identifier hs-var hs-var">scheduleDeparture</span></a></span></span><span> </span><span id="local-6989586621679217567"><span class="annot"><span class="annottext">Time
-</span><a href="#local-6989586621679217567"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span id="local-6989586621679217566"><span class="annot"><span class="annottext">Sometimes
-</span><a href="#local-6989586621679217566"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679217565"><span class="annot"><span class="annottext">Maybe OffPeakConfig
-</span><a href="#local-6989586621679217565"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><a href="Tesla.Car.Command.Climate.html#scheduleDeparture"><span class="hs-identifier hs-var hs-var">scheduleDeparture</span></a></span></span><span> </span><span id="local-6989586621679234472"><span class="annot"><span class="annottext">Time
+</span><a href="#local-6989586621679234472"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span id="local-6989586621679234471"><span class="annot"><span class="annottext">Sometimes
+</span><a href="#local-6989586621679234471"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679234470"><span class="annot"><span class="annottext">Maybe OffPeakConfig
+</span><a href="#local-6989586621679234470"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
@@ -195,85 +479,85 @@ String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;departure_time&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Time
-</span><a href="#local-6989586621679217567"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><a href="#local-6989586621679234472"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">[Pair]
-</span><a href="#local-6989586621679217564"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><a href="#local-6989586621679234469"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; Maybe OffPeakConfig -&gt; [a]
-</span><a href="#local-6989586621679217563"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe OffPeakConfig
-</span><a href="#local-6989586621679217565"><span class="hs-identifier hs-var">o</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-82"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-83"></span><span>    </span><span id="local-6989586621679217564"><span class="annot"><span class="annottext">pp :: [Pair]
-</span><a href="#local-6989586621679217564"><span class="hs-identifier hs-var hs-var">pp</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; Key -&gt; Key -&gt; Sometimes -&gt; [a]
-</span><a href="#local-6989586621679217559"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234468"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe OffPeakConfig
+</span><a href="#local-6989586621679234470"><span class="hs-identifier hs-var">o</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-101"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-102"></span><span>    </span><span id="local-6989586621679234469"><span class="annot"><span class="annottext">pp :: [Pair]
+</span><a href="#local-6989586621679234469"><span class="hs-identifier hs-var hs-var">pp</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; Key -&gt; Key -&gt; Sometimes -&gt; [a]
+</span><a href="#local-6989586621679234464"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;preconditioning_enabled&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;preconditioning_weekdays_only&quot;</span></span><span> </span><span class="annot"><span class="annottext">Sometimes
-</span><a href="#local-6989586621679217566"><span class="hs-identifier hs-var">p</span></a></span><span>
-</span><span id="line-84"></span><span>    </span><span id="local-6989586621679217563"><span class="annot"><span class="annottext">op :: Maybe OffPeakConfig -&gt; [a]
-</span><a href="#local-6989586621679217563"><span class="hs-identifier hs-var hs-var">op</span></a></span></span><span> </span><span class="annot"><span class="annottext">Maybe OffPeakConfig
+</span><a href="#local-6989586621679234471"><span class="hs-identifier hs-var">p</span></a></span><span>
+</span><span id="line-103"></span><span>    </span><span id="local-6989586621679234468"><span class="annot"><span class="annottext">op :: Maybe OffPeakConfig -&gt; [a]
+</span><a href="#local-6989586621679234468"><span class="hs-identifier hs-var hs-var">op</span></a></span></span><span> </span><span class="annot"><span class="annottext">Maybe OffPeakConfig
 </span><span class="hs-identifier hs-var">Nothing</span></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; OffPeakConfig -&gt; [a]
-</span><a href="#local-6989586621679217552"><span class="hs-identifier hs-var">opp</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Sometimes -&gt; Time -&gt; OffPeakConfig
+</span><a href="#local-6989586621679234457"><span class="hs-identifier hs-var">opp</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Sometimes -&gt; Time -&gt; OffPeakConfig
 </span><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-var">OffPeakConfig</span></a></span><span> </span><span class="annot"><span class="annottext">Sometimes
 </span><a href="Tesla.Car.Command.Climate.html#Never"><span class="hs-identifier hs-var">Never</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Finite 1440 -&gt; Time
 </span><a href="Tesla.Car.Command.html#Time"><span class="hs-identifier hs-var">Time</span></a></span><span> </span><span class="annot"><span class="annottext">Finite 1440
 </span><span class="hs-number">0</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-85"></span><span>    </span><span class="annot"><a href="#local-6989586621679217563"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679217550"><span class="annot"><span class="annottext">OffPeakConfig
-</span><a href="#local-6989586621679217550"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; OffPeakConfig -&gt; [a]
-</span><a href="#local-6989586621679217552"><span class="hs-identifier hs-var">opp</span></a></span><span> </span><span class="annot"><span class="annottext">OffPeakConfig
-</span><a href="#local-6989586621679217550"><span class="hs-identifier hs-var">x</span></a></span><span>
-</span><span id="line-86"></span><span>    </span><span id="local-6989586621679217552"><span class="annot"><span class="annottext">opp :: OffPeakConfig -&gt; [a]
-</span><a href="#local-6989586621679217552"><span class="hs-identifier hs-var hs-var">opp</span></a></span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-type">OffPeakConfig</span></a></span><span class="hs-special">{</span><span id="local-6989586621679217541"><span id="local-6989586621679217542"><span class="annot"><span class="annottext">Time
+</span><span id="line-104"></span><span>    </span><span class="annot"><a href="#local-6989586621679234468"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679234455"><span class="annot"><span class="annottext">OffPeakConfig
+</span><a href="#local-6989586621679234455"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; OffPeakConfig -&gt; [a]
+</span><a href="#local-6989586621679234457"><span class="hs-identifier hs-var">opp</span></a></span><span> </span><span class="annot"><span class="annottext">OffPeakConfig
+</span><a href="#local-6989586621679234455"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-105"></span><span>    </span><span id="local-6989586621679234457"><span class="annot"><span class="annottext">opp :: OffPeakConfig -&gt; [a]
+</span><a href="#local-6989586621679234457"><span class="hs-identifier hs-var hs-var">opp</span></a></span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#OffPeakConfig"><span class="hs-identifier hs-type">OffPeakConfig</span></a></span><span class="hs-special">{</span><span id="local-6989586621679234446"><span id="local-6989586621679234447"><span class="annot"><span class="annottext">Time
 Sometimes
 _offPeakEndTime :: Time
 _offPeakEnabled :: Sometimes
 _offPeakEndTime :: OffPeakConfig -&gt; Time
 _offPeakEnabled :: OffPeakConfig -&gt; Sometimes
-</span><a href="#local-6989586621679217541"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234446"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;end_off_peak_time&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Time
-</span><a href="#local-6989586621679217541"><span class="hs-identifier hs-var">_offPeakEndTime</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; [a] -&gt; [a]
+</span><a href="#local-6989586621679234446"><span class="hs-identifier hs-var">_offPeakEndTime</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; [a] -&gt; [a]
 </span><span class="hs-glyph hs-var">:</span></span><span> </span><span class="annot"><span class="annottext">forall {a}. KeyValue a =&gt; Key -&gt; Key -&gt; Sometimes -&gt; [a]
-</span><a href="#local-6989586621679217559"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234464"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;off_peak_charging_enabled&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;off_peak_charging_weekdays_only&quot;</span></span><span> </span><span class="annot"><span class="annottext">Sometimes
-</span><a href="#local-6989586621679217542"><span class="hs-identifier hs-var">_offPeakEnabled</span></a></span><span>
-</span><span id="line-87"></span><span>
-</span><span id="line-88"></span><span>    </span><span id="local-6989586621679217559"><span class="annot"><span class="annottext">s :: Key -&gt; Key -&gt; Sometimes -&gt; [a]
-</span><a href="#local-6989586621679217559"><span class="hs-identifier hs-var hs-var">s</span></a></span></span><span> </span><span id="local-6989586621679217527"><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217527"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span id="local-6989586621679217526"><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217526"><span class="hs-identifier hs-var">w</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-89"></span><span>           </span><span class="annot"><span class="annottext">Sometimes
+</span><a href="#local-6989586621679234447"><span class="hs-identifier hs-var">_offPeakEnabled</span></a></span><span>
+</span><span id="line-106"></span><span>
+</span><span id="line-107"></span><span>    </span><span id="local-6989586621679234464"><span class="annot"><span class="annottext">s :: Key -&gt; Key -&gt; Sometimes -&gt; [a]
+</span><a href="#local-6989586621679234464"><span class="hs-identifier hs-var hs-var">s</span></a></span></span><span> </span><span id="local-6989586621679234432"><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234432"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span id="local-6989586621679234431"><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679234431"><span class="hs-identifier hs-var">w</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-108"></span><span>           </span><span class="annot"><span class="annottext">Sometimes
 </span><a href="Tesla.Car.Command.Climate.html#Never"><span class="hs-identifier hs-var">Never</span></a></span><span>        </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217527"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><a href="#local-6989586621679234432"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217526"><span class="hs-identifier hs-var">w</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><a href="#local-6989586621679234431"><span class="hs-identifier hs-var">w</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">]</span><span>
-</span><span id="line-90"></span><span>           </span><span class="annot"><span class="annottext">Sometimes
+</span><span id="line-109"></span><span>           </span><span class="annot"><span class="annottext">Sometimes
 </span><a href="Tesla.Car.Command.Climate.html#Always"><span class="hs-identifier hs-var">Always</span></a></span><span>       </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217527"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><a href="#local-6989586621679234432"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217526"><span class="hs-identifier hs-var">w</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><a href="#local-6989586621679234431"><span class="hs-identifier hs-var">w</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">]</span><span>
-</span><span id="line-91"></span><span>           </span><span class="annot"><span class="annottext">Sometimes
+</span><span id="line-110"></span><span>           </span><span class="annot"><span class="annottext">Sometimes
 </span><a href="Tesla.Car.Command.Climate.html#WeekdaysOnly"><span class="hs-identifier hs-var">WeekdaysOnly</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217527"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><a href="#local-6989586621679234432"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679217526"><span class="hs-identifier hs-var">w</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
+</span><a href="#local-6989586621679234431"><span class="hs-identifier hs-var">w</span></a></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">]</span><span>
-</span><span id="line-92"></span><span>
-</span><span id="line-93"></span><span class="hs-keyword">data</span><span> </span><span id="ClimateKeeper"><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier hs-var">ClimateKeeper</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ClimateKeeperOff"><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeperOff"><span class="hs-identifier hs-var">ClimateKeeperOff</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="ClimateKeeperDefault"><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeperDefault"><span class="hs-identifier hs-var">ClimateKeeperDefault</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="DogMode"><span class="annot"><a href="Tesla.Car.Command.Climate.html#DogMode"><span class="hs-identifier hs-var">DogMode</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="CampMode"><span class="annot"><a href="Tesla.Car.Command.Climate.html#CampMode"><span class="hs-identifier hs-var">CampMode</span></a></span></span><span>
-</span><span id="line-94"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679217518"><span id="local-6989586621679217520"><span class="annot"><span class="annottext">ClimateKeeper -&gt; ClimateKeeper -&gt; Bool
+</span><span id="line-111"></span><span>
+</span><span id="line-112"></span><span class="hs-keyword">data</span><span> </span><span id="ClimateKeeper"><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier hs-var">ClimateKeeper</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ClimateKeeperOff"><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeperOff"><span class="hs-identifier hs-var">ClimateKeeperOff</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="ClimateKeeperDefault"><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeperDefault"><span class="hs-identifier hs-var">ClimateKeeperDefault</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="DogMode"><span class="annot"><a href="Tesla.Car.Command.Climate.html#DogMode"><span class="hs-identifier hs-var">DogMode</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="CampMode"><span class="annot"><a href="Tesla.Car.Command.Climate.html#CampMode"><span class="hs-identifier hs-var">CampMode</span></a></span></span><span>
+</span><span id="line-113"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679234423"><span id="local-6989586621679234425"><span class="annot"><span class="annottext">ClimateKeeper -&gt; ClimateKeeper -&gt; Bool
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 /= :: ClimateKeeper -&gt; ClimateKeeper -&gt; Bool
 $c/= :: ClimateKeeper -&gt; ClimateKeeper -&gt; Bool
 == :: ClimateKeeper -&gt; ClimateKeeper -&gt; Bool
 $c== :: ClimateKeeper -&gt; ClimateKeeper -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679217511"><span id="local-6989586621679217513"><span id="local-6989586621679217515"><span class="annot"><span class="annottext">Int -&gt; ClimateKeeper -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234417"><span id="local-6989586621679234419"><span id="local-6989586621679234421"><span class="annot"><span class="annottext">Int -&gt; ClimateKeeper -&gt; ShowS
 [ClimateKeeper] -&gt; ShowS
 ClimateKeeper -&gt; String
 forall a.
@@ -284,13 +568,13 @@ show :: ClimateKeeper -&gt; String
 $cshow :: ClimateKeeper -&gt; String
 showsPrec :: Int -&gt; ClimateKeeper -&gt; ShowS
 $cshowsPrec :: Int -&gt; ClimateKeeper -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679217506"><span id="local-6989586621679217508"><span class="annot"><span class="annottext">ClimateKeeper
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234413"><span id="local-6989586621679234415"><span class="annot"><span class="annottext">ClimateKeeper
 forall a. a -&gt; a -&gt; Bounded a
 maxBound :: ClimateKeeper
 $cmaxBound :: ClimateKeeper
 minBound :: ClimateKeeper
 $cminBound :: ClimateKeeper
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Bounded</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679217462"><span id="local-6989586621679217464"><span id="local-6989586621679217468"><span id="local-6989586621679217472"><span id="local-6989586621679217474"><span id="local-6989586621679217488"><span id="local-6989586621679217494"><span id="local-6989586621679217502"><span class="annot"><span class="annottext">Int -&gt; ClimateKeeper
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Bounded</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679234376"><span id="local-6989586621679234378"><span id="local-6989586621679234382"><span id="local-6989586621679234385"><span id="local-6989586621679234387"><span id="local-6989586621679234398"><span id="local-6989586621679234404"><span id="local-6989586621679234410"><span class="annot"><span class="annottext">Int -&gt; ClimateKeeper
 ClimateKeeper -&gt; Int
 ClimateKeeper -&gt; [ClimateKeeper]
 ClimateKeeper -&gt; ClimateKeeper
@@ -323,29 +607,30 @@ $cpred :: ClimateKeeper -&gt; ClimateKeeper
 succ :: ClimateKeeper -&gt; ClimateKeeper
 $csucc :: ClimateKeeper -&gt; ClimateKeeper
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Enum</span></span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
-</span><span id="line-95"></span><span>
-</span><span id="line-96"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679217454"><span id="local-6989586621679217456"><span id="local-6989586621679217458"><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier hs-type">ClimateKeeper</span></a></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-97"></span><span>  </span><span id="local-6989586621679217450"><span class="annot"><span class="annottext">toJSON :: ClimateKeeper -&gt; Value
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">toJSON</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. ToJSON a =&gt; a -&gt; Value
+</span><span id="line-114"></span><span>
+</span><span id="line-115"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679234369"><span id="local-6989586621679234371"><span id="local-6989586621679234373"><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier hs-type">ClimateKeeper</span></a></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-116"></span><span>  </span><span id="local-6989586621679234366"><span class="annot"><span class="annottext">toJSON :: ClimateKeeper -&gt; Value
+</span><a href="#local-6989586621679234366"><span class="hs-identifier hs-var hs-var hs-var hs-var">toJSON</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. ToJSON a =&gt; a -&gt; Value
 </span><span class="hs-identifier hs-var">toJSON</span></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">forall a. Enum a =&gt; a -&gt; Int
 </span><span class="hs-identifier hs-var">fromEnum</span></span><span>
-</span><span id="line-98"></span><span>
-</span><span id="line-99"></span><span id="local-6989586621679217694"><span class="annot"><a href="Tesla.Car.Command.Climate.html#climateKeeper"><span class="hs-identifier hs-type">climateKeeper</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679217694"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier hs-type">ClimateKeeper</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679217694"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
-</span><span id="line-100"></span><span id="climateKeeper"><span class="annot"><span class="annottext">climateKeeper :: forall (m :: * -&gt; *).
+</span><span id="line-117"></span><span>
+</span><span id="line-118"></span><span class="hs-comment">-- | Configure the climate keeper.</span><span>
+</span><span id="line-119"></span><span id="local-6989586621679234913"><span class="annot"><a href="Tesla.Car.Command.Climate.html#climateKeeper"><span class="hs-identifier hs-type">climateKeeper</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadIO</span></span><span> </span><span class="annot"><a href="#local-6989586621679234913"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.Command.Climate.html#ClimateKeeper"><span class="hs-identifier hs-type">ClimateKeeper</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Tesla.Car.html#Car"><span class="hs-identifier hs-type">Car</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679234913"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="Tesla.Car.Command.html#CommandResponse"><span class="hs-identifier hs-type">CommandResponse</span></a></span></span><span>
+</span><span id="line-120"></span><span id="climateKeeper"><span class="annot"><span class="annottext">climateKeeper :: forall (m :: * -&gt; *).
 MonadIO m =&gt;
 ClimateKeeper -&gt; Car m CommandResponse
-</span><a href="Tesla.Car.Command.Climate.html#climateKeeper"><span class="hs-identifier hs-var hs-var">climateKeeper</span></a></span></span><span> </span><span id="local-6989586621679217441"><span class="annot"><span class="annottext">ClimateKeeper
-</span><a href="#local-6989586621679217441"><span class="hs-identifier hs-var">ck</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
+</span><a href="Tesla.Car.Command.Climate.html#climateKeeper"><span class="hs-identifier hs-var hs-var">climateKeeper</span></a></span></span><span> </span><span id="local-6989586621679234360"><span class="annot"><span class="annottext">ClimateKeeper
+</span><a href="#local-6989586621679234360"><span class="hs-identifier hs-var">ck</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *).
 MonadIO m =&gt;
 String -&gt; [Pair] -&gt; Car m CommandResponse
 </span><a href="Tesla.Car.Command.html#runCmd"><span class="hs-identifier hs-var">runCmd</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;set_climate_keeper_mode&quot;</span></span><span> </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;climate_keeper_mode&quot;</span></span><span> </span><span class="annot"><span class="annottext">forall kv v. (KeyValue kv, ToJSON v) =&gt; Key -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">ClimateKeeper
-</span><a href="#local-6989586621679217441"><span class="hs-identifier hs-var">ck</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-101"></span><span>
-</span><span id="line-102"></span><span id="local-6989586621679217439"><span id="local-6989586621679217440"><span id="hvacOff"><span id="hvacOn"><span class="hs-identifier">mkNamedCommands</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="hs-string">&quot;hvacOn&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-string">&quot;auto_conditioning_start&quot;</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><span id="line-103"></span><span>                 </span><span class="hs-special">(</span><span class="hs-string">&quot;hvacOff&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-string">&quot;auto_conditioning_stop&quot;</span><span class="hs-special">)</span><span class="hs-special">]</span></span></span></span></span><span>
-</span><span id="line-104"></span><span>
-</span><span id="line-105"></span></pre></body></html>
+</span><a href="#local-6989586621679234360"><span class="hs-identifier hs-var">ck</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-121"></span><span>
+</span><span id="line-122"></span><span id="local-6989586621679234358"><span id="local-6989586621679234359"><span id="hvacOff"><span id="hvacOn"><span class="hs-identifier">mkNamedCommands</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="hs-string">&quot;hvacOn&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-string">&quot;auto_conditioning_start&quot;</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-123"></span><span>                 </span><span class="hs-special">(</span><span class="hs-string">&quot;hvacOff&quot;</span><span class="hs-special">,</span><span> </span><span class="hs-string">&quot;auto_conditioning_stop&quot;</span><span class="hs-special">)</span><span class="hs-special">]</span></span></span></span></span><span>
+</span><span id="line-124"></span><span>
+</span><span id="line-125"></span></pre></body></html>
