@@ -353,7 +353,7 @@ fromTime :: Time -> (Finite 24, Finite 60)
 -- | A type representing a whole number percnetage between 0 and 100
 --   (inclusive).
 newtype Percent
-Percent :: Finite 100 -> Percent
+Percent :: Finite 101 -> Percent
 mkPercent :: Integral n => n -> Maybe Percent
 
 -- | Run a command with a JSON payload.
@@ -380,6 +380,7 @@ mkCommands :: [String] -> Q [Dec]
 
 -- | Make commands with given names.
 mkNamedCommands :: [(String, String)] -> Q [Dec]
+instance GHC.Read.Read Tesla.Car.Command.Percent
 instance GHC.Show.Show Tesla.Car.Command.Percent
 instance Data.Aeson.Types.ToJSON.ToJSON Tesla.Car.Command.Percent
 instance GHC.Show.Show Tesla.Car.Command.Time
