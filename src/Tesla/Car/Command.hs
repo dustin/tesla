@@ -1,9 +1,13 @@
-{-# LANGUAGE DataKinds           #-}
-{-# LANGUAGE OverloadedStrings   #-}
-{-# LANGUAGE RankNTypes          #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeFamilies        #-}
-{-# LANGUAGE TypeOperators       #-}
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE RankNTypes                 #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TypeApplications           #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE TypeOperators              #-}
+
 {-|
 Module      : Tesla.Car.Command
 Description : Commands executed on a car.
@@ -20,20 +24,22 @@ module Tesla.Car.Command (
   -- * TH support for generating commands.
   mkCommand, mkCommands, mkNamedCommands) where
 
-import           Control.Lens           hiding ((.=))
-import           Control.Monad.IO.Class (MonadIO (..))
+import           Control.Lens                    hiding ((.=))
+import           Control.Monad.IO.Class          (MonadIO (..))
 import           Data.Aeson
-import           Data.Aeson.Lens        (_Bool, _String, key)
-import           Data.Finite            (Finite, getFinite, modulo, packFinite)
-import           Data.Text              (Text)
+import           Data.Aeson.Lens                 (_Bool, _String, key)
+import           Data.Finite                     (Finite, getFinite, modulo, packFinite)
+import           Data.Text                       (Text)
+import           GHC.Read
 import           GHC.TypeNats
 import           Language.Haskell.TH
-import           Network.Wreq.Types     (FormValue (..))
-import           Text.Casing            (fromSnake, toCamel)
+import           Network.Wreq.Types              (FormValue (..))
+import           Text.Casing                     (fromSnake, toCamel)
 
-import           Data.Aeson.Types       (Pair)
+import           Data.Aeson.Types                (Pair)
 import           Tesla.Car
 import           Tesla.Internal.HTTP
+import qualified Text.ParserCombinators.ReadPrec as TextParser
 
 -- | A CommandResponse wraps an Either such that Left represents a
 -- failure message and Right suggests the command was successful.
@@ -70,7 +76,10 @@ fromTime (Time t) = bimap f f (t `divMod` 60)
     f = modulo . toInteger
 
 -- | A type representing a whole number percnetage between 0 and 100 (inclusive).
-newtype Percent = Percent (Finite 100)
+newtype Percent = Percent (Finite 101)
+
+instance Read Percent where
+    readPrec = TextParser.prec 10 (maybe TextParser.pfail pure . mkPercent @Int =<< readPrec)
 
 instance Show Percent where show (Percent t) = show (toInteger t)
 
