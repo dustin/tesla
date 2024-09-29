@@ -3,3 +3,4 @@
 /stack.yaml.lock
 /.direnv/
 .DS_Store
+dist-newstyle/

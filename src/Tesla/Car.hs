@@ -23,7 +23,7 @@ module Tesla.Car (
   Car, runCar, runNamedCar,
   VehicleID,
   -- * Requests
-  vehicleData, nearbyChargers, vehicleStatus, isAwake,
+  vehicleData, locationData, nearbyChargers, vehicleStatus, isAwake, vehicleDriveState,
   -- * Convenience functions for examining VehicleData
   VehicleData, isUserPresent, isCharging, teslaTS, maybeTeslaTS,
   Door(..), OpenState(..), _Open, _Closed, doors, openDoors,
@@ -146,6 +146,26 @@ vehicleData = do
   r <- liftIO $ getWith (authOpts a) (vehicleURL v "vehicle_data")
   pure . fromJust . inner $ r ^. responseBody
     where inner = BL.stripPrefix "{\"response\":" <=< BL.stripSuffix "}"
+
+-- | Fetch location information.
+locationData :: MonadIO m => Car m VehicleData
+locationData = do
+  a <- teslaAuth
+  v <- currentVehicleID
+  r <- liftIO $ getWith (authOpts a) (vehicleURL v "vehicle_data?endpoints=location_data")
+  pure . fromJust . inner $ r ^. responseBody
+    where inner = BL.stripPrefix "{\"response\":" <=< BL.stripSuffix "}"
+
+-- https://owner-api.teslamotors.com/api/1/vehicles/:id/data_request/drive_state
+--                                  /api/1/vehicles/1492931202218670/data_request/drive_state
+vehicleDriveState :: MonadIO m => Car m VehicleData
+vehicleDriveState = do
+  a <- teslaAuth
+  v <- currentVehicleID
+  r <- liftIO $ getWith (authOpts a) (vehicleURL v "data_request/drive_state")
+  pure . fromJust . inner $ r ^. responseBody
+    where inner = BL.stripPrefix "{\"response\":" <=< BL.stripSuffix "}"
+
 
 -- | Prism for viewing 'VehicleData' as an Aeson 'Value'.
 vdata :: Prism' VehicleData Value

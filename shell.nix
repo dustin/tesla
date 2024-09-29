@@ -3,6 +3,8 @@ with pkgs;
 mkShell {
   buildInputs = [
     stack
+    cabal-install
+    ghc
     sqlite-interactive
     ffmpeg
     stylish-haskell
@@ -11,6 +13,7 @@ mkShell {
     ghcid
     haskell-language-server
     haskellPackages.tasty-discover
+    zlib
   ];
 
   shellHook = ''
