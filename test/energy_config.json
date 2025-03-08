@@ -1,0 +1,86 @@
+{
+    "response": {
+        "backup_reserve_percent": 40,
+        "battery_count": 3,
+        "components": {
+            "backup": true,
+            "battery": true,
+            "battery_solar_offset_view_enabled": true,
+            "battery_type": "ac_powerwall",
+            "car_charging_data_supported": false,
+            "configurable": true,
+            "flex_energy_request_capable": false,
+            "gateway": "teg",
+            "grid": true,
+            "grid_services_enabled": false,
+            "load_meter": true,
+            "off_grid_vehicle_charging_reserve_supported": false,
+            "solar": true,
+            "solar_type": "pv_panel",
+            "storm_mode_capable": true,
+            "tou_capable": true,
+            "vehicle_charging_performance_view_enabled": false,
+            "vehicle_charging_solar_offset_view_enabled": false
+        },
+        "default_real_mode": "autonomous",
+        "id": "1232100-00-E--TG1203020024N8",
+        "installation_date": "2021-04-06T13:22:17-07:00",
+        "installation_time_zone": "America/Los_Angeles",
+        "nameplate_energy": 40500,
+        "nameplate_power": 15000,
+        "site_name": "The Ranch",
+        "tou_settings": {
+            "optimization_strategy": "balanced",
+            "schedule": [
+                {
+                    "end_seconds": 54000,
+                    "start_seconds": 68400,
+                    "target": "off_peak",
+                    "week_days": [
+                        6,
+                        0
+                    ]
+                },
+                {
+                    "end_seconds": 68400,
+                    "start_seconds": 54000,
+                    "target": "peak",
+                    "week_days": [
+                        6,
+                        0
+                    ]
+                },
+                {
+                    "end_seconds": 25200,
+                    "start_seconds": 82800,
+                    "target": "off_peak",
+                    "week_days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
+                },
+                {
+                    "end_seconds": 75600,
+                    "start_seconds": 50400,
+                    "target": "peak",
+                    "week_days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
+                }
+            ]
+        },
+        "user_settings": {
+            "breaker_alert_enabled": false,
+            "storm_mode_enabled": true,
+            "sync_grid_alert_enabled": true
+        },
+        "version": "20.40.3"
+    }
+}

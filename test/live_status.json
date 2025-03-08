@@ -1,0 +1,18 @@
+{
+    "response": {
+        "backup_capable": true,
+        "battery_power": -2130,
+        "energy_left": 32447,
+        "generator_power": 0,
+        "grid_power": 0,
+        "grid_services_active": false,
+        "grid_services_power": 0,
+        "grid_status": "Active",
+        "load_power": 624,
+        "percentage_charged": 80.02318297284633,
+        "solar_power": 2754,
+        "storm_mode_active": false,
+        "timestamp": "2021-04-10T11:03:21-07:00",
+        "total_pack_energy": 40547
+    }
+}

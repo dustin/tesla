@@ -1,0 +1,34 @@
+{
+    "response": {
+        "components": {
+            "backup": false,
+            "battery": false,
+            "battery_solar_offset_view_enabled": false,
+            "car_charging_data_supported": false,
+            "configurable": false,
+            "energy_service_self_scheduling_enabled": true,
+            "flex_energy_request_capable": false,
+            "gateway": "neo",
+            "grid": true,
+            "grid_services_enabled": false,
+            "load_meter": false,
+            "off_grid_vehicle_charging_reserve_supported": false,
+            "solar": true,
+            "solar_type": "pv_panel",
+            "solar_value_enabled": true,
+            "storm_mode_capable": false,
+            "tou_capable": false,
+            "vehicle_charging_performance_view_enabled": false,
+            "vehicle_charging_solar_offset_view_enabled": false
+        },
+        "id": "cd3a46e9-7336-41f0-8c0b-07d6e72f090d",
+        "installation_date": "2018-09-30T17:00:00-07:00",
+        "site_number": "STE20180912-00052",
+        "time_zone_offset": -420,
+        "user_settings": {
+            "breaker_alert_enabled": false,
+            "storm_mode_enabled": null,
+            "sync_grid_alert_enabled": false
+        }
+    }
+}
