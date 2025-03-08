@@ -7,7 +7,7 @@
 --   Please see the README on GitHub at
 --   <a>https://github.com/dustin/tesla#readme</a>
 @package tesla
-@version 0.7.4.0
+@version 0.7.5.0
 
 
 -- | Authentication related data structures.
@@ -195,6 +195,9 @@ type VehicleID = Text
 -- | Fetch the VehicleData.
 vehicleData :: MonadIO m => Car m VehicleData
 
+-- | Fetch location information.
+locationData :: MonadIO m => Car m VehicleData
+
 -- | Get the nearby chargers.
 nearbyChargers :: MonadIO m => Car m [Charger]
 
@@ -203,6 +206,7 @@ vehicleStatus :: MonadIO m => Car m VehicleState
 
 -- | isAwake returns true if the current vehicle is awake and online.
 isAwake :: MonadIO m => Car m Bool
+vehicleDriveState :: MonadIO m => Car m VehicleData
 
 -- | Giant blob of VehicleData describing all known state of the vehicle.
 --   
@@ -234,8 +238,8 @@ RearTrunk :: Door
 data OpenState a
 Closed :: a -> OpenState a
 Open :: a -> OpenState a
-_Open :: forall a_auqC. Prism' (OpenState a_auqC) a_auqC
-_Closed :: forall a_auqC. Prism' (OpenState a_auqC) a_auqC
+_Open :: forall a_auqE. Prism' (OpenState a_auqE) a_auqE
+_Closed :: forall a_auqE. Prism' (OpenState a_auqE) a_auqE
 
 -- | Return a list of doors and their OpenState.
 doors :: VehicleData -> Maybe [OpenState Door]
