@@ -8,39 +8,35 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v6
 
-    - name: Cache Key
-      id: cache_key
-      run: echo ::set-output name=key::$(md5sum stack.yaml | awk '{print $1}')
+    - name: Install Nix
+      uses: cachix/install-nix-action@v31
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+        extra_nix_config: |
+          experimental-features = nix-command flakes
 
-    - name: Cache Dependencies
-      id: cache
+    - name: Cache Nix store
       uses: actions/cache@v5
       with:
-        path: ~/.stack
-        key: ${{ matrix.os }}-${{ steps.cache_key.outputs.key }}
-
-    - name: Build Snapshot
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: |
-        stack --no-terminal test --bench --only-snapshot
+        path: /nix
+        key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+        restore-keys: nix-${{ runner.os }}-
 
     - name: Build & Test
+      run: nix develop --command cabal test --test-show-details=streaming
+
+    - name: Build Docs
       run: |
-        stack --no-terminal test --bench --no-run-benchmarks --haddock --no-haddock-deps
-        PKG_NAME=$(cat *.cabal | grep "name:" | sed "s/name:\s*\(.*\)/\1/")
-        mkdir -p dist/  && mv $(stack path --local-install-root)/doc/$PKG_NAME-*/* dist/
+        nix develop --command cabal haddock
+        mkdir -p dist/ && cp -r $(dirname $(find dist-newstyle -path '*/doc/html/*/index.html' | head -1))/* dist/
 
     - name: Publish Docs
-      if: matrix.os == 'ubuntu-latest' && github.event_name == 'push'
+      if: github.event_name == 'push'
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

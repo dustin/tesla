@@ -1,5 +1,7 @@
-{-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE DataKinds            #-}
+{-# LANGUAGE OverloadedStrings    #-}
 
 import           Test.Tasty
 import           Test.Tasty.HUnit
